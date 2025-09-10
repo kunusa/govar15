@@ -359,7 +359,7 @@ class generador_compras_line(models.Model):
 
     def _get_stock_avalaible(self):
         for rec in self:
-            rec.stock = rec.product_id.immediately_usable_qty
+            rec.stock = rec.product_id.free_qty
 
 
 
@@ -386,7 +386,7 @@ class ExtraFieldsFacturasProvedor(models.Model):
 
 
     def get_account_pay(self):
-        if self.type == 'in_invoice':
+        if self.move_type == 'in_invoice':
             self.write({
                 'account_id': self.partner_id.property_account_payable_id.id
             })
@@ -394,12 +394,12 @@ class ExtraFieldsFacturasProvedor(models.Model):
 
 
     def _get_amount_mxn_update(self):
-        sup_invoices = self.env['account.move'].search([('type','=','in_invoice')])
+        sup_invoices = self.env['account.move'].search([('move_type','=','in_invoice')])
         for rec in sup_invoices:
-            if rec.move_id.line_ids:
-                if rec.move_id.line_ids[0].amount_currency != 0.0:
-                    if rec.move_id.line_ids[0].credit != 0.0:
-                        rec.diary_value = (rec.move_id.line_ids[0].credit/(rec.move_id.line_ids[0].amount_currency*-1))
+            if rec.line_ids:
+                if rec.line_ids[0].amount_currency != 0.0:
+                    if rec.line_ids[0].credit != 0.0:
+                        rec.diary_value = (rec.line_ids[0].credit/(rec.line_ids[0].amount_currency*-1))
             if rec.currency_id.name != 'MXN':
                 rec.amount_mxn = rec.amount_total * rec.diary_value
             else:
@@ -412,7 +412,7 @@ class invoicecrearnuevo(models.Model):
 
 
 	def get_filds_cfdi(self):
-		if self.type == 'out_invoice':
+		if self.move_type == 'out_invoice':
 			client = self.env['res.partner'].search([('id','=',self.partner_id.id)])
 
 			self.write({

@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_denied_products,access.denied.products,model_denied_products,base.group_user,1,1,1,0
+access_denied_product_save,access.denied.product_save,model_denied_product_save,base.group_user,1,1,1,0
+
+

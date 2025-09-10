@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+    <record id="see_menu_product_denied" model="res.groups">
+      <field name="name">Ver menú productos negados</field>
+      <field name="comment">Permite ver el menú de productos negados en inventario</field>
+    </record>
+  </data>
+</odoo>
