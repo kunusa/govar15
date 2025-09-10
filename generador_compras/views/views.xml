@@ -1,0 +1,206 @@
+<odoo>
+  <data>
+    <!-- Tree view generador de compras-->
+
+    <record model="ir.ui.view" id="generador_compras_view">
+      <field name="name">compras.generador.view</field>
+      <field name="model">generador.compras</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name" />
+          <field name="fecha" />
+          <field name="product_category" />
+          <field name="dp_purchase_order" />
+          <field name="total_a" />
+          <field name="total_b" />
+          <field name="partner_id" />
+          <field name="user_id" />
+        </tree>
+      </field>
+    </record>
+
+    <!-- vista formulario generador de compras -->
+
+    <record id="view_generador_form" model="ir.ui.view">
+      <field name="name">view.generador.form</field>
+      <field name="model">generador.compras</field>
+      <field name="arch" type="xml">
+        <form string="Generador de Compras">
+          <header>
+            <button type="object" name="generar_compras" class="oe_highlight"
+              string="Generar Compras" states="revision" />
+            <button type="object" name="return_draft" class="oe_highlight" string="Regresar a Nuevo"
+              states="revision" />
+            <button type="object" name="cancel_sales" class="oe_highlight" string="Cancelar"
+              states="nuevo,revision,aplicado" groups="compras_govar.close_sales" />
+            <button type="object" name="validate" class="oe_highlight" string="Validar"
+              states="nuevo" />
+            <field name="state" widget="statusbar"
+              statusbar_visible="nuevo,revision,aplicado" />
+          </header>
+
+          <legend>Hoja de Generación de Compra</legend>
+          <group>
+            <group>
+              <field name="name" />
+              <field name="user_id"
+                options="{'no_create': '1', 'no_create_edit': '1', 'no_open': '1'}" />
+              <field name="partner_id"
+                options="{'no_create': '1', 'no_create_edit': '1', 'no_open': '1'}" />
+              <field name="product_category" widget="many2many_tags"
+                options="{'no_create_edit': True,'no_quick_create':True}" required="1" />
+              <field name="dias_inventario_a" required="1" />
+              <field name="dias_inventario_b" required="1" />
+            </group>
+            <group>
+              <field name="fecha" />
+              <field name="periodo" />
+              <field name="dias_laborables" required="1" />
+              <field name="picking_type_id"
+                options="{'no_create_edit': True,'no_quick_create':True}" />
+            </group>
+          </group>
+          <notebook>
+            <page string="Lineas de Compra" attrs="{'invisible': [('lines_ids','=',[])]}">
+              <field name="lines_ids" on_change="0">
+                <tree editable="top">
+                  <field name="sequence_ref" readonly="1" />
+                  <field name="categoria_linea" />
+                  <field name="name" />
+                  <field name="product_id"
+                    options="{'no_create': '1', 'no_create_edit': '1', 'no_open': '1'}" />
+                  <field name="costo" sum="Total" />
+                  <field name="currency_id" invisible="1" />
+                  <field name="total_ventas" />
+                  <field name="promedio" />
+                  <field name="dias_inventario_a" readonly="1" />
+                  <field name="sugerido_a" />
+                  <field name="dias_inventario_b" readonly="1" />
+                  <field name="sugerido_b" />
+                  <field name="stock" />
+                  <field name="pedido" />
+                  <field name="subtotal_a" />
+                  <field name="back_order" />
+                  <field name="purchase_planning" />
+                  <field name="pedido_b" />
+                  <field name="subtotal_b" />
+                </tree>
+              </field>
+              <table>
+                <tr>
+                  <td style="width:100px"></td>
+                  <td style="width:100px"></td>
+                  <td style="width:100px"></td>
+                  <td style="width:100px"></td>
+                  <td style="width:100px"></td>
+                  <td style="width:100px"></td>
+                  <td style="width:100px"></td>
+                  <td style="width:100px"></td>
+                  <td style="width:100px"></td>
+                  <td style="width:100px"></td>
+                  <td style="width:100px"></td>
+                  <td style="width:90px text-align:right">
+                    <b>
+                      <field name="subtotal_a" />
+                    </b>
+                  </td>
+                  <td style="width:100px"></td>
+                  <td style="width:100px"></td>
+                  <td style="width:90px text-align:right">
+                    <b>
+                      <field name="subtotal_b" />
+                    </b>
+                  </td>
+                </tr>
+              </table>
+            </page>
+          </notebook>
+
+          <div class="oe_chatter">
+            <field name="message_follower_ids" widget="mail_followers" />
+            <field name="message_ids" widget="mail_thread" />
+          </div>
+        </form>
+      </field>
+    </record>
+
+    <!-- TODO: Mandar esta vista a otro modulo  -->
+    <record model="ir.ui.view" id="view_purchase_order_inherit_from">
+      <field name="name">purchase.order.inherit_from</field>
+      <field name="model">purchase.order</field>
+      <field name="inherit_id" ref="purchase.purchase_order_form" />
+      <field name="arch" type="xml">
+
+        <!-- **************************************************** -->
+        <xpath expr="//form//field[@name='partner_id']" position="replace">
+          <field name="partner_id"
+            options='{"no_create": True, "no_quick_create": True,"no_open":True}' />
+        </xpath>
+        <!-- 
+        <xpath expr="//field[@name='partner_id']" position="replace">
+          <field name="partner_id" domain="[('supplier','=',True)]"
+            attrs="{'readonly': [('state', 'in', ['cancel','purchase','done'])]} " required='1' />
+        </xpath>
+        <xpath expr="//tree/field[@name='name']" position="attributes">
+          <attribute name='invisible'>1</attribute>
+        </xpath>
+        <xpath expr="//field[@name='order_line']/tree//field[@name='product_id']" position="before">
+          <field name="sequence_ref" />
+        </xpath>
+        <xpath expr="//field[@name='order_line']/tree//field[@name='product_id']" position="replace">
+          <field name="product_id" options="{'no_create': '1', 'no_create_edit': '1'}" />
+        </xpath> -->
+
+
+        <!-- **************************************************** -->
+
+        <!-- 
+        <xpath expr="//tree/field[@name='product_uom']" position="attributes">
+          <attribute name='readonly'>1</attribute>
+        </xpath>
+        <xpath expr="//tree/field[@name='taxes_id']" position="attributes">
+          <attribute name='readonly'>1</attribute>
+        </xpath>
+        <xpath expr="//tree/field[@name='date_planned']" position="attributes">
+          <attribute name='readonly'>1</attribute>
+        </xpath>-->
+      </field>
+    </record><!-- 
+    <record id="purchase.purchase_form_action" model="ir.actions.act_window">
+      <field name="context">
+        {'readonly_by_pass': ['product_uom', 'taxes_id', 'date_planned',]}
+      </field>
+    </record>-->
+
+    <!--Accion
+    Generador Compras -->
+
+    <record model="ir.actions.act_window" id="generdor_action_window">
+      <field name="name">Generador de Compras</field>
+      <field name="res_model">generador.compras</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+
+    <!-- TODO: MOver a otro modulo -->
+    <!-- <record model="ir.ui.view" id="account_invoice_inherit_form">
+      <field name="name">account.invoice.inherit.form</field>
+      <field name="inherit_id" ref="account.invoice_supplier_tree" />
+      <field name="model">account.invoice</field>
+      <field name="arch" type="xml">
+        <xpath expr="//field[@name='origin']" position="after">
+          <field name="amount_mxn" sum="Total" string="Total MXN" />
+          <field name="currency_id" readonly="1" />
+          <field name="diary_value" string="TC" readonly="1" />
+        </xpath>
+      </field>
+    </record> -->
+
+
+    <!-- Top menu item -->
+    <menuitem name="Generador Compras" id="generador_compras_menu"
+      parent="purchase.menu_procurement_management" action="generdor_action_window" />
+
+
+  </data>
+</odoo>

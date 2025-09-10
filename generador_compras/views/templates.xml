@@ -1,0 +1,11 @@
+<odoo>
+    <data>
+        <!-- Secuencia para el folio Generador de Compras -->
+        <record id="sec_generador_compras" model="ir.sequence">
+            <field name="name">generador</field>
+            <field name="code">generador.compras</field>
+            <field name="prefix">GC</field>
+            <field name="padding">5</field>
+        </record>
+    </data>
+</odoo>
