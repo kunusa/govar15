@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="seq_remisiones" model="ir.sequence">
+            <field name="name">Remisiones</field>
+            <field name="code">seq_remisiones</field>
+            <field name="prefix">REM</field>
+            <field name="padding">4</field>
+            <field name="company_id" eval="ref('base.main_company')"/>
+        </record>
+    </data>
+</odoo>

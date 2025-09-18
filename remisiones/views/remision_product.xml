@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<odoo>
+    <data>
+        <record id="remision_count_inherit_sale" model="ir.ui.view">
+            <field name="name">product.template.inherit.form</field>
+            <field name="inherit_id" ref="product.product_template_only_form_view" />
+            <field name="model">product.template</field>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@name='button_box']" position="inside">
+                    <button type="object"
+                        name="action_view_remision"
+                        class="oe_stat_button"
+                        icon="fa-money"
+                        groups="base.group_user">
+                        <field name="count_rem" widget="statinfo" string="Remisiones" />
+                    </button>
+                </xpath>
+            </field>
+        </record>
+        <record id="view_company_form_inherit" model="ir.ui.view">
+            <field name="name">res.company.form</field>
+            <field name="model">res.company</field>
+            <field name="inherit_id" ref="base.view_company_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='website']" position="after">
+                    <field name="message_rem_mot" />
+                    <field name="list_validate" />
+                </xpath> 
+            </field>
+        </record> 
+    </data>
+</odoo>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Heredar la vista de sale.order para agregar botón make_remission -->
+        <record id="view_order_form_remision_inherit" model="ir.ui.view">
+            <field name="name">sale.order.form.remision.inherit</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <!-- Agregar botón make_remission en el header después de los botones existentes -->
+                <xpath expr="//header/button[@name='action_quotation_send']" position="after">
+                    <button name="make_remission" 
+                            string="Duplicar a remisión" 
+                            type="object" 
+                            class="btn-primary"
+                            attrs="{'invisible': [('state', 'not in', ['draft', 'sent'])]}"
+                            groups="base.group_user"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

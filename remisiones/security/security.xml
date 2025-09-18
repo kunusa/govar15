@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Grupo para cerrar remisiones -->
+        <record id="group_close_remision" model="res.groups">
+            <field name="name">Cerrar Remisiones</field>
+            <field name="comment">Permite cerrar remisiones</field>
+        </record>
+
+        <!-- Grupo para confirmar remisiones -->
+        <record id="group_confirm_rem" model="res.groups">
+            <field name="name">Confirmar Remisiones</field>
+            <field name="comment">Permite confirmar remisiones</field>
+        </record>
+    </data>
+</odoo>

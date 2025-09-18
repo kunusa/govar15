@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+<!--Tree-->
+    <record model="ir.ui.view" id="view_remisionesgovar_remisiones_tree">
+      <field name="name">remisiones.remisiones.tree</field>
+      <field name="model">remision</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+          <field name="motive" attrs="{'invisible': [('motive_flag','=', False)]}"/>
+          <field name="fecha_documento"/>
+          <field name="fecha_vencimiento"/>
+          <field name="default_warehouse" string = "Alamcen"/>
+          <field name="email_message" />
+          <field name="partner_id"/>
+          <field name="create_uid"/>
+          <field name="stock_picking_id"/>
+          <field name="state"/>
+          <field name="motive_flag" invisible="1"/>
+          <field name="total_tree" sum="Total"/>
+        </tree>
+      </field>
+    </record> 
+<!--From-->
+        <record id="view_remisionesgovar_remisiones_line_form" model="ir.ui.view">
+            <field name="name">remisiones.remisiones.line.from</field>
+            <field name="model">remision_line</field>
+            <field name="arch" type="xml">
+                <form >
+                    <group name="name" col="4" >
+                        <field name="producto" string= "Producto" options="{'no_create_edit': True, 'no_create': '1', 'no_open': '1', 'no_quick_create':True}"/>
+                        <field name="tax_id" options="{'no_create_edit': True, 'no_create': '1', 'no_open': '1', 'no_quick_create':True}" domain="[('type_tax_use','=','sale')]"  widget="many2many_tags"/>
+                        <!-- <field name="category_layout" options="{'no_create_edit': True, 'no_create': '1', 'no_open': '1', 'no_quick_create':True}"/> -->
+                        <field name="delivery_time" />
+                        <field name="cantidad" string="Cantidad pedida"/>
+                        <field name="id_precotizador" invisible = "1"/>
+                        <field name="unidad_medida" options="{'no_create_edit': True, 'no_create': '1', 'no_open': '1', 'no_quick_create':True}"/>
+                        <field name="inernt_category" invisible = "1"/>
+                        <field name="quantity_delivery" readonly = "1"/>
+                        <field name="id_precotizador" invisible = "1"/>
+                        <field name="product_to_invoice" readonly = "1"/>
+                        <!-- <field name="avaible_stock" invisible = "1"/> -->
+                        <field name="valor_unitario" string = "Precio unitario"/>
+                        <!-- <field name="importe" invisible = "1"/>     -->
+                        <!-- FIXME Pendiente a precio de lista -->
+                        <!-- <field name="price_list"/> -->                        
+                    </group>                    
+                    <group name="description" col="1">
+                        <field name="description"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+    <record model="ir.ui.view" id="view_remisionesgovar_remisiones_from">
+      <field name="name">remisione.remisiones.from</field>
+      <field name="model">remision</field>
+      <field name="arch" type="xml">
+        <form>
+          <header>
+            <button string="Crear factura" name="total_remision" type="object" class="oe_highlight" attrs="{'invisible': [('flag_remision', '=', False)]}"/>
+            <button name="send_email_remission" type="object" string="Enviar por correo electrónico" states="draft,send,proceso,remission,to_invoice,invoiced,done"/>
+            <button name="print_pdf" type="object" string="Imprimir" states="draft,proceso,remission,to_invoice,invoiced,done"/>
+            <button name="crear_pickin" type="object" string="Confirmar remisión" states="draft" />
+            <button name="cancel_referral" type="object" string="Cancelar" states="draft,proceso,remission"/>
+            <button name="close_remision" type="object" string="Cerrar remision" class="oe_highlight" groups_id="[(4, ref('remisiones.group_close_remision'))]" attrs="{'invisible': [('state', '=','closed')]}"/>
+            <field name="state" widget="statusbar"
+            statusbar_visible="draft,proceso,send,remission,done,to_invoice,invoiced,cancelled"/>
+            <field name="menssage" invisible="1"/>
+            <field name="email_send" invisible="1" />
+            <div class="alert alert-info" role="alert" style="margin-bottom:0px;" attrs="{'invisible': [('email_send','=',False)]}">
+                 <h2> <b>Recordatiorio: Enviar Remision</b></h2> 
+            </div>
+          </header>
+          <sheet>
+            <div class="oe_button_box" name="button_box">
+                  <button type="object"
+                      name="action_view_delivery"
+                      class="oe_stat_button"
+                      icon="fa-truck"
+                      attrs="{'invisible': [('delivery_count', '=', 0)]}" groups_id="[(4, ref('base.group_user'))]">
+                      <field name="delivery_count" widget="statinfo" string="Entrega"/>
+                  </button>
+
+                    <button type="object"
+                        name="action_view_invoice"
+                        class="oe_stat_button"
+                        icon="fa-pencil-square-o"
+                        attrs="{'invisible': [('invoice_count', '=', 0)]}" groups_id="[(4, ref('base.group_user'))]">
+                        <field name="invoice_count" widget="statinfo" string="Facturas"/>
+                    </button>
+                  </div>
+              <div class="oe_title">
+                <h1><field name="name" readonly="1"/></h1>
+              </div>
+
+              <group col="2">
+                <group col="2">
+                <field name="pickin_id" invisible="1"/>
+                  <field name="fecha_documento" readonly="1"/>
+                  <field name="id_sale" attrs="{'invisible':[('state','in',['proceso', 'send','draft','remission'])]}" readonly="1"/>
+                  <field name="pickin_id" string = 'Movimientos' readonly="1" options="{'no_open': True}" widget="many2many_tags"/>
+                </group>
+                <group col="2">
+                  <field name="fecha_vencimiento" readonly="1"/>
+                  <h4>
+                    <span>
+                       <field name="sales_flag" invisible="1"/>
+                       <field name="flag_remision" invisible= "1" />
+                       <field name="menssage" string=" " class="badge badge-danger" attrs="{'invisible': [('menssage','!=','Producto surtido')]}" nolabel="1"/>
+                       <field name="message_logistic" string=" " class="badge badge-warning" nolabel="1" readonly="1"/>
+                       <field name="message_sales" string=" " class="badge badge-danger" nolabel="1" readonly="1"/>
+                       <field name="message_client" string=" " class="badge badge-success" nolabel="1" readonly="1"/>
+                       <field name="message_residence" string=" " class="badge badge-primary" nolabel="1" readonly="1"/>
+                       <field name="message_remission" string=" " class="badge badge-info" nolabel="1" readonly="1"/>
+                    </span>
+                  </h4>
+                </group>
+              </group>
+              <group col="2">
+                <group col="2">
+                  <field name="partner_id" domain="[('customer_rank', '>', 0)]" context="{'search_default_customer':1, 'show_address': 1}" options="{'no_create': True, 'no_open': True, 'always_reload': True}" attrs="{'readonly': [('state','!=','draft')]}"/>
+                  <field name="comercial_id" string = "Comercial" options="{'no_create_edit': True, 'no_create': '1', 'no_open': '1', 'no_quick_create':True}" readonly = "1"/>
+                  <field name="clave_de_cliente" readonly="1"/>
+                  <field name="default_warehouse" options="{'no_create_edit': True, 'no_create': '1', 'no_open': '1', 'no_quick_create':True}"  readonly="1"/>
+                  <field name="email_message" />
+                  <field name="motive" attrs="{'required': [('state','=','draft'),('motive_flag','=', True)],'readonly': [('state','!=','draft')],'invisible': [('motive_flag','=', False)]}"/>
+                  <field name="motive_flag" invisible="1"/>
+                  <field name="stock_picking_id" invisible="1"/>
+                </group>
+                <group col="2">
+                  <field name="pedido_cliente" attrs="{'readonly': [('flag_other_info','=',True)]}"/>
+                  <field name="contacto" attrs="{'readonly': [('flag_other_info','=',True)]}"/>
+                  <field name="forma_entrega" attrs="{'required': [('state', 'in', 'draft')], 'readonly': [('flag_other_info','=',True)]}"/>
+                  <field name="package" attrs="{'readonly': [('flag_other_info','=',True)]}"/>
+                  <field name="destiny" attrs="{'readonly': [('flag_other_info','=',True)]}"/>
+                  <field name="condiciones" attrs="{'readonly': [('flag_other_info','=',True)]}"/>
+                  <field name="gia" attrs="{'readonly': [('flag_other_info','=',True)]}"/>
+                  <field name="descuento_total" invisible="1"/>
+                  <field name="flag_other_info" invisible="1"/>
+                </group>
+              </group>   
+              <notebook colspan="4">
+                <page name="Lineas" string="Productos">
+                  <field name="remisiones_line_id" attrs="{'readonly': [('state','!=','draft')]}">
+                    <tree string="Lineas de Captura" colors="blue:product_to_invoice > 0">
+                      <!-- <field name="avaible_stock"/> -->
+                      <field name="producto" string="Producto" options="{'no_create': True, 'no_open': True}" domain="[('active', '=', True)]"/>
+                      <field name="description" />
+                      <field name="inernt_category" readonly="1"/>
+                      <field name="cantidad" string="cantidad"/>
+                      <field name="product_to_invoice" invisible= "1"/>
+                      <field name="unidad_medida" readonly="1" string="Unidad medida"/>
+                      <!-- FIXME Pendiente a precio de lista -->
+                      <!-- <field name="price_list" string="Lista N°"/> -->
+                      <field name="tax_id" options="{'no_create_edit': True, 'no_create': '1', 'no_open': '1', 'no_quick_create':True}" widget="many2many_tags" readonly="1"/>
+                      <field name="valor_unitario" string="Valor unitario"/>
+                      <field name="importe" string="importe"/>
+                    </tree>
+                  </field>
+                </page>
+              </notebook>
+              <group col="2">
+                <group>
+                  <field name="observaciones"/>
+                </group>
+                <group class="oe_subtotal_footer">
+                  <field name="importe" readonly="1"/>
+                  <field name="iva" readonly="1"/>
+                  <field name="total" class="oe_subtotal_footer_separator" readonly="1"/>
+                </group>
+              </group>
+          </sheet>
+          <div class="oe_chatter">
+            <field name="message_follower_ids" widget="mail_followers" />
+            <field name="message_ids" widget="mail_thread" />
+          </div>
+        </form>
+      </field>
+    </record>
+<!--search-->
+    <record id="view_remisionesgovar_remisiones_filter" model="ir.ui.view">
+      <field name="name">remisiones.remisiones.filter</field>
+      <field name="model">remision</field>
+      <field name="arch" type="xml">
+        <search string="Search referrals">
+          <field name="partner_id" string="Cliente"/>
+          <field name="name" string="Folio"/>
+          <field name="fecha_documento" string="Periodo"/>
+          <field name="default_warehouse" string="Almacen"/>
+          <field name="clave_de_cliente" string="Referencia"/>
+          <field name="product_id"/>
+          <filter name="group_by_state" string="Estado" context="{'group_by':'state'}"/>
+          <filter name="group_by_partner" string="Cliente" context="{'group_by':'partner_id'}"/>
+        </search>
+      </field>
+    </record>
+
+    <record id="remision_invoice_action_server" model="ir.actions.server">
+        <field name="name">Crear factura</field>
+        <field name="model_id" ref="model_remision"/>
+        <field name="state">code</field>
+        <field name="code">
+            if records:
+                action = records.total_remision()
+        </field>
+    </record>
+<!--accion-->
+    <record model="ir.actions.act_window" id="action_remisionesgovar_remisiones">
+      <field name="name">Remisiones</field>
+      <field name="res_model">remision</field>
+      <field name="view_mode">tree,form</field>
+      <field name="domain">[('state','!=','closed')]</field>
+      <field name="help" type="html">
+        <p class="oe_view_nocontent_create">Remisiones</p>
+      </field>
+    </record>
+    <record model="ir.actions.act_window" id="action_remisionesgovar_close_remisiones">
+      <field name="name">Remisiones cerradas</field>
+      <field name="res_model">remision</field>
+      <field name="view_mode">tree,form</field>
+      <field name="domain">[('state','=','closed')]</field>
+      <field name="groups_id" eval="[(4, ref('remisiones.group_close_remision'))]"/>
+    </record>
+    <record model="ir.actions.act_window" id="action_remisionesgovar_validate_remisiones">
+      <field name="name">Pendientes a validar CyC</field>
+      <field name="res_model">remision</field>
+      <field name="view_mode">tree,form</field>
+      <field name="domain">[('state','=','draft')]</field>
+      <field name="groups_id" eval="[(4, ref('remisiones.group_confirm_rem'))]"/>
+    </record>
+
+<!-- delete="false" edit="false" create="false" --> 
+    <menuitem name="Remisiones" id="menu_remisionesgovar_remisiones" parent="sale.sale_menu_root" action="action_remisionesgovar_remisiones"/>
+    <menuitem name="Remisiones cerradas" id="menu_close_remisiones" parent="sale.sale_menu_root" action="action_remisionesgovar_close_remisiones"/>
+    <menuitem name="Pendientes a validar CyC" id="menu_validate_remisiones" parent="account.menu_finance_receivables" sequence="103" action="action_remisionesgovar_validate_remisiones"/>
+  </data>
+</odoo>
