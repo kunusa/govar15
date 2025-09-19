@@ -18,16 +18,26 @@ class StatePickingInherit(models.Model):
     leabe_embarcado=fields.Char(readonly=True, default='Embarcado')
     bandera=fields.Boolean()
 
+    @api.depends('origin')
     def _compute_type_delivered(self):
-        if self.origin:
-            if self.origin[:3] == 'REM':
-                remission = self.env['remision'].search([('name','=',self.origin)], limit = 1)   
-                if len(remission)>=1:
-                    self.type_delivered = remission.forma_entrega
-            if self.origin[:1] == 'S':
-                origin = self.env['sale.order'].search([('name','=',self.origin)])
-                if len(origin)>=1:
-                    self.type_delivered = origin.v_delivery_method
+        for picking in self:
+            if picking.origin:
+                if picking.origin[:3] == 'REM':
+                    remission = self.env['remision'].search([('name','=',picking.origin)], limit = 1)   
+                    if remission:
+                        picking.type_delivered = remission.forma_entrega
+                    else:
+                        picking.type_delivered = ""
+                elif picking.origin[:1] == 'S':
+                    origin = self.env['sale.order'].search([('name','=',picking.origin)], limit=1)
+                    if origin:
+                        picking.type_delivered = origin.v_delivery_method
+                    else:
+                        picking.type_delivered = ""
+                else:
+                    picking.type_delivered = ""
+            else:
+                picking.type_delivered = ""
 
     def validate_client(self):
 
@@ -48,6 +58,7 @@ class StatePickingInherit(models.Model):
                     remission.state = 'remission'
 
     def parcial_remision(self):
+        
         if self.state != 'done':
             raise UserError(_('No se puede crear el presupuesto hasta validar la transferencia'))
 
@@ -95,7 +106,10 @@ class StatePickingInherit(models.Model):
             for x in picking.move_line_ids_without_package:
                 x.qty_done = x.product_qty
             
-            picking.button_validate()
+
+            
+            # Opción 2: Usar _action_done() directamente (bypasa validaciones)
+            picking._action_done()
                         
             sale = self.env['sale.order'].create({
                 'partner_id': line.partner_id.id,
