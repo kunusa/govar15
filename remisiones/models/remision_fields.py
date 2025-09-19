@@ -1,10 +1,5 @@
-from datetime import date, datetime, timedelta
-from odoo import api, fields, models, _,SUPERUSER_ID
-from odoo import exceptions
-from odoo.exceptions import UserError
-from dateutil.relativedelta import relativedelta
 
-
+from odoo import api, fields, models, _
 
 
 class productTemplateInherit(models.Model):

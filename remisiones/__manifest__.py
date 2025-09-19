@@ -20,7 +20,7 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base','sale','stock','purchase'],
+    'depends': ['base','sale','stock','purchase','sale_stock'],
 
     # always loaded
     'data': [
@@ -33,7 +33,8 @@
         'views/remision_product.xml',
         'views/remision_line_tree.xml',
         'views/remision_stock.xml',
-        'views/remision_sale.xml'
+        'views/remision_sale.xml',
+        'views/remision_account.xml'
     ],
     # only loaded in demonstration mode
     'demo': [

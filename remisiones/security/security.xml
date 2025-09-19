@@ -12,5 +12,8 @@
             <field name="name">Confirmar Remisiones</field>
             <field name="comment">Permite confirmar remisiones</field>
         </record>
+        <record id="parcial_quotation" model="res.groups">
+            <field name="name">Presupuesto parcial</field>
+        </record>
     </data>
 </odoo>

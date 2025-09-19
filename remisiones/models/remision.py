@@ -206,23 +206,21 @@ class remisiones(models.Model):
 
         invoice = self.env['account.move'].create({
             #'name': order.client_order_ref or order.name,
-                # 'origin': origin,
+                'document_origin': origin,
                 'move_type': 'out_invoice',
-                # 'account_id': self[0].partner_id.property_account_receivable_id.id,  # No necesario en Odoo 15
                 'partner_id': self[0].partner_id.id,
-                # 'partner_shipping_id': self[0].partner_id.id,  # No necesario en Odoo 15
                 'journal_id': self[0].env['account.journal'].search([('type', '=', 'sale'), ('company_id', '=', self[0].env.user.company_id.id)], limit=1).id,
                 'currency_id': self[0].env.user.company_id.currency_id.id,
                 'invoice_payment_term_id': self[0].partner_id.property_payment_term_id.id,
                 'team_id': self[0].env.user.sale_team_id.id if hasattr(self[0].env.user, 'sale_team_id') else False,
                 'user_id': self[0].env.user.id,
                 'company_id': self[0].env.user.company_id.id,
-                # 'remision_ids': [(6, 0, self.ids)],
-                # 'other_delivery_method': self[0].forma_entrega,
-                # 'other_terms': self[0].condiciones,
-                # 'package': self[0].package,
-                'destination_invoice': self[0].destiny
-            # 'comment': order.note,
+                'remision_ids': [(6, 0, self.ids)],
+                'other_delivery_method': self[0].forma_entrega,
+                'other_terms': self[0].condiciones,
+                'package': self[0].package,
+                'destination_invoice': self[0].destiny,
+                # 'comment': order.note,
         })
         # Crear líneas de factura usando el método estándar de Odoo
         invoice_lines = []
@@ -235,14 +233,13 @@ class remisiones(models.Model):
                         'product_id':producto.id,
                         'quantity':rec.product_to_invoice,
                         'price_unit':rec.valor_unitario,
-                        # 'origin': remision.name,
+                        'origin': remision.name,
                         'product_uom_id': producto.uom_id.id,
                         'account_id': producto.property_account_income_id.id or producto.categ_id.property_account_income_categ_id.id,
-                        # 'currency_id': producto.product_tmpl_id.currency_fixed_id.id,
                         'partner_id': self[0].partner_id.id,
                         'company_id': self[0].env.user.company_id.id,
                         'name': rec.description or "[{}] {}".format(producto.default_code, producto.product_tmpl_id.name),
-                        # 'remision_id':remision.id                        
+                        'remision_id': remision.id                        
                     }
                     if rec.tax_id:
                         line_invoice['tax_ids'] = [(6,0,rec.tax_id.ids)]
@@ -396,7 +393,7 @@ class remisiones(models.Model):
 
 
         invoices = self.mapped('invoice_ids')
-        action = self.env.ref('account.action_invoice_tree1').read()[0]
+        action = self.env.ref('account.action_move_out_invoice_type').read()[0]
         if len(invoices) > 1:
             action['domain'] = [('id', 'in', invoices.ids)]
         elif len(invoices) == 1:

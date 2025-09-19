@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Inherit account.move form view to add document_origin field -->
+        <record id="view_move_form_inherit_remision" model="ir.ui.view">
+            <field name="name">account.move.form.inherit.remision</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_move_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group//group[@id='header_left_group']//field[@name='partner_bank_id']" position="after">
+                    <field name="document_origin" string="Origen documento"/>
+                </xpath>
+                <xpath expr="//field[@name='narration']" position="before">
+                    <group colspan="4">           
+                        <field name="other_observations" string="Observaciones"/>
+                        <field name="other_delivery_method"  string="Forma de entrega"/>
+                        <field name="other_terms" string="Condiciones"/>
+                        <field name="pedido_cliente" string="Pedido del cliente" attrs = "{'readonly': [('state', 'in', ['paid','cancel'])]}"/>
+                        <field name="package" string="Paqueteria" attrs = "{'readonly': [('state', 'in', ['paid','cancel'])]}"/>
+                        <field name="destination_invoice" string="Destino" attrs = "{'readonly': [('state', 'in', ['paid','cancel'])]}"/>
+                        
+                    </group>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

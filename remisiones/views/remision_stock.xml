@@ -20,6 +20,7 @@
                     <button name="delivered_residence" string="Surtido Domicilio" type="object" 
                             class="btn-primary" attrs="{'invisible': ['|',('flag_button', '=', True),('state','in',('waiting','done'))]}"
                             groups="stock.group_stock_user"/>
+                    <button name= "parcial_remision" string= "Presupuesto parcial" type="object" class="oe_highlight" attrs="{'invisible': [('is_remision', '=', False)]}"  groups = "remisiones.parcial_quotation"/>
                 </xpath>
                 <xpath expr="//field[@name='origin']" position="after">
                     <field name="bandera" invisible="1"/>
@@ -34,7 +35,9 @@
                         </h4>
                     </div>
                 </xpath>
-
+                <xpath expr="//field[@name='location_dest_id']" position="after">
+                    <field name="type_delivered" readonly="1"/>
+                </xpath>
             </field>
         </record>
     </data>
