@@ -75,7 +75,7 @@ class RemisionSale(models.Model):
         view_id = self.env.ref('remisiones.view_remisionesgovar_remisiones_from').id
         remision = self.env['remision'].create({
             'partner_id': self.partner_id.id,
-            # 'forma_entrega': self.v_delivery_method
+            'forma_entrega': self.v_delivery_method
         })
         
         for rec in self.order_line:
