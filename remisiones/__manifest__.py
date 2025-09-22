@@ -20,13 +20,13 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base','sale','stock','purchase','sale_stock'],
+    'depends': ['base','sale','stock','purchase','sale_stock','web'],
 
     # always loaded
     'data': [
         'security/security.xml',
         'security/ir.model.access.csv',
-        'views/data.xml',
+        'data/data_remision.xml',
         'views/sequence_rem.xml',
         'views/remisiones.xml',
         'views/remision_partner.xml',
@@ -34,7 +34,9 @@
         'views/remision_line_tree.xml',
         'views/remision_stock.xml',
         'views/remision_sale.xml',
-        'views/remision_account.xml'
+        'views/remision_account.xml',
+        'data/report_remision.xml',
+        'data/template_remision.xml'
     ],
     # only loaded in demonstration mode
     'demo': [

@@ -57,3 +57,19 @@ class resCmpanyRemision(models.Model):
 
     list_validate = fields.Boolean('Lista de precio', help = "Activa la validación de lista de precio menor a 3")
     message_rem_mot = fields.Boolean('Motivos remisión', help = "Aparece los motivos en las remisiones")
+    directions_line_id =fields.One2many(comodel_name='directions.report',inverse_name='id_direction',index=True)
+
+
+
+class directions_report(models.Model):
+	_name = 'directions.report'
+
+	id_direction = fields.Many2one(inverse_name='directions_line_id',comodel_name="res.company", string="Direccion",invisible=True)
+	name = fields.Char(string = 'Nombre')
+	street = fields.Char(string = 'Calle')
+	number = fields.Char(string = 'Numero')
+	zip = fields.Char(string = 'Codigo postal')
+	city = fields.Char(string = 'Ciudad')
+	state = fields.Char(string = 'Estado')
+	phone = fields.Char(string = 'Telefono')
+	email = fields.Char(string = 'Correo')

@@ -26,6 +26,22 @@
                     <field name="message_rem_mot" />
                     <field name="list_validate" />
                 </xpath> 
+                <xpath expr="//notebook" position="inside">
+                    <page string="Direcciones" >
+                        <field name = "directions_line_id">
+                            <tree editable = "bottom">
+                                <field name="name"/>
+                                <field name="street" />
+                                <field name="number" />
+                                <field name="zip" />
+                                <field name="city"/>
+                                <field name="state" />
+                                <field name="phone"/>
+                                <field name="email" />
+                            </tree>
+                        </field>                
+                    </page>  
+                </xpath>    
             </field>
         </record> 
     </data>

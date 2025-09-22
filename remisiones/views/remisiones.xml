@@ -15,7 +15,7 @@
           <field name="email_message" />
           <field name="partner_id"/>
           <field name="create_uid"/>
-          <field name="stock_picking_id"/>
+          <field name="stock_picking_id" string = "Movimientos"/>
           <field name="state"/>
           <field name="motive_flag" invisible="1"/>
           <field name="total_tree" sum="Total"/>

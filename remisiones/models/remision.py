@@ -37,6 +37,7 @@ class remisiones(models.Model):
     total_tree=fields.Float(string="Total", compute='_get_importe_tree')
     iva=fields.Float(string="IVA", compute="_get_iva")
     currency_id = fields.Many2one('res.currency', string='Currency', default=lambda self: self.env.company.currency_id)
+    company_id = fields.Many2one('res.company', string='Company', default=lambda self: self.env.company, required=True)
     stock_picking_id = fields.Many2one(comodel_name='stock.picking')
     count_picking_rem = fields.Integer(compute='action_view_delivery',string=' ')
     menssage=fields.Char(compute='_compute_menssage')
@@ -98,7 +99,7 @@ class remisiones(models.Model):
     @api.depends('state')
     def _compute_email_rem(self):
         if self.state == 'draft' and len(self.pickin_id) > 0:
-            query = """UPDATE remisionesgovar_remisiones SET email_send = True WHERE id = {}""".format(self.id)
+            query = """UPDATE remision SET email_send = True WHERE id = {}""".format(self.id)
             self.env.cr.execute(query)
 
     @api.onchange('partner_id')
@@ -335,11 +336,11 @@ class remisiones(models.Model):
         self.ensure_one()
         ir_model_data = self.env['ir.model.data']
         try:
-            template_id = ir_model_data.get_object_reference('ventas_govar', 'email_template_remission')[1]
+            template_id = ir_model_data._xmlid_to_res_id('remisiones.email_template_remission')
         except ValueError:
             template_id = False
         try:
-            compose_form_id = ir_model_data.get_object_reference('mail', 'email_compose_message_wizard_form')[1]
+            compose_form_id = ir_model_data._xmlid_to_res_id('mail.email_compose_message_wizard_form')
         except ValueError:
             compose_form_id = False
         ctx = dict()
@@ -350,13 +351,11 @@ class remisiones(models.Model):
             'default_template_id': template_id,
             'default_composition_mode': 'comment',
             'mark_so_as_sent': True,
-            'custom_layout': "ventas_govar.email_template_remission",
             'default_partner_ids': self.partner_id.ids,
         })
 
         return {
             'type': 'ir.actions.act_window',
-        
             'view_mode': 'form',
             'res_model': 'mail.compose.message',
             'views': [(compose_form_id, 'form')],
@@ -410,9 +409,15 @@ class remisiones(models.Model):
 
     
     def print_pdf(self):
-
+        """Generate PDF report for remision"""
         self.ensure_one()
-        return self.env['report'].get_action(self, 'ventas_govar.report_remisiones')
+        return {
+            'type': 'ir.actions.report',
+            'report_name': 'remisiones.remisiones_report_data',
+            'report_type': 'qweb-pdf',
+            'data': None,
+            'context': self.env.context,
+        }
 
     def get_name_remision(self):
 
@@ -579,15 +584,18 @@ class remisiones(models.Model):
                     if available_qty <= 0:
                         raise exceptions.ValidationError("No hay suficiente material del producto ingresado \n {}".format(product.name))   
 
+        query = """  SELECT id FROM stock_location WHERE name = 'REMISION' AND usage = 'customer' """
+        self.env.cr.execute(query)
+        location = self.env.cr.fetchone()[0]
+
         for line in self:
-            location= self.env['stock.location'].search([('name', '=', 'REMISION'),('usage','=','customer',)])
             outgoing = self.env['stock.picking.type'].search([('code', '=', 'outgoing'),('warehouse_id','=',line.default_warehouse.id,)])
             picking = self.env['stock.picking'].create({
                 'partner_id':line.partner_id.id,
                 'origin':line.name,
                 'picking_type_id':outgoing[0].id,
                 'location_id':line.default_warehouse.lot_stock_id.id,
-                'location_dest_id':location.id,
+                'location_dest_id':location,
                 'id_remision':line.id,
                 'is_remision': True,          
                 })
@@ -602,8 +610,8 @@ class remisiones(models.Model):
                         'product_uom':rec.unidad_medida.id,
                         'picking_id':picking.id,
                         'location_id':line.default_warehouse.lot_stock_id.id,
-                        'name':"["+producto.default_code+"] "+producto.product_tmpl_id.name,
-                        'location_dest_id':location.id,
+                        'name': f"{producto.default_code} {producto.product_tmpl_id.name}",
+                        'location_dest_id':location,
                         })
                 
             picking.action_confirm()
@@ -678,7 +686,7 @@ class remisiones(models.Model):
             for x in picking.move_line_ids:
                 x.qty_done=x.product_qty
             picking.button_validate()
-            iva=self.env['account.tax'].search([('type_tax_use','=','sale'),('name','=','IVA(16%) VENTAS',)])            
+            
             sale = self.env['sale.order'].create({
                 'partner_id':line.partner_id.id,
                 'payment_term_id':line.partner_id.property_payment_term_id.id,
@@ -696,10 +704,10 @@ class remisiones(models.Model):
                     'product_id':producto.id,
                     'product_uom_qty':rec.cantidad,
                     'price_unit':rec.valor_unitario,
-                    'tax_id':[(6,0,[iva.id])],
+                    'tax_id':[(6,0,producto.taxes_id.ids)],
                     # 'price_list':rec.price_list,  # Campo no disponible en Odoo 15
                     'order_id':sale.id,
-                    'name':"["+producto.default_code+"] "+producto.product_tmpl_id.name,
+                    'name': f"[{producto.default_code}] {producto.product_tmpl_id.name}",
                     })
             line.state='done'
         self.update({
@@ -744,6 +752,7 @@ class remisiones_line(models.Model):
     producto=fields.Many2one(string="Producto",comodel_name='product.template')
     tax_id = fields.Many2many(comodel_name='account.tax',string='Impuestos')
     unidad_medida=fields.Many2one(string="Unidad de medida",comodel_name='uom.uom',related='producto.uom_id')
+    clabe_medida=fields.Char(string="Clave producto",related='producto.default_code')
     cantidad=fields.Float(string="Cantidad", default = 1)
     valor_unitario=fields.Float(string="Precio unitario")
     importe=fields.Float(string="Importe", compute='_compute_importe', store=True)

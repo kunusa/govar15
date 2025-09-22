@@ -1,3 +1,4 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_remision,access_remision,model_remision,base.group_user,1,1,1,0
 access_remision_line,access_remision_line,model_remision_line,base.group_user,1,1,1,1
+access_directions_report,access_directions_report,model_directions_report,base.group_user,1,1,1,0

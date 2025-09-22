@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<!--formato de la hoja/papel-->
+     <record id="paperformat_remision" model="report.paperformat">
+        <field name="name">paperformat remisiones </field>
+        <field name="default" eval="True"/>
+        <field name="format">A4</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">10</field>
+        <field name="margin_bottom">60</field>
+        <field name="margin_left">3</field>
+        <field name="margin_right">3</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">3</field>
+        <field name="dpi">90</field>
+    </record>
+<!--fin del formato de la hoja/papel-->
+<!--Declaracion del reporte-->
+    <record id="remisiones_report" model="ir.actions.report">
+        <field name="name">Remisión</field>
+        <field name="model">remision</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">remisiones.remisiones_report_data</field>
+        <field name="report_file">remisiones.remisiones_report_data</field>
+        <field name="attachment_use">True</field>
+        <field name="binding_type">report</field>
+        <field name="print_report_name">'Remision - %s' % (object.name)</field>
+        <field name="paperformat_id" ref="paperformat_remision"/>
+
+    </record>
+
+<!--Contenido del reporte-->
+    <template id="remisiones_report_data">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+            <t t-call="web.basic_layout"> 
+                <page>
+
+                    <table style="width:100%;">
+                        <t t-set="num_lin" t-value="0" />
+                        <t t-set="x" t-value="0" />
+                        <t t-foreach="o.remisiones_line_id" t-as="line">
+                            <t t-set="num_lin" t-value="num_lin + 1" />
+                            <t t-set="x" t-value="x + line.cantidad" />
+                        </t>
+                        <tr style="width:100%;">
+                            <td width="100%" colspan="4" style="border: 3px solid blue;color: blue;font-size: 2px; background-color:blue;">_</td>
+                        </tr>
+                        <tr style="width:100%;">
+                            <td align="center" style="border-bottom: 3px solid #e4e4e4;">
+                                <img t-if="o.company_id.logo" t-att-src="image_data_uri(o.company_id.logo)" width="225"/>
+                            </td>
+                            <td colspan="2" align="center" style="border-bottom: 3px solid #e4e4e4;">
+                                <b>
+                                    <span t-field="o.company_id.name"/>
+                                    <br/>
+                                    R.F.C. 
+                                    <span t-esc="o.company_id.company_registry"/>
+                                </b>
+                            </td>
+                            <td style="border-bottom: 3px solid #e4e4e4;">
+                                <h3>
+                                    <span t-esc="o.get_name_remision()"/>: <span t-field="o.name"/>
+                                </h3>
+                                <p>
+                                    Fecha de la remisión:<br/>
+                                    <span t-field="o.fecha_documento"/>
+                                </p>
+                                <p>
+                                    Fecha de vencimiento:<br/>
+                                    <span t-field="o.fecha_vencimiento"/>
+                                </p>
+                            </td>
+                        </tr>
+                        <tr style="width:100%;">
+                            <p> </p>
+                            <td width="100%" colspan="4" style="border: 3px solid #e4e4e4; background-color:#e4e4e4;"></td>
+                        </tr>
+                        <tr style="width:100%;">
+                        <t t-foreach="o.directions_line()" t-as="line">
+                            <td style="border: 2px solid White;" align="center">
+                                <b><span t-field="line.name" /></b><br/>
+                                <span t-field="line.street"/> <span t-field="line.number"/><br/>
+                                <span t-field="line.zip"/> <span t-field="line.city"/>, <span t-field="line.state"/><br/>
+                                <span t-field="line.phone" /><br/>
+                                <span t-field="line.email" /><br/>
+                            </td>
+                        </t>                                    
+                        </tr>
+                        <tr style="width:100%;">
+                            <td width="100%" colspan="4" style="border: 3px solid #e4e4e4;color: #e4e4e4;font-size: 2px; background-color:#e4e4e4;">_</td>
+                        </tr>
+                    </table>
+                    <table style="width:100%;">
+                        <tr style="width:100%;">
+                            <td style="width:50%;">
+                                <b>Vendido a:</b><br/>
+                                    <strong t-field="o.partner_id.name"/>
+                                    <br/>
+                                    <span t-field="o.partner_id.street"/>
+                                    <br/>
+                                    <span t-field="o.partner_id.city"/>
+                                    <span t-field="o.partner_id.state_id"/> 
+                                    <span t-field="o.partner_id.zip"/>
+                                    <br/>
+                                    <span t-field="o.partner_id.country_id"/>
+                                    <br/>
+                                    Tel: <span t-field="o.partner_id.phone" t-options='{"widget": "phone"}'/>
+                                    <br/>
+                                    Email: <span t-field="o.partner_id.email" t-options='{"widget": "email"}'/>
+                            </td>
+                            <td style="width:50%;">
+                                <b>Destino</b><br/>
+                                <span t-field="o.destiny"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><b>RFC</b><br/></td>
+                        </tr>
+                        <tr>
+                            <td><span t-esc= "o.partner_id.vat"/></td>
+                        </tr>
+                    </table>
+                    <p><br/></p>
+                    <table style="width:100%; border: 3px solid #e4e4e4;">
+                        <tr style="width:100%;">
+                            <th style="border: 2px solid #e4e4e4;" align="center">
+                                Clave del cliente
+                            </th>
+                            <th style="border: 2px solid #e4e4e4;" align="center">
+                                Pedido del cliente
+                            </th>
+                            <th style="border: 2px solid #e4e4e4;" align="center" colspan="2">
+                                Realizó
+                            </th>
+                        </tr>
+                        <tr style="width:100%;">
+                            <td style="border: 2px solid #e4e4e4;" align="center">
+                                <span t-field="o.clave_de_cliente"/>
+                            </td>
+                            <td style="border: 2px solid #e4e4e4;" align="center">
+                                <span t-field="o.pedido_cliente"/>
+                            </td>
+                            <td style="border: 2px solid #e4e4e4;" align="center" colspan="2">
+                                <span t-field="o.create_uid.partner_id.name"/>
+                            </td>
+                        </tr>
+                        <tr style="width:100%;">
+                            <th style="border: 2px solid #e4e4e4;" align="center">
+                                Contacto
+                            </th>
+                            <th style="border: 2px solid #e4e4e4;" align="center">
+                                Forma de entrega
+                            </th>
+                            <th style="border: 2px solid #e4e4e4;" align="center">
+                                Paqueteria 
+                            </th>
+                            <th style="border: 2px solid #e4e4e4;" align="center" colspan="2">
+                                Comercial 
+                            </th>
+                        </tr>
+                        <tr style="width:100%;">
+                            <td style="border: 2px solid #e4e4e4;" align="center">
+                                <span t-field="o.contacto"/>
+                            </td>
+                            <td style="border: 2px solid #e4e4e4;" align="center">
+                                <span t-field="o.forma_entrega"/>
+                            </td>
+                            <td style="border: 2px solid #e4e4e4;" align="center">
+                                <span t-field="o.package"/>
+                            </td>
+                            <td style="border: 2px solid #e4e4e4;" align="center" colspan="2">
+                                <span t-esc="o.get_comercial()"/>
+                            </td>
+                        </tr>
+                    </table>
+                    <p><br/></p>
+                    <table style="width:100%">
+                        <tr style="width:100%;">
+                            <td width="100%" colspan="7" style="border: 3px solid #e4e4e4;color: #e4e4e4;font-size: 2px; background-color:#e4e4e4;">
+                                _
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Unidad</th>
+                            <th>Clave</th>
+                            <th>Producto</th>
+                            <th>Descripcion</th>
+                            <th>Cantidad</th>
+                            <th>Valor unitario</th>
+                            <th>Importe</th>
+                        </tr>
+                        <t t-foreach="o.remisiones_line_id" t-as="z">
+                            <tr>
+                                <td>
+                                    <span t-field="z.unidad_medida"/>
+                                </td>
+                                <td>
+                                    <span t-field="z.clabe_medida"/>
+                                </td>
+                                <td>
+                                    <span t-field="z.producto"/>
+                                </td>
+                                <td>
+                                    <span t-field="z.description"/>
+                                </td>
+                                <td>
+                                    <span t-esc="'%.0f'%(z.cantidad)"/>
+                                </td>                                            
+                                <td>
+                                    <span t-esc="'%.2f'%(z.valor_unitario)"/>
+                                </td>
+                                <td>
+                                    <span t-esc="'%.2f'%(z.importe)"/>
+                                </td>
+                            </tr>
+                        </t>
+                        <tr style="width:100%;">
+                            <td width="100%" colspan="7" style="border: 3px solid #e4e4e4;color: #e4e4e4;font-size: 2px; background-color:#e4e4e4;">
+                                _
+                            </td>
+                        </tr>
+                        <tr style="width:100%;" align="right">
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td align="right">
+                                <span style="color:#ffffff">_</span>Total de piezas
+                            </td>
+                            <td>
+                                <span t-esc="x" />
+                            </td>
+                        </tr>
+                    </table>
+                    
+
+
+                    <footer>   
+                        <div  style="position:relative; padding:0px; ">
+                            <table width="100%">
+                                <tr width="100%">
+                                    <td width="80%">
+                                        <b>Observaciones </b>
+                                    </td>
+                                    <td width="10%" style="border-bottom: 3px solid #e4e4e4;">
+                                        Subtotal:
+                                    </td>
+                                    <td width="10%" style="border-bottom: 3px solid #e4e4e4;" align="right">
+                                        <span t-esc="'%.2f'%(o.subtotal)"/>
+                                    </td>
+                                </tr>
+                                <tr width="100%">
+                                    <td width="80%" rowspan="2">
+                                        <span t-field="o.observaciones"/>
+                                    </td>
+                                    <td width="10%" style="border-bottom: 3px solid blue;">
+                                        IVA:
+                                    </td>
+                                    <td width="10%" style="border-bottom: 3px solid blue;" align="right">
+                                        <span t-esc="'%.2f'%(o.iva)"/>
+                                    </td>
+                                </tr>
+                                <tr width="100%">
+                                    <td width="10%">
+                                        Total:
+                                    </td>
+                                    <td width="10%" align="right">
+                                        $<span t-esc="'%.2f'%(o.total)"/>
+                                    </td>
+                                </tr>
+                                <tr width="100%">
+                                    <td>
+                                    <b>Condiciones </b> 
+                                    </td>
+                                </tr>
+                                <tr width="100%">
+                                    <td>
+                                        <span t-field="o.condiciones"/>
+                                    </td>
+                                </tr>
+                            </table>
+                            <table width="100%">
+                                <tr width="100%" >
+                                    <td width="50%" style="border: 2px solid White;">
+                                        <h4 align="center">
+                                            <br/><br/>
+                                            <br/><br/>
+                                            _________________________________________
+                                        </h4>
+                                    </td>
+                                    <td width="50%" style="border: 2px solid White;">
+                                        <h4 align="center">
+                                            <br/><br/>
+                                            <br/><br/>
+                                            _________________________________________
+                                        </h4>
+                                    </td>
+                                </tr>
+                                <tr width="100%" >
+                                    <td width="50%" style="border: 2px solid White;">
+                                        <h4 align="center">Entrego</h4>
+                                    </td>
+                                    <td width="50%" style="border: 2px solid White;">
+                                        <h4 align="center">Recibió</h4>
+                                    </td>
+                                </tr>
+                                <tr style="width:100%;">
+                                    <td width="100%" colspan="2" style="border: 3px solid blue;color: blue;font-size: 2px; background-color:blue;">
+                                        _
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </footer>
+                </page>
+            </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>
