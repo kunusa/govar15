@@ -27,7 +27,8 @@
         'security/security.xml',
         'security/ir.model.access.csv',
         'views/denied_product.xml',
-        'views/warehouse.xml'
+        'views/warehouse.xml',
+        'views/account_move.xml'
     ],
     # only loaded in demonstration mode
     'demo': [
