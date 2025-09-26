@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record model="ir.ui.view" id="res_company_form_inherit">
+        <field name="name">res.company.form.inherit</field>
+        <field name="model">res.company</field>
+        <field name="inherit_id" ref="base.view_company_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='street']" position="after">
+                <field name="colonia" placeholder="Colonia"/>
+                <field name="numero_ext" placeholder="No. Exterior"/>
+                <field name="numero_int" placeholder="No. Interior"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

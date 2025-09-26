@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="create_label_form" model="ir.ui.view">
+        <field name="name">create.label.wizard</field>
+        <field name="model">wz.label</field>
+        <field name="arch" type="xml">
+            <form string="Generar etiqueta">
+                <group col="4">
+                    <field name="invoice_id"
+                        options="{'no_create': True, 'no_open': True, 'no_quick_create': True}" />
+                    <field name="remision_id"
+                        options="{'no_create': True, 'no_open': True, 'no_quick_create': True}" />
+                </group>
+                <footer>
+                    <button class="btn-primary" string="Generar" name="generate_label" type="object" />
+                    <button special="cancel" string="Cancelar" class="btn-secondary" />
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="create_label_wizard" model="ir.actions.act_window">
+        <field name="name">Generar etiqueta</field>
+        <field name="res_model">wz.label</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="create_label_form" />
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="menu_label_wz" name="Generar etiqueta" action="create_label_wizard"
+        parent="stock.menu_stock_warehouse_mgmt" />
+
+    <!-- <menuitem id="menu_label" name="Etiquetas" groups="ventas_govar.show_label_menu" />
+    <menuitem id="menu_product_label" name="Productos" action="stock.product_template_action_product"
+        parent="menu_label" sequence="1" />
+    <menuitem id="make_label" name="Generar etiqueta" parent="menu_label"
+        action="create_label_wizard" groups="ventas_govar.show_label_menu" sequence="2"/>
+        
+    <menuitem id="menu_only_products" name="Inventario" groups="ventas_govar.show_products_menu" />
+    <menuitem id="menu_product_only" name="Productos" action="stock.product_template_action_product"
+        parent="menu_only_products" sequence="1" />
+    <menuitem id="menu_product_category" name="Categorías de productos" action="product.product_category_action_form"
+    parent="menu_only_products" sequence="1" /> -->
+
+</odoo>

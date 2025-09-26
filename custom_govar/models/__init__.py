@@ -3,3 +3,6 @@
 from . import denied_products
 from . import warehouse
 from . import account_move
+from . import label
+from . import helpers_custom
+from . import res_company

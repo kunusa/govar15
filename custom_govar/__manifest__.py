@@ -20,7 +20,7 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'sale', 'stock', 'purchase'],
+    'depends': ['base', 'sale', 'stock', 'purchase','remisiones'],
 
     # always loaded
     'data': [
@@ -28,7 +28,11 @@
         'security/ir.model.access.csv',
         'views/denied_product.xml',
         'views/warehouse.xml',
-        'views/account_move.xml'
+        'views/account_move.xml',
+        'views/label_wizard.xml',
+        'views/res_company.xml',
+        'report/label_invoice.xml',
+        'report/label_remision.xml',
     ],
     # only loaded in demonstration mode
     'demo': [

@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <data>
+
+        <!--formato de la
+        hoja/papel-->
+        <record id="paperformat_label_invoice" model="report.paperformat">
+            <field name="name">paperformat label remision </field>
+            <field name="default" eval="True" />
+            <field name="format">custom</field>
+            <field name="page_height">101</field>
+            <field name="page_width">152</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">3</field>
+            <field name="margin_bottom">1</field>
+            <field name="margin_left">1</field>
+            <field name="margin_right">1</field>
+            <field name="header_line" eval="False" />
+            <field name="header_spacing">1</field>
+        </record>
+
+
+        <record id="invoice_label" model="ir.actions.report">
+            <field name="name">Etiqueta factura</field>
+            <field name="model">account.move</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">custom_govar.report_invoice_label</field>
+            <field name="report_file">custom_govar.report_invoice_label</field>
+            <field name="paperformat_id" ref="paperformat_label_invoice"/>
+            <field name="print_report_name">'Etiqueta - %s' % (object.name)</field>
+            <field name="attachment_use">True</field>
+        </record>
+
+
+        <template id="report_invoice_label">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="web.basic_layout">                 
+                        <page>
+                            <table
+                                style="width:100%;">
+                                <t t-set="num_lin" t-value="0" />
+                                <t t-set="x" t-value="0" />
+                                <t t-foreach="o.invoice_line_ids" t-as="line">
+                                    <t t-set="num_lin" t-value="num_lin + 1" />
+                                    <t t-set="x" t-value="x + line.quantity" />
+                                </t>
+                                <tr style="width:50%; ">
+                                    <td style="width: 30%; text-align: left;">
+                                        <span style=" font-size:35; color:#ffffff;">M</span>
+                                        <img t-if="o.company_id.logo"
+                                            t-att-src="image_data_uri(o.company_id.logo)"
+                                            style="width: 32%; height: 190px; position:absolute; left: 3%; top: -73px;" />
+                                    </td>
+                                    <td style="width: 70%; text-align: center;">
+                                        <b>
+                                            <span style=" font-size:17px; color:#ffffff;">____</span>
+                                            <span t-field="o.company_id.name"
+                                                style="width:80%; font-size:20px;" />
+                                            <br />
+
+                                        </b>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span style=" font-size:15px; color:#ffffff;">___________</span>
+                                    </td>
+                                    <td>
+                                        <span style=" font-size:15px; color:#ffffff;">
+                                            ______________________________________</span>
+                                        <span t-field="o.company_id.website" style="font-size: 19px;"/>
+                                        <br />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" style="width: 100%; text-align: center; font-size: 22px;">
+                                        <br />
+                                        <span>Etiqueta de embarque</span>
+                                    </td>
+                                </tr>
+                            </table>
+                            <span t-field="o.directions_label" />
+                            <table style="width:100%; font-size:17px; font-family: Arial; width:100%;">
+                                <tr style="width:100%;">
+                                    <p> </p>
+                                    <td width="100%" colspan="4"
+                                        style="border: 2px solid #e4e4e4; background-color:#e4e4e4;">
+                                        <pan> </pan>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="width: 46%;">
+                                        <span>
+                                            <b>Remitente: </b>
+                                            <span t-esc="o.get_direction(o.company_id)" />
+                                        </span>
+                                    </td>
+                                    <td style="width: 54%;" colspan="3">
+                                        <span>
+                                            <b>RFC: </b>
+                                            <span t-esc="o.company_id.vat" />
+                                        </span>
+                                        <br />
+                                        <span>
+                                            <b>Telefono: </b>
+                                            <span t-field="o.company_id.phone" />
+                                        </span>
+                                    </td>
+                                </tr>
+                            </table>
+                            <table style="font-size:17px; font-family: Arial; width:100%;">
+                                <tr style="width:100%;">
+                                    <p> </p>
+                                    <td width="100%" colspan="4"
+                                        style="border: 2px solid #e4e4e4; background-color:#e4e4e4;">
+                                        <pan> </pan>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="width: 46%;">
+                                        <span>
+                                            <b>Destinatario: </b>
+                                            <span t-esc="o.get_direction(o.partner_id)" />
+                                        </span>
+                                    </td>
+                                    <td style="width: 28%;">
+                                        <span>
+                                            <b>RFC: </b>
+                                            <span t-esc="o.partner_id.vat" />
+                                        </span>
+                                        <br />
+                                        <span>
+                                            <b>Telefono: </b>
+                                            <span t-field="o.partner_id.phone" />
+                                        </span>
+                                    </td>
+                                    <td style="width: 26%;">
+                                        <span>
+                                            <b>Factura: </b>
+                                            <span t-field="o.name" />
+                                        </span>
+                                    </td>
+                                </tr>
+                            </table>
+                            <table>
+
+                            </table>
+                            <table style="font-size:17px; font-family: Arial; width:100%;">
+                                <tr style="width:100%;">
+                                    <p> </p>
+                                    <td width="100%" colspan="4"
+                                        style="border: 2px solid #e4e4e4; background-color:#e4e4e4;">
+                                        <pan> </pan>
+                                    </td>
+                                </tr>
+                                <tr  style="width:100%;">
+                                    <td style="width: 46%;" >
+                                        <span>
+                                            <b>Forma de entrega: </b>
+                                            <t t-if="o.other_delivery_method">
+                                                <span
+                                                    t-esc="o.capitalize_laters(o.other_delivery_method)" />
+                                            </t>
+
+                                        </span>
+                                    </td>
+                                    <td style="width:28%;">
+                                        <span>
+                                            <b>Paqueteria: </b>
+                                            <t t-if="o.package">
+                                                <span t-esc="o.capitalize_laters(o.package)" />
+                                            </t>
+
+                                        </span>
+                                    </td>
+                                    <td style="width:26%;">
+                                        <span>
+                                            <b>Condiciones: </b>
+                                            <t t-if="o.other_terms">
+                                                <span t-esc="o.capitalize_later(o.other_terms)" />
+                                            </t>
+                                        </span>
+                                    </td>
+                                </tr>
+                            </table>
+                            <table style="width:100%; font-size:17px; font-family: Arial;">
+                                <tr>
+                                    <td style="width: 46%;">
+                                        <span>
+                                            <b>Destino: </b>
+                                            <span t-esc="o.capitalize_laters(o.destination_invoice)" />
+                                        </span>
+                                    </td>
+                                    <td style="width: 28%;">
+                                        <span>
+                                            <b>Pedido del cliente: </b>
+                                            <span t-esc="o.capitalize_later(o.pedido_cliente)" />
+                                        </span>
+                                    </td>
+                                    <td style="width: 26%;">
+                                        <span>
+                                            <b>Peso (KG): </b>
+                                        </span>
+                                    </td>
+                                </tr>
+                            </table>
+                            <table style="font-size:17px; font-family: Arial;">
+                                <tr style="width:100%;">
+                                    <td style="width: 46%;">
+                                        <span>
+                                            <b>Total de bultos: </b>
+                                        </span>
+                                    </td>
+                                    <td style="width: 28%;">
+                                        <span>
+                                            <b>Total de piezas: </b>
+                                            <span t-esc="x" />
+                                        </span>
+                                    </td>
+                                    <td style="width: 26%;">
+                                        <b>Monto total:</b>
+                                        <span t-field="o.amount_total" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1">
+                                        <span>
+                                            <b>Observaciones: </b>
+                                            <span t-esc="o.capitalize_later(o.other_observations)" />
+                                        </span>
+                                    </td>
+                                    <td colspan="1"
+                                        style="background-color: transparent; position:relative; padding:0px;">
+                                        <b>Creación: </b>
+                                        <span t-esc="o.get_day_time()" />
+                                    </td>
+                                    <td colspan="1">
+                                        <span>
+                                            
+                                        </span>
+                                    </td>                                
+                                </tr>
+                            </table>
+                        </page>
+                    </t>
+                </t>
+            </t>
+        </template>
+    </data>
+
+</odoo>
