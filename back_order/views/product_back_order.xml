@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data> 
+
+    <record model="ir.ui.view" id="product_report_back_order_tree">
+      <field name="name">create.back.order</field>
+      <field name="model">product.report.back</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="code_report" />
+          <field name="initial_date"/>
+          <field name="final_date"/>
+          <field name="partner_id" />
+        </tree>
+      </field>
+    </record>
+
+    <record id="product_report_back_order_form" model="ir.ui.view">
+        <field name="name">create.product.back.order</field>
+        <field name="model">product.report.back</field>
+        <field name="arch" type="xml">
+            <form string= "Back order">
+                  <header>
+                        <button class="oe_highlight" string="Generar excel"  name="download_file_report_backs" type="object" attrs="{'invisible': [('lines_ids','=',[])]}"/>
+                        <button class="oe_highlight" string="Cerrar back orders"  name="close_back_order" type="object" attrs="{'invisible': [('lines_ids','=',[])]}" groups="back_order.close_back_order" />
+                        <button class="oe_highlight" string="Actualizar"  name="update_lines" type="object" attrs="{'invisible': [('lines_ids','=',[])]}" groups="back_order.close_back_order" />
+                 </header>
+           
+                <group col = "4">
+                    <field name="initial_date" required="1"/>
+                    <field name="final_date" required="1"/>
+                </group>
+                <group col = "4">
+                    <field name="partner_id" widget="many2many_tags" options="{'no_create':True, 'no_open':True}"/>
+                    <field name="product_ids" widget="many2many_tags" options="{'no_create':True, 'no_open':True}"/>
+                    <field name="all_supplier"/>
+                    <field name="all_products" />
+                    <field name="datas" invisible="1"/> 
+                    <field name="datas_fname" invisible="1"/>
+                </group>
+
+                  <notebook>
+                    <page string="Lineas de pedido" attrs="{'invisible': [('lines_ids','=',[])]}">
+                       <field name="lines_ids"  readonly="1">
+                          <tree editable="top">
+                            <field name="hide_line" invisible="1" readonly="1"/>
+                            <field name="cancel_order" invisible="1" readonly="1"/>
+                            <button class="oe_highlight" string="Cancelar back order"  name="close_back_order_line" type="object" attrs="{'invisible': ['|', ('cancel_order','=',False),('hide_line','=',True)]}" groups="back_order.close_back_order" />
+                            <field name="supplier" readonly="1"  attrs="{'invisible': [('hide_line','=',True)]}"/>
+                            <field name="quatation_id"  attrs="{'invisible': ['|', ('hide_line','=',True),('cancel_order','=',False)]}" string = 'Pedido de compra'/>
+                            <field name="date_po"  attrs="{'invisible': [('hide_line','=',True)]}"/>
+                            <field name="code" readonly="1"  attrs="{'invisible': [('hide_line','=',True)]}"/>
+                            <field name="product" readonly="1"  attrs="{'invisible': [('hide_line','=',True)]}"/>
+                            <field name="category" readonly="1"  attrs="{'invisible': [('hide_line','=',True)]}"/>
+                            <field name="quanity" readonly="1"  attrs="{'invisible': [('hide_line','=',True)]}"/>
+                            <field name="amount" readonly="1"  attrs="{'invisible': [('hide_line','=',True)]}"/>
+                          </tree>
+                      </field> 
+                    </page>              
+                  </notebook>
+            </form>
+        </field>
+    </record>
+
+
+    <!-- Secuencia para el folio reporte de compras -->
+    <record id="sec_back_order" model="ir.sequence">
+        <field name="name">Reporte back order</field>
+        <field name="code">product.report.back</field>
+        <field name="prefix">BO</field>
+        <field name="padding">5</field>
+    </record>
+    
+    <record model="ir.actions.act_window" id="product_report_back_order" >
+      <field name="name">Reporte back order</field>
+      <field name="view_mode">tree,form</field>
+      <field name="res_model">product.report.back</field>
+    </record>
+
+
+           <menuitem action="product_report_back_order" id="menu_product_report_back_order"
+            parent="purchase.menu_procurement_management"
+            sequence="15"
+            name="Reporte back order"/>
+  </data>
+</odoo>
