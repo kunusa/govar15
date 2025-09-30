@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+        <record id="minimun_product_template" model="mail.template">
+            <field name="name">product.avaibility.email.template</field>
+            <field name="lang">${object.lang}</field>
+            <field name="model_id" ref="model_product_avaibility"/>
+            <field name="auto_delete" eval="True"/>
+            <field name="body_html">
+                <![CDATA[
+                <p>Reporte de productos minimo</p>
+                </br></br>
+                ]]>
+            </field>
+        </record>
+</odoo>

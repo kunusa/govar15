@@ -2,4 +2,5 @@ id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_denied_products,access.denied.products,model_denied_products,base.group_user,1,1,1,0
 access_denied_product_save,access.denied.product_save,model_denied_product_save,base.group_user,1,1,1,0
 access_wz_label,access.wz.label,model_wz_label,base.group_user,1,1,1,0
+access_product_avaibility,access.product.avaibility,model_product_avaibility,base.group_user,1,1,1,0
 

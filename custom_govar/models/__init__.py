@@ -6,3 +6,5 @@ from . import account_move
 from . import label
 from . import helpers_custom
 from . import res_company
+from . import stock
+from . import product_avaibility
