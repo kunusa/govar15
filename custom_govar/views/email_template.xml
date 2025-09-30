@@ -3,7 +3,7 @@
         <record id="minimun_product_template" model="mail.template">
             <field name="name">product.avaibility.email.template</field>
             <field name="lang">${object.lang}</field>
-            <field name="model_id" ref="model_product_avaibility"/>
+            <field name="model_id" ref="custom_govar.model_product_avaibility"/>
             <field name="auto_delete" eval="True"/>
             <field name="body_html">
                 <![CDATA[
@@ -12,4 +12,35 @@
                 ]]>
             </field>
         </record>
+
+        <record id="unblock_email_template" model="mail.template">
+            <field name="name">unblock.email.template</field>
+            <field name="lang">${object.lang}</field>
+            <field name="model_id" ref="model_res_partner"/>
+            <field name="auto_delete" eval="True"/>
+            <field name="body_html" type="html">
+                <p>Se ha desbloqueado un cliente</p>
+                <br/>
+                <p>Modificado por: <t t-out="object.write_uid.partner_id.name"/></p>
+                <p>Cliente: <t t-out="object.name"/></p>
+                <a t-att-href="object.get_url_folio()">Ver cliente</a>
+                <br/><br/>
+            </field>
+        </record>
+
+        <record id="block_email_template" model="mail.template">
+            <field name="name">block.email.template</field>
+            <field name="lang">${object.lang}</field>
+            <field name="model_id" ref="model_res_partner"/>
+            <field name="auto_delete" eval="True"/>
+            <field name="body_html" type="html">
+                <p>Se ha bloqueado un cliente</p>
+                <br/>
+                <p>Modificado por: <t t-out="object.write_uid.partner_id.name"/></p>
+                <p>Cliente: <t t-out="object.name"/></p>
+                <a t-att-href="object.get_url_folio()">Ver cliente</a>
+                <br/><br/>
+            </field>
+        </record>        
+
 </odoo>

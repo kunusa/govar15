@@ -77,3 +77,23 @@ class HelpersCustom(models.AbstractModel):
 
         return current_time_mazatlan.strftime('%d-%m-%Y %H:%M:%S')
 
+    def send_email_cp(self, template, subject, email_to, email_from, record_id, model, attachment=None):
+        """
+        Envía un correo electrónico usando un template de Odoo 15
+        """
+        import ipdb; ipdb.set_trace()
+        self.env['mail.template'].browse(self.env.ref(template).id).send_mail(
+            record_id,  # ID del registro relacionado
+            force_send=True,
+            email_values={
+                'email_from': email_from,  # Quién envía
+                'email_to': email_to,     # Quién recibe
+                'subject': subject,  # Título/Asunto
+            }
+            )
+
+    def get_url_folio(self,modelo,action,id): 
+        url = ""
+        base_url = self.env['ir.config_parameter'].get_param('web.base.url')
+        url = "{}/web#id={}&view_type=form&model={}&action={}".format(base_url,id,modelo,action)
+        return url

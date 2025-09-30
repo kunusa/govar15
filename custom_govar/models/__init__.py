@@ -8,3 +8,5 @@ from . import helpers_custom
 from . import res_company
 from . import stock
 from . import product_avaibility
+from . import setting_inherit
+from . import res_partner

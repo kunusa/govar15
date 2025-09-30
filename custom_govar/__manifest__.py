@@ -20,7 +20,7 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'sale', 'stock', 'purchase','remisiones'],
+    'depends': ['base', 'sale', 'stock', 'purchase', 'remisiones', 'account'],
 
     # always loaded
     'data': [
@@ -32,6 +32,7 @@
         'views/label_wizard.xml',
         'views/res_company.xml',
         'views/settings_inventory.xml',
+        'views/settings_accounting.xml',
         'views/sale_order.xml',
         'views/email_template.xml',
         'views/product_avaibility.xml',

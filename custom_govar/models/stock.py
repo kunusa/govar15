@@ -136,26 +136,6 @@ class saleOrderCheckInventory(models.Model):
         })
         mail.send()
 
-class StockConfig(models.TransientModel):
 
-    """Add options to easily install the submodules"""
-    _inherit = 'res.config.settings'
-
-    email_product_min = fields.Char(string='Envio de correo')
-    email_product_min_3 = fields.Char(string='Envio de correo')
-
-    def set_values(self):
-        super().set_values()
-        self.env['ir.config_parameter'].sudo().set_param('email_product_min', self.email_product_min or '')
-        self.env['ir.config_parameter'].sudo().set_param('email_product_min_3', self.email_product_min_3 or '')
-    
-    @api.model
-    def get_values(self):
-        res = super().get_values()
-        res.update(
-            email_product_min=self.env['ir.config_parameter'].sudo().get_param('email_product_min', ''),
-            email_product_min_3=self.env['ir.config_parameter'].sudo().get_param('email_product_min_3', ''),
-        )
-        return res
 
 

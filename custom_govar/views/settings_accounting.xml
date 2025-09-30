@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_account_config_settings_inherit" model="ir.ui.view">
+        <field name="name">Account Settings: Email Configuration</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="account.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='default_taxes_setting_container']" position="after">
+                <h2>Notificaciones</h2>
+                <div class="row mt16 o_settings_container" name="email_settings_container">
+                    <div class="col-12 col-lg-6 o_setting_box">
+                        <div class="o_setting_left_pane"/>
+                        <div class="o_setting_right_pane">
+                            <div class="text-muted">
+                                Correo para notificaciones de bloqueo/desbloqueo de clientes
+                            </div>
+                            <div class="content-group">
+                                <div class="row mt16">
+                                    <label for="email_block" class="col-lg-3 o_light_label"/>
+                                    <field name="email_block" string=" "/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-6 o_setting_box">
+                        <div class="o_setting_left_pane"/>
+                        <div class="o_setting_right_pane">
+                            <div class="text-muted">
+                                Correo para notificaciones generales de bloqueo
+                            </div>
+                            <div class="content-group">
+                                <div class="row mt16">
+                                    <label for="email_block_all" class="col-lg-3 o_light_label"/>
+                                    <field name="email_block_all" string=" "/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+        </field>
+    </record>
+</odoo>
