@@ -81,7 +81,7 @@ class HelpersCustom(models.AbstractModel):
         """
         Envía un correo electrónico usando un template de Odoo 15
         """
-        import ipdb; ipdb.set_trace()
+
         self.env['mail.template'].browse(self.env.ref(template).id).send_mail(
             record_id,  # ID del registro relacionado
             force_send=True,

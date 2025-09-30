@@ -10,6 +10,9 @@
                 <field name="numero_ext" placeholder="No. Exterior"/>
                 <field name="numero_int" placeholder="No. Interior"/>
             </xpath>
+            <xpath expr="//field[@name='currency_id']" position="after">
+                <field name="rfc_to_send"/>
+            </xpath>
         </field>
     </record>
 </odoo>

@@ -211,7 +211,7 @@ class ProductReportBackOrder(models.Model):
         
         report_name = "Reporte back order"
 		
-        import ipdb; ipdb.set_trace()
+
 
 		# crear libro de trabajo con hoja de trabajo
         fp = BytesIO()

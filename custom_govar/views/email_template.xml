@@ -16,7 +16,7 @@
         <record id="unblock_email_template" model="mail.template">
             <field name="name">unblock.email.template</field>
             <field name="lang">${object.lang}</field>
-            <field name="model_id" ref="model_res_partner"/>
+            <field name="model_id" ref="base.model_res_partner"/>
             <field name="auto_delete" eval="True"/>
             <field name="body_html" type="html">
                 <p>Se ha desbloqueado un cliente</p>
@@ -31,7 +31,7 @@
         <record id="block_email_template" model="mail.template">
             <field name="name">block.email.template</field>
             <field name="lang">${object.lang}</field>
-            <field name="model_id" ref="model_res_partner"/>
+            <field name="model_id" ref="base.model_res_partner"/>
             <field name="auto_delete" eval="True"/>
             <field name="body_html" type="html">
                 <p>Se ha bloqueado un cliente</p>
@@ -42,5 +42,34 @@
                 <br/><br/>
             </field>
         </record>        
+
+
+        <record id="create_invoice_customer_company_email_move" model="mail.template">
+            <field name="name">create.invoice.company.email.template</field>
+            <field name="lang">${object.lang}</field>
+            <field name="model_id" ref="model_account_move"/>
+            <field name="auto_delete" eval="True"/>
+            <field name="body_html" type="html">
+                <p>Se ha creado una factura</p>
+                <br/>
+                <p>Creado por: <t t-out="object.create_uid.partner_id.name"/></p>
+                <a t-att-href="object.get_url_folio()">Ver Factura</a>
+                <br/><br/>
+            </field>
+        </record>
+
+        <record id="create_invoice_supplier_company_email_template" model="mail.template">
+            <field name="name">create.invoice.supplier.company.email.template</field>
+            <field name="lang">${object.lang}</field>
+            <field name="model_id" ref="model_account_move"/>
+            <field name="auto_delete" eval="True"/>
+            <field name="body_html" type="html">
+                <p>Se ha creado una factura de proveedor</p>
+                <br/>
+                <p>Creado por: <t t-out="object.create_uid.partner_id.name"/></p>
+                <a t-att-href="object.get_url_folio()">Ver Factura</a>
+                <br/><br/>
+            </field>
+        </record>
 
 </odoo>

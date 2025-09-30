@@ -5,6 +5,19 @@ from odoo.exceptions import UserError
 class accountMoveInherit(models.Model):
     _inherit = 'account.move'
 
+
+    def action_post(self):
+        """
+        Hereda el método action_post y agrega el envío de correo
+        """
+        # Llamar al método original
+        result = super().action_post()
+        
+        # Enviar correo después de confirmar la factura
+        self.send_email_company()
+        
+        return result
+
     def delete_lines(self):
         """Enfocarse en la factura en lugar de las líneas individuales"""
         for invoice in self:
@@ -31,8 +44,59 @@ class accountMoveInherit(models.Model):
                 'invoice_line_ids': [(5, 0, 0)] + new_line_vals
             })
             
+    def send_email_company(self):
+        """
+        Envía correo cuando se crea una factura para la empresa
+        """
+        # Obtener el correo de configuración
+        email_company = self.env['ir.config_parameter'].sudo().get_param('email_company', '')
+        
+        if not email_company:
+            return False
+            
+        # Verificar si es factura de cliente y el RFC coincide
+        if self.move_type == 'out_invoice' and self.partner_id.vat == self.company_id.rfc_to_send:
+            subject = f'Factura creada para {self.partner_id.name}'
+            self.env['custom.helpers'].send_email_cp(
+                'custom_govar.create_invoice_customer_company_email_move',
+                subject,
+                email_company,
+                self.company_id.email,
+                self.id,
+                'account.move',
+                None
+            )
+        # Verificar si es factura de proveedor y el RFC coincide
+        elif self.move_type == 'in_invoice' and self.partner_id.vat == self.company_id.rfc_to_send:
+            subject = f'Factura creada para {self.partner_id.name}'
+            self.env['custom.helpers'].send_email_cp(
+                'custom_govar.create_invoice_supplier_company_email_template',
+                subject,
+                email_company,
+                self.company_id.email,
+                self.id,
+                'account.move',
+                None
+            )
 
-    
+
+
+    def get_url_folio(self):
+        """
+        Obtiene la URL del folio de la factura
+        """
+        try:
+            # Intentar obtener la acción del contexto web
+            action_id = self._context.get('params', {}).get('action')
+            if action_id:
+                return self.env['custom.helpers'].get_url_folio('account.move', action_id, self.id)
+        except (KeyError, AttributeError):
+            pass
+        
+        # Si no hay contexto web, generar URL directa
+        base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
+        return f"{base_url}/web#id={self.id}&model=account.move&view_type=form"
+
 
 class accountMoveLineInherit(models.Model):
     _inherit = 'account.move.line'
