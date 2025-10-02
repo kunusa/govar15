@@ -82,14 +82,20 @@ class HelpersCustom(models.AbstractModel):
         Envía un correo electrónico usando un template de Odoo 15
         """
 
+        email_values={
+            'email_from': email_from,  # Quién envía
+            'email_to': email_to,     # Quién recibe
+            'subject': subject,  # Título/Asunto
+
+        }
+        # Adjunto el archivo si existe
+        if attachment:
+            email_values['attachment_ids'] = attachment
+
         self.env['mail.template'].browse(self.env.ref(template).id).send_mail(
             record_id,  # ID del registro relacionado
             force_send=True,
-            email_values={
-                'email_from': email_from,  # Quién envía
-                'email_to': email_to,     # Quién recibe
-                'subject': subject,  # Título/Asunto
-            }
+            email_values=email_values
             )
 
     def get_url_folio(self,modelo,action,id): 

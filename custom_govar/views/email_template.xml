@@ -72,4 +72,26 @@
             </field>
         </record>
 
+
+        <record id="pending_payment_template" model="mail.template">
+            <field name="name">pending.payment.template</field>
+            <field name="lang">${object.lang}</field>
+            <field name="model_id" ref="model_res_partner"/>
+            <field name="auto_delete" eval="True"/>
+            <field name="body_html" type="html">
+                <p>Estimado/a <t t-out="object.name"/>,</p>
+                <br/>
+                <p>Le informamos que tiene pagos pendientes por realizar.</p>
+                <br/>
+                <p>Adjunto encontrará el reporte detallado de sus pagos pendientes.</p>
+                <br/>
+                <p>Por favor, revise la información y proceda con los pagos correspondientes.</p>
+                <br/>
+                <p>Si tiene alguna pregunta, no dude en contactarnos.</p>
+                <br/>
+                <p>Saludos cordiales,</p>
+                <p><t t-out="object.company_id.name"/></p>
+            </field>
+        </record>
+
 </odoo>

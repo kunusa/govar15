@@ -1,5 +1,6 @@
 from odoo.exceptions import UserError
 from odoo import api, fields, models
+import base64
 
 class ResPartner(models.Model):
     _inherit = 'res.partner'
@@ -46,3 +47,34 @@ class ResPartner(models.Model):
 
     def get_url_folio(self):
         return self.env['custom.helpers'].get_url_folio('res.partner',self._context['params']['action'],self.id)
+
+    def send_account_state(self):
+
+        pdf_content, content_type = self.env['report.report_overdue'].render_html([self.id],self)
+
+
+
+        attatchment_state = self.env['ir.attachment'].sudo().create({
+                                'name': 'Pagos_pendientes.pdf',
+                                'datas': base64.b64encode(pdf_content).decode('utf-8'),
+                                'res_model': self._name
+        })
+
+        # Obtener emails de notificación del campo partner_notifica_ids
+        notification_emails = [self.email]
+        if self.partner_notifica_ids:
+            for partner in self.partner_notifica_ids:
+                if partner.correo:
+                    notification_emails.append(partner.correo)
+        email_to = ",".join(notification_emails)
+
+        if email_to:
+            self.env['custom.helpers'].send_email_cp(
+                'custom_govar.pending_payment_template',
+                'Pagos pendientes',
+                email_to,
+                self.env.user.login,
+                self.id,
+                'res.partner',
+                attatchment_state
+            )

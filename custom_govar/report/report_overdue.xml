@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Report Definition -->
+        <record id="action_report_overdue" model="ir.actions.report">
+            <field name="name">Customer Account Statement</field>
+            <field name="model">res.partner</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">custom_govar.report_overdue</field>
+            <field name="report_file">custom_govar.report_overdue</field>
+            <field name="binding_type">report</field>
+        </record>
+    </data>
+
+    <!-- Report Template -->
+    <template id="report_overdue">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.basic_layout">
+            
+                    <div class="page">  
+                    <!-- Header Section -->
+                        <div class="row">
+                        <!-- Company Info (Left) -->
+                        <div class="col-7">
+                            <div style="font-size: 18px; font-weight: bold; text-transform: uppercase; margin-bottom: 10px;">
+                                <span t-esc="o.company_id.name or ''"/>
+                            </div>
+                            <div style="font-size: 12px; margin-bottom: 5px;">
+                                <span t-esc="o.company_id.street or ''"/>
+                            </div>
+                            <div style="font-size: 12px; margin-bottom: 5px;">
+                                <span t-esc="o.company_id.city or ''"/> <span t-esc="o.company_id.state_id.name or ''"/> <span t-esc="o.company_id.zip or ''"/>
+                            </div>
+                            <div style="font-size: 12px; margin-bottom: 10px;">
+                                <span t-esc="o.company_id.country_id.name or ''"/>
+                            </div>
+                            <div style="border-bottom: 1px solid #000; margin-bottom: 20px;"></div>
+                        </div>
+                        
+                        <!-- Customer Info (Right) -->
+                        <div class="col-5 text-right">
+                            <div style="font-size: 14px; font-weight: bold; margin-bottom: 20px;">
+                                <span t-esc="o.company_id.slogan or ''"/>
+                            </div>
+                            <div style="font-size: 12px; font-weight: bold; margin-bottom: 5px;">
+                                <span t-esc="o.name or ''"/>
+                            </div>
+                            <div style="font-size: 12px; margin-bottom: 5px;">
+                                <span t-esc="o.street or ''"/>
+                            </div>
+                            <div style="font-size: 12px; margin-bottom: 5px;">
+                                <span t-esc="o.city or ''"/> <span t-esc="o.state_id.name or ''"/> <span t-esc="o.zip or ''"/>
+                            </div>
+                            <div style="font-size: 12px; margin-bottom: 5px;">
+                                <span t-esc="o.country_id.name or ''"/>
+                            </div>
+                            <div style="font-size: 12px; font-weight: bold;">
+                                RFC: <span t-esc="o.vat or ''"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Document Title -->
+                    <div style="margin: 20px 0;">
+                        <div style="font-size: 16px; font-weight: bold; margin-bottom: 10px;">
+                            Documento: saldo contable del cliente
+                        </div>
+                        <div style="font-size: 12px;">
+                            Fecha: <t t-esc="Date"/>
+                        </div>
+                    </div>
+
+                    <!-- Message Section -->
+                    <div style="margin: 20px 0; font-size: 12px; line-height: 1.4;">
+                        <p>Estimado/a Señor/Señora,</p>
+                        <p>Nuestros registros indican que tiene pagos pendientes de su cuenta. Encontrará los detalles a continuación.</p>
+                        <p>Si ya ha pagado la cantidad, por favor ignore este aviso.</p>
+                        <p>De lo contrario, por favor envíe la cantidad total que se indica a continuación.</p>
+                        <p>Si tiene cualquier pregunta relacionada con su cuenta, por favor póngase en contacto con nosotros.</p>
+                        <p>Gracias de antemano por su colaboración.</p>
+                        <p>Atentamente,</p>
+                    </div>
+
+                    <!-- Table Section -->
+                    <t t-if="Lines and Lines.get(o.id)">
+                        <table class="table table-bordered" t-foreach="Lines.get(o.id, {})" t-as="currency" style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+                            <thead>
+                                <tr style="background-color: #f8f9fa;">
+                                    <th style="border: 1px solid #000; padding: 8px; font-weight: bold; text-align: left;">Número de referencia</th>
+                                    <th style="border: 1px solid #000; padding: 8px; font-weight: bold; text-align: center;">Fecha</th>
+                                    <th style="border: 1px solid #000; padding: 8px; font-weight: bold; text-align: center;">Fecha vencimiento</th>
+                                    <th style="border: 1px solid #000; padding: 8px; font-weight: bold; text-align: left;">Comunicación</th>
+                                    <th style="border: 1px solid #000; padding: 8px; font-weight: bold; text-align: right;">Total</th>
+                                    <th style="border: 1px solid #000; padding: 8px; font-weight: bold; text-align: right;">Pagado</th>
+                                    <th style="border: 1px solid #000; padding: 8px; font-weight: bold; text-align: right;">Saldo</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="Lines.get(o.id, {}).get(currency, [])" t-as="line">
+                                    <td style="border: 1px solid #000; padding: 8px;">
+                                        <span t-esc="line['move_id']"/>
+                                    </td>
+                                    <td style="border: 1px solid #000; padding: 8px; text-align: center;">
+                                        <span t-esc="line['date']"/>
+                                    </td>
+                                    <td style="border: 1px solid #000; padding: 8px; text-align: center;">
+                                        <span t-esc="line['date_maturity']"/>
+                                    </td>
+                                    <td style="border: 1px solid #000; padding: 8px;">
+                                        <t t-if="line['name'] != '/'">
+                                            <span t-esc="line['name']"/>
+                                        </t>
+                                        <span t-esc="line['ref']"/>
+                                    </td>
+                                    <td style="border: 1px solid #000; padding: 8px; text-align: right;">
+                                        <span t-esc="line['debit']" t-options="{'widget': 'monetary', 'display_currency': currency}"/>
+                                    </td>
+                                    <td style="border: 1px solid #000; padding: 8px; text-align: right;">
+                                        <span t-esc="line['credit']" t-options="{'widget': 'monetary', 'display_currency': currency}"/>
+                                    </td>
+                                    <td style="border: 1px solid #000; padding: 8px; text-align: right;">
+                                        <span t-esc="line['debit'] - line['credit']" t-options="{'widget': 'monetary', 'display_currency': currency}"/>
+                                    </td>
+                                </tr>
+               
+                                <tr style="background-color: #e9ecef; font-weight: bold;">
+                                    <td colspan="4" style="border: 1px solid #000; padding: 8px; text-align: right;">
+                                        Subtotal:
+                                    </td>
+                                    <td style="border: 1px solid #000; padding: 8px; text-align: right;">
+                                        <span t-esc="Totals.get(o.id, {}).get(currency, {}).get('due', 0)" t-options="{'widget': 'monetary', 'display_currency': currency}"/>
+                                    </td>
+                                    <td style="border: 1px solid #000; padding: 8px; text-align: right;">
+                                        <span t-esc="Totals.get(o.id, {}).get(currency, {}).get('paid', 0)" t-options="{'widget': 'monetary', 'display_currency': currency}"/>
+                                    </td>
+                                    <td style="border: 1px solid #000; padding: 8px; text-align: right;">
+                                        <span t-esc="Totals.get(o.id, {}).get(currency, {}).get('due', 0) - Totals.get(o.id, {}).get(currency, {}).get('paid', 0)" t-options="{'widget': 'monetary', 'display_currency': currency}"/>
+                                    </td>
+                                </tr>
+                             
+                                <tr style="background-color: #d1ecf1; font-weight: bold;">
+                                    <td colspan="6" style="border: 1px solid #000; padding: 8px; text-align: right;">
+                                        Saldo:
+                                    </td>
+                                    <td style="border: 1px solid #000; padding: 8px; text-align: right;">
+                                        <span t-esc="Totals.get(o.id, {}).get(currency, {}).get('due', 0) - Totals.get(o.id, {}).get(currency, {}).get('paid', 0)" t-options="{'widget': 'monetary', 'display_currency': currency}"/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </t>
+                    
+                    <t t-if="not Lines or not Lines.get(o.id)">
+                        <div style="margin: 20px 0; font-size: 14px; font-weight: bold; text-align: center;">
+                            No hay pagos.
+                        </div>
+                    </t>
+
+                        <!-- Footer Section -->
+                        <div style="border-top: 1px solid #000; margin-top: 30px; padding-top: 20px;">
+                            <div class="row">
+                                <div class="col-4">
+                                    <div style="font-weight: bold; margin-bottom: 5px;">Correo electrónico</div>
+                                    <div style="font-size: 12px;"><span t-esc="o.company_id.email or ''"/></div>
+                                    <div style="font-weight: bold; margin-top: 10px; margin-bottom: 5px;">Banorte</div>
+                                    <div style="font-size: 12px;"><span t-esc="o.company_id.bank_ids[0].acc_number if o.company_id.bank_ids and len(o.company_id.bank_ids) > 0 else ''"/></div>
+                                </div>
+                                <div class="col-4">
+                                    <div style="font-weight: bold; margin-bottom: 5px;">Sitio web</div>
+                                    <div style="font-size: 12px;"><span t-esc="o.company_id.website or ''"/></div>
+                                    <div style="font-weight: bold; margin-top: 10px; margin-bottom: 5px;">Banamex</div>
+                                    <div style="font-size: 12px;"><span t-esc="o.company_id.bank_ids[1].acc_number if o.company_id.bank_ids and len(o.company_id.bank_ids) > 1 else ''"/></div>
+                                </div>
+                                <div class="col-4">
+                                    <div style="font-weight: bold; margin-bottom: 5px;">RFC</div>
+                                    <div style="font-size: 12px;"><span t-esc="o.company_id.vat or ''"/></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </t>    
+            </t>
+        </t>
+    </template>
+</odoo>

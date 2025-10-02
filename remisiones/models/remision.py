@@ -436,7 +436,7 @@ class remisiones(models.Model):
 
     @api.model
     def create(self, vals):
-        # import ipdb; ipdb.set_trace()  # Debug removido
+
         sucursal = self.env.user.property_warehouse_id
 
         if not sucursal:

@@ -50,6 +50,20 @@
                             </div>
                         </div>
                     </div>
+                    <div class="col-12 col-lg-6 o_setting_box">
+                        <div class="o_setting_left_pane"/>
+                        <div class="o_setting_right_pane">
+                            <div class="text-muted">
+                                Correo para notificaciones de pagos
+                            </div>
+                            <div class="content-group">
+                                <div class="row mt16">
+                                    <label for="email_payment" class="col-lg-3 o_light_label"/>
+                                    <field name="email_payment" string=" "/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </xpath>
         </field>

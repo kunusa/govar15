@@ -34,10 +34,12 @@
         'views/settings_inventory.xml',
         'views/settings_accounting.xml',
         'views/sale_order.xml',
+        'views/res_partner.xml',
         'views/email_template.xml',
         'views/product_avaibility.xml',
         'report/label_invoice.xml',
         'report/label_remision.xml',
+        'report/report_overdue.xml',
     ],
     # only loaded in demonstration mode
     'demo': [

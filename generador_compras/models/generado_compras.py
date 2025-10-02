@@ -72,7 +72,7 @@ class generador_compras(models.Model):
             return 0
 
     def _get_period(self):
-        # import ipdb; ipdb.set_trace()
+
         date = fields.Date.today()
 
         for rec in self:
@@ -96,7 +96,7 @@ class generador_compras(models.Model):
         end_period = fields.Date.today()
         start_period = fields.Datetime.from_string(end_period) - relativedelta(days=dias)
         start_period = start_period.date()
-        # import ipdb; ipdb.set_trace()
+
         query="""Select ROW_NUMBER() OVER(ORDER BY prod.id DESC) AS  partida, prod.id as producto,prod.default_code as code,(
                     Select sum(case when  line.balance < 0 then line.quantity*-1
                     else line.quantity end) as qty from account_move_line as line 
