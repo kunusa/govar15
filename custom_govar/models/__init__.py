@@ -11,3 +11,4 @@ from . import product_avaibility
 from . import setting_inherit
 from . import res_partner
 from . import report_overdue
+from . import wizard_cfdi

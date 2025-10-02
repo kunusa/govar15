@@ -3,4 +3,4 @@ access_denied_products,access.denied.products,model_denied_products,base.group_u
 access_denied_product_save,access.denied.product_save,model_denied_product_save,base.group_user,1,1,1,0
 access_wz_label,access.wz.label,model_wz_label,base.group_user,1,1,1,0
 access_product_avaibility,access.product.avaibility,model_product_avaibility,base.group_user,1,1,1,0
-
+access_cfdi_issue,access.cfdi.issue,model_cfdi_issue,base.group_user,1,1,1,0

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="cfdi_issued_wizard" model="ir.ui.view">
+        <field name="name">cfdi.issue.download</field>
+        <field name="model">cfdi.issue</field>
+        <field name="arch" type="xml">
+            <form string="Descargar CFDI">
+                <script>
+                    $(document).ready(function(){
+                    $('.modal-dialog').css({'width': '50%', 'height': '85%'});
+                    $('.modal-content').css({'height': '75%'});
+                    $('.modal-body').css({'height': '75%'});
+                    });
+                </script>
+                <group col="4">
+                    <field name="initial_date" required="1" />
+                    <field name="final_date" required="1" />
+                </group>
+                <group col="4">
+                    <field name="is_cfdi" />
+                    <field name="is_pdf" />
+                </group>
+                <group col="2">
+                    <field name="partner_id" options="{'no_create':True, 'no_open':True, 'no_create_edit':True}" />
+                </group>
+                <group>
+                    <p class="text-muted">
+                        Nota: Si no se selecciona un cliente, se descargarán los CFDI emitidos de todos los clientes.
+                    </p>
+                </group>
+                <footer>
+                    <button class="btn-primary" string="Descargar"
+                        name="download_cfdi" type="object" />
+                    <button string="Cancelar" class="btn-secondary" special="cancel" />
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="cfdi_issued_wizard_action" model="ir.actions.act_window">
+        <field name="name">CFDI emitidos</field>
+        <field name="res_model">cfdi.issue</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="cfdi_issued_wizard" />
+        <field name="target">inline</field>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="product_report_menu"
+        name="Descargar CFDI emitidos"
+        action="cfdi_issued_wizard_action"
+        parent="account.menu_finance_entries"
+        groups="account.group_account_manager" />
+</odoo>

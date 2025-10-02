@@ -37,6 +37,7 @@
         'views/res_partner.xml',
         'views/email_template.xml',
         'views/product_avaibility.xml',
+        'views/wizard_cfdi.xml',
         'report/label_invoice.xml',
         'report/label_remision.xml',
         'report/report_overdue.xml',
