@@ -16,7 +16,7 @@ class cfdiIssue(models.TransientModel):
     
     
     def download_cfdi(self):
-        import ipdb; ipdb.set_trace()
+
         if self.partner_id:
             invoices = self.env['account.move'].search([
                 ('invoice_date', '>=', self.initial_date),

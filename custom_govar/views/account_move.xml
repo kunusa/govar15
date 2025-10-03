@@ -24,5 +24,22 @@
             <field name="state">code</field>
             <field name="code">action = records.delete_lines()</field>
         </record>
+
+
+        <record id="account_move_reversal_inherit" model="ir.ui.view">
+            <field name="name">account.move.reversal.inherit</field>
+            <field name="model">account.move.reversal</field>
+            <field name="inherit_id" ref="account.view_account_move_reversal"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='reason']" position="after">
+                    <field name="type_account" required="1"/>
+                    <field name="reference" />
+                </xpath>
+                <xpath expr="//field[@name='reason']" position="attributes">
+                    <attribute name="required">1</attribute>
+                </xpath>
+            </field>
+        </record>
+
     </data>
 </odoo>

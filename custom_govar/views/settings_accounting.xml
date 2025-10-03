@@ -64,6 +64,67 @@
                             </div>
                         </div>
                     </div>
+                </div>          
+            </xpath>
+            <xpath expr="//div[@name='default_taxes_setting_container']" position="after">
+                <h2>Notas de credito</h2>
+                <div class="row mt16 o_settings_container" name="credit_note_settings_container">
+                    <div class="col-12 col-lg-6 o_setting_box">
+                        <div class="o_setting_left_pane"/>
+                        <div class="o_setting_right_pane">
+                            <div class="text-muted">
+                                Cuenta de descuento sobre venta
+                            </div>
+                            <div class="content-group">
+                                <div class="row mt16">
+                                    <label for="discount_sale_account" class="col-lg-3 o_light_label"/>
+                                    <field name="discount_sale_account" string=" "/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-6 o_setting_box">
+                        <div class="o_setting_left_pane"/>
+                        <div class="o_setting_right_pane">
+                            <div class="text-muted">
+                                Cuenta de devolución sobre venta
+                            </div>
+                            <div class="content-group">
+                                <div class="row mt16">
+                                    <label for="refaund_sale_account" class="col-lg-3 o_light_label"/>
+                                    <field name="refaund_sale_account" string=" "/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-6 o_setting_box">
+                        <div class="o_setting_left_pane"/>
+                        <div class="o_setting_right_pane">
+                            <div class="text-muted">
+                                Cuenta de descuento sobre compra
+                            </div>
+                            <div class="content-group">
+                                <div class="row mt16">
+                                    <label for="discount_purchase_account" class="col-lg-3 o_light_label"/>
+                                    <field name="discount_purchase_account" string=" "/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-6 o_setting_box">
+                        <div class="o_setting_left_pane"/>
+                        <div class="o_setting_right_pane">
+                            <div class="text-muted">
+                                Cuenta de devolución sobre compra
+                            </div>
+                            <div class="content-group">
+                                <div class="row mt16">
+                                    <label for="refaund_purchase_account" class="col-lg-3 o_light_label"/>
+                                    <field name="refaund_purchase_account" string=" "/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </xpath>
         </field>

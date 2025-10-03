@@ -1,5 +1,5 @@
 from odoo import api, fields, models, _
-from odoo.exceptions import UserError
+from odoo import exceptions
 
 
 class accountMoveInherit(models.Model):
@@ -12,7 +12,6 @@ class accountMoveInherit(models.Model):
         """
         # Llamar al método original
         result = super().action_post()
-        
         # Enviar correo después de confirmar la factura
         self.send_email_company()
         
@@ -79,8 +78,6 @@ class accountMoveInherit(models.Model):
                 None
             )
 
-
-
     def get_url_folio(self):
         """
         Obtiene la URL del folio de la factura
@@ -97,6 +94,55 @@ class accountMoveInherit(models.Model):
         base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
         return f"{base_url}/web#id={self.id}&model=account.move&view_type=form"
 
+    @api.model
+    def create(self, vals):
+        type_account = self._context.get('type_account')
+        res = super().create(vals)
+
+        if res.move_type == 'out_refund' or res.move_type == 'in_refund':
+
+            if vals.get('move_type') == "out_refund":
+                if type_account in ['discount_purchase','refaund_purchase']:
+                    raise exceptions.UserError("No se puede generar una nota de crédito con una cuenta de compras")
+                
+                # Obtener cuentas configuradas para ventas
+                if type_account == 'discount_sale':
+                    account_id = self.env['ir.config_parameter'].sudo().get_param('discount_sale_account', '')
+                elif type_account == 'refaund_sale':
+                    account_id = self.env['ir.config_parameter'].sudo().get_param('refaund_sale_account', '')
+                else:
+                    account_id = False
+                
+            if vals.get('move_type') == "in_refund":
+                if type_account in ['discount_sale','refaund_sale']:
+                    raise exceptions.UserError("No se puede generar una nota de crédito con una cuenta de ventas")
+                
+                # Obtener cuentas configuradas para compras
+                if type_account == 'discount_purchase':
+                    account_id = self.env['ir.config_parameter'].sudo().get_param('discount_purchase_account', '')
+                elif type_account == 'refaund_purchase':
+                    account_id = self.env['ir.config_parameter'].sudo().get_param('refaund_purchase_account', '')
+                else:
+                    account_id = False
+                
+            # Aplicar la cuenta a las líneas si está configurada
+            if account_id:
+                self._apply_account_to_lines(res, account_id)
+                    
+        return res
+        
+    def _apply_account_to_lines(self, move, account_id):
+        """
+        Aplica la cuenta especificada a todas las líneas de la factura
+        """
+        import  ipdb; ipdb.set_trace()
+        id_credit = self.env['account.account'].search([('id','=',int(account_id))], limit = 1)
+        try:
+            for line in move.invoice_line_ids:
+                line.account_id = id_credit.id
+        except Exception as e:
+            # Log del error pero no interrumpir el proceso
+            pass
 
 class accountMoveLineInherit(models.Model):
     _inherit = 'account.move.line'
