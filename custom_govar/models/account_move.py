@@ -1,5 +1,6 @@
 from odoo import api, fields, models, _
 from odoo import exceptions
+from odoo.exceptions import UserError
 
 
 class accountMoveInherit(models.Model):
@@ -128,6 +129,21 @@ class accountMoveInherit(models.Model):
             # Aplicar la cuenta a las líneas si está configurada
             if account_id:
                 self._apply_account_to_lines(res, account_id)
+
+        if res.move_type == 'in_invoice':
+            reference = self.env['account.move'].search([('partner_id','=',res.partner_id.id),('ref','=',vals.get('ref')),('move_type','=',res.move_type),('state','=','posted')], limit = 1)
+            if reference and reference.ref:
+                raise UserError(_("Ya existe una factura con la referencia '{}'".format(vals.get('ref'))))
+        
+        if res.move_type == 'in_refund':	
+            if not self._context.get('reference'):
+                raise UserError(_("La referencia es obligatoria en caso de una nota de crédito de un proveedor"))
+            
+            reference = self.env['account.move'].search([('partner_id','=',vals.get('partner_id')),('ref','=',self._context.get('reference')),('move_type','=',res.move_type),('state','=','posted')], limit = 1)
+            if reference and res.move_type == 'in_refund':
+                raise UserError(_("Ya existe una nota de crédito con la referencia '{}'".format(self._context.get('reference'))))		
+            
+            res.ref = self._context.get('reference')
                     
         return res
         
@@ -135,7 +151,7 @@ class accountMoveInherit(models.Model):
         """
         Aplica la cuenta especificada a todas las líneas de la factura
         """
-        import  ipdb; ipdb.set_trace()
+
         id_credit = self.env['account.account'].search([('id','=',int(account_id))], limit = 1)
         try:
             for line in move.invoice_line_ids:
