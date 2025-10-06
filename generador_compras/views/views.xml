@@ -182,19 +182,7 @@
     </record>
 
 
-    <!-- TODO: MOver a otro modulo -->
-    <!-- <record model="ir.ui.view" id="account_invoice_inherit_form">
-      <field name="name">account.invoice.inherit.form</field>
-      <field name="inherit_id" ref="account.invoice_supplier_tree" />
-      <field name="model">account.invoice</field>
-      <field name="arch" type="xml">
-        <xpath expr="//field[@name='origin']" position="after">
-          <field name="amount_mxn" sum="Total" string="Total MXN" />
-          <field name="currency_id" readonly="1" />
-          <field name="diary_value" string="TC" readonly="1" />
-        </xpath>
-      </field>
-    </record> -->
+
 
 
     <!-- Top menu item -->
