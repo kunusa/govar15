@@ -2,3 +2,4 @@
 
 from . import product_purchase
 from . import product_inventory
+from . import product_sell
