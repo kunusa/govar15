@@ -28,6 +28,8 @@
         'views/product_purchase.xml',
         'views/product_inventory.xml',
         'views/product_sell.xml',
+        'views/product_sale_tri.xml',
+        'views/settings_conf.xml',
     ],
     # only loaded in demonstration mode
     'demo': [
