@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+
+    <record model="ir.ui.view" id="product_report_buys_form">
+      <field name="name">create.product.report.stock</field>
+      <field name="model">report.stock.buys</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="code_report" />
+          <field name="initial_date"/>
+          <field name="final_date"/>
+          <field name="product_category" />
+          <field name="product_product" />
+          <field name="supplier_flag" />
+        </tree>
+      </field>
+    </record>
+
+    <record id="product_report_buys_view" model="ir.ui.view">
+        <field name="name">create.product.report.buys</field>
+        <field name="model">report.stock.buys</field>
+        <field name="arch" type="xml">
+            <form string= "Productos comprados">
+                  <header>
+                        <button class="oe_highlight" string="Generar excel"  name="download_file_report_buys" type="object" attrs="{'invisible': [('lines_ids','=',[])]}"/>
+                 </header>
+           
+                <group col = "4">
+                    <field name="initial_date" required="1"/>
+                    <field name="compare_initial_date" />
+                    <field name="final_date" required="1"/>
+                    <field name="compare_final_date" />
+                </group>
+                <group col = "6">
+                    <field name="product_category"/>
+                    <field name = "product_product"/>
+                    <field name="supplier_flag" />
+                </group>
+                <group col = "2">
+                    <field name="flag_product" invisible="1"/>
+                    <field name="flag_product_product" invisible="1"/>
+                    <field name="product_category_id"  widget="many2many_tags" options="{'no_create':True, 'no_open':True}" attrs="{'invisible': [('flag_product', '=', False)]}"/>
+                    <field name="datas" invisible="1"/> 
+                    <field name="datas_fname" invisible="1"/>
+                </group>
+                <group col = "2">
+                  <field name = "product_ids" widget="many2many_tags" options="{'no_create':True, 'no_open':True}" attrs="{'invisible': [('flag_product_product', '=', False)]}"/>
+                </group>
+                <group col = "2">
+                  <field name = "partner_id" widget="many2many_tags" options="{'no_create':True, 'no_open':True}" attrs="{'invisible': [('supplier_flag', '=', False)]}"/>
+                   <field name = "reference" placeholder = "Referencia separadas por comas" attrs="{'invisible': [('supplier_flag', '=', False)]}"/>
+                </group>
+                  <notebook>
+                    <page string="Lineas de Compra" attrs="{'invisible': [('lines_ids','=',[])]}">
+                       <field name="lines_ids"  readonly="1">
+                          <tree editable="top">
+                            <field name="code" readonly="1"/>
+                            <field name="product" readonly="1"/>
+                            <field name="quanity" readonly="1"/>
+                            <field name="amount" readonly="1"/>
+                            <field name="invoice_id"/>
+                            <field name="supplier" readonly="1"/>
+                          </tree>
+                      </field> 
+                    </page>
+                    <page string="Comparación" attrs="{'invisible': [('lines_compare_ids','=',[])]}">
+                       <field name="lines_compare_ids"  readonly="1">
+                          <tree editable="top">
+                            <field name="code" readonly="1"/>
+                            <field name="product" readonly="1"/>
+                            <field name="quanity" readonly="1"/>
+                            <field name="amount" readonly="1"/>
+                            <field name="invoice_id"/>
+                            <field name="supplier" readonly="1"/>
+                          </tree>
+                      </field> 
+                    </page>
+                  </notebook>
+            </form>
+        </field>
+    </record>
+
+    <!-- Secuencia para el folio reporte de compras -->
+    <record id="sec_reporte_compras" model="ir.sequence">
+        <field name="name">reporte compras</field>
+        <field name="code">report.stock.buys</field>
+        <field name="prefix">RP</field>
+        <field name="padding">5</field>
+    </record>
+
+
+    <record model="ir.actions.act_window" id="product_report_buys_stock" >
+      <field name="name">Reporte de productos</field>
+      <field name="view_mode">tree,form</field>
+      <field name="res_model">report.stock.buys</field>
+      <!-- <field name="view_id" ref="product_report_buys_form"/> -->
+    </record>
+
+    <!-- <menuitem name="Informes" id="info_menu"/> -->
+    <menuitem id="product_report_buys_menu" name="Reporte de productos comprados" action="product_report_buys_stock" parent="stock.menu_warehouse_report"/> 
+</odoo>
