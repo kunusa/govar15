@@ -208,7 +208,7 @@ class productSalesWizard(models.TransientModel):
         return attachment
     
     def send_email_with_attachment(self, attachment,submint):
-        import ipdb; ipdb.set_trace()
+
         mail = self.env['mail.mail'].create({
             'subject': submint,
             'body_html': '<p>Envio de excel adjunto con las ventas trimestrales.</p>',

@@ -13,3 +13,4 @@ from . import res_partner
 from . import report_overdue
 from . import wizard_cfdi
 from . import account_move_reversal
+from . import sale_order
