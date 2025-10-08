@@ -7,9 +7,7 @@ class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
     _order = "sequence_ref"
 
-    sequence = fields.Integer('Sequence', help="Gives the sequence order when displaying a list of sales order lines.")
     sequence_ref = fields.Integer('No.', compute="_sequence_ref", store = True)
-
 
     def _prepare_order_line_procurement(self, group_id=False):
         self.ensure_one()

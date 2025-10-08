@@ -14,3 +14,5 @@ from . import report_overdue
 from . import wizard_cfdi
 from . import account_move_reversal
 from . import sale_order
+from . import purchase
+from . import stock_move
