@@ -15,6 +15,7 @@ class StettingsConfig(models.TransientModel):
     email_company = fields.Char(string=' ')
     email_payment = fields.Char(string=' ')
     email_users = fields.Char(string=' ')
+    email_cyc = fields.Char(string=' ')
     #Notas de credito
     discount_sale_account = fields.Many2one(comodel_name="account.account", string="Cuenta de descuento sobre venta")
     refaund_sale_account = fields.Many2one(comodel_name="account.account", string="Cuenta de devolución sobre venta")
@@ -30,6 +31,7 @@ class StettingsConfig(models.TransientModel):
         self.env['ir.config_parameter'].sudo().set_param('email_company', self.email_company or '')
         self.env['ir.config_parameter'].sudo().set_param('email_payment', self.email_payment or '')
         self.env['ir.config_parameter'].sudo().set_param('email_users', self.email_users or '')
+        self.env['ir.config_parameter'].sudo().set_param('email_cyc', self.email_cyc or '')
         #Notas de credito
         self.env['ir.config_parameter'].sudo().set_param('discount_sale_account', self.discount_sale_account.id if self.discount_sale_account else '')
         self.env['ir.config_parameter'].sudo().set_param('refaund_sale_account', self.refaund_sale_account.id if self.refaund_sale_account else '')
@@ -52,6 +54,7 @@ class StettingsConfig(models.TransientModel):
             email_company=self.env['ir.config_parameter'].sudo().get_param('email_company', ''),
             email_payment=self.env['ir.config_parameter'].sudo().get_param('email_payment', ''),
             email_users=self.env['ir.config_parameter'].sudo().get_param('email_users', ''),
+            email_cyc=self.env['ir.config_parameter'].sudo().get_param('email_cyc', ''),
             discount_sale_account=int(discount_sale_account_id) if discount_sale_account_id and discount_sale_account_id.isdigit() else False,
             refaund_sale_account=int(refaund_sale_account_id) if refaund_sale_account_id and refaund_sale_account_id.isdigit() else False,
             discount_purchase_account=int(discount_purchase_account_id) if discount_purchase_account_id and discount_purchase_account_id.isdigit() else False,
