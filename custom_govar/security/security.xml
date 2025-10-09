@@ -5,5 +5,10 @@
       <field name="name">Ver menú productos negados</field>
       <field name="comment">Permite ver el menú de productos negados en inventario</field>
     </record>
+    	<record id="permission_update_product_quantity" model="res.groups">
+    		<field name="name">
+				Permiso para actualizar la cantidad del producto
+    		</field>
+    	</record>
   </data>
 </odoo>
