@@ -64,6 +64,20 @@
                             </div>
                         </div>
                     </div>
+                    <div class="col-12 col-lg-6 o_setting_box">
+                        <div class="o_setting_left_pane"/>
+                        <div class="o_setting_right_pane">
+                            <div class="text-muted">
+                                Notificaciones en creacion de clientes/proveedores y productos
+                            </div>
+                            <div class="content-group">
+                                <div class="row mt16">
+                                    <label for="email_users" class="col-lg-3 o_light_label"/>
+                                    <field name="email_users" string=" "/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>          
             </xpath>
             <xpath expr="//div[@name='default_taxes_setting_container']" position="after">

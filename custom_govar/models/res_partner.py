@@ -12,6 +12,15 @@ class ResPartner(models.Model):
                     """
         return display_msg
 
+    @api.model
+    def create(self, vals):
+        res = super(ResPartner, self).create(vals)
+        if res.customer_rank > 0:
+            self.env['custom.helpers'].send_email_cp('custom_govar.create_client_email_template','Cliente creado',self.env['ir.config_parameter'].sudo().get_param('email_users', ''),res.create_uid.login,res.id,'res.partner',None)
+        elif res.supplier_rank > 0:
+            self.env['custom.helpers'].send_email_cp('custom_govar.create_supplier_email_template','Proveedor creado',self.env['ir.config_parameter'].sudo().get_param('email_users', ''),res.create_uid.login,res.id,'res.partner',None)
+        return res
+
     def write(self, vals):
 
         res = super().write(vals)
@@ -27,10 +36,10 @@ class ResPartner(models.Model):
                 #         raise UserError('No cuenta con el permiso para modificar un cliente') 
 
                 #Envio de correo cuando se modifica un cliente/proveedor
-                # if self.customer and not vals.get('sale_warn'):
-                #     self.send_email_cp('ventas_govar.write_client_email_template','Modificación de cliente',self.env['ir.values'].get_default('account.config.settings','email_users'),self.write_uid.login,self.id,'res.partner',None)
-                # elif self.supplier:
-                #     self.send_email_cp('ventas_govar.write_supplier_email_template','Modificación de proveedor',self.env['ir.values'].get_default('account.config.settings','email_users'),self.write_uid.login,self.id,'res.partner',None)
+            if self.customer_rank > 0 and not vals.get('sale_warn'):
+                self.env['custom.helpers'].send_email_cp('custom_govar.write_client_email_template','Modificación de cliente',self.env['ir.config_parameter'].sudo().get_param('email_users', ''),self.write_uid.login,self.id,'res.partner',None)
+            elif self.supplier_rank > 0:
+                self.env['custom.helpers'].send_email_cp('custom_govar.write_supplier_email_template','Modificación de proveedor',self.env['ir.config_parameter'].sudo().get_param('email_users', ''),self.write_uid.login,self.id,'res.partner',None)
             
             #Envio de correo cuando de bloquea/debloquea un cliente
             if vals.get('sale_warn') in ['no-message','warning'] or vals.get('sale_warn') == False:
@@ -46,7 +55,24 @@ class ResPartner(models.Model):
         return res
 
     def get_url_folio(self):
-        return self.env['custom.helpers'].get_url_folio('res.partner',self._context['params']['action'],self.id)
+        # Get the action from context if available, otherwise use a default action
+        action = None
+        if self._context.get('params') and self._context['params'].get('action'):
+            action = self._context['params']['action']
+        else:
+            # Try to get the default action for res.partner model
+            action_record = self.env['ir.actions.act_window'].search([
+                ('res_model', '=', 'res.partner'),
+                ('view_mode', '=', 'form')
+            ], limit=1)
+            if action_record:
+                action = action_record.id
+            else:
+                # Fallback: use a generic URL without action
+                base_url = self.env['ir.config_parameter'].get_param('web.base.url')
+                return f"{base_url}/web#id={self.id}&view_type=form&model=res.partner"
+        
+        return self.env['custom.helpers'].get_url_folio('res.partner', action, self.id)
 
     def send_account_state(self):
 

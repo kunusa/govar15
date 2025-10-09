@@ -72,7 +72,99 @@
             </field>
         </record>
 
+        <!--Email product create-->
+        <record id="create_product_email_template" model="mail.template">
+            <field name="name">create.product.email.template</field>
+            <field name="lang">${object.lang}</field>
+            <field name="model_id" ref="model_product_template"/>
+            <field name="auto_delete" eval="True"/>
+            <field name="body_html" type="html">
+                <p>Se ha creado un producto nuevo</p>
+                <br/>
+                <p>Creado por: <t t-out="object.write_uid.partner_id.name"/></p>
+                <p>Producto: <t t-out="object.name"/></p>
+                <a t-att-href="object.get_url_folio()">Ver producto</a>
+                <br/><br/>
+            </field>
+        </record>
+        <!--Email product write-->
+        <record id="write_product_email_template" model="mail.template">
+            <field name="name">write.product.email.template</field>
+            <field name="lang">${object.lang}</field>
+            <field name="model_id" ref="model_product_template"/>
+            <field name="auto_delete" eval="True"/>
+            <field name="body_html" type="html">
+                <p>Se ha modificado un producto</p>
+                <br/>
+                <p>Modificado por: <t t-out="object.write_uid.partner_id.name"/></p>
+                <p>Producto: <t t-out="object.name"/></p>
+                <a t-att-href="object.get_url_folio()">Ver producto</a>
+                <br/><br/>
+            </field>
+        </record>
 
+        <!--Email client create-->
+        <record id="create_client_email_template" model="mail.template">
+            <field name="name">create.client.email.template</field>
+            <field name="lang">${object.lang}</field>
+            <field name="model_id" ref="model_res_partner"/>
+            <field name="auto_delete" eval="True"/>
+            <field name="body_html" type="html">
+                <p>Se ha creado un nuevo cliente</p>
+                <br/>
+                <p>Creado por: <t t-out="object.create_uid.partner_id.name"/></p>
+                <p>Cliente: <t t-out="object.name"/></p>
+                <a t-att-href="object.get_url_folio()">Ver cliente</a>
+                <br/><br/>
+            </field>
+        </record>
+        <!--Email client write-->
+        <record id="write_client_email_template" model="mail.template">
+            <field name="name">write.client.email.template</field>
+            <field name="lang">${object.lang}</field>
+            <field name="model_id" ref="model_res_partner"/>
+            <field name="auto_delete" eval="True"/>
+            <field name="body_html" type="html">
+                <p>Se ha modificado un cliente</p>
+                <br/>
+                <p>Modificado por: <t t-out="object.write_uid.partner_id.name"/></p>
+                <p>Cliente: <t t-out="object.name"/></p>
+                <a t-att-href="object.get_url_folio()">Ver cliente</a>
+                <br/><br/>
+            </field>
+        </record>
+
+        <!--Email supplier create-->
+        <record id="create_supplier_email_template" model="mail.template">
+            <field name="name">create.supplier.email.template</field>
+            <field name="lang">${object.lang}</field>
+            <field name="model_id" ref="model_res_partner"/>
+            <field name="auto_delete" eval="True"/>
+            <field name="body_html" type="html">
+                <p>Se ha creado un nuevo proveedor</p>
+                <br/>
+                <p>Creado por: <t t-out="object.create_uid.partner_id.name"/></p>
+                <p>Proveedor: <t t-out="object.name"/></p>
+                <a t-att-href="object.get_url_folio()">Ver proveedor</a>
+                <br/><br/>
+            </field>
+        </record>
+
+        <!--Email supplier write-->
+        <record id="write_supplier_email_template" model="mail.template">
+            <field name="name">write.supplier.email.template</field>
+            <field name="lang">${object.lang}</field>
+            <field name="model_id" ref="model_res_partner"/>
+            <field name="auto_delete" eval="True"/>
+            <field name="body_html" type="html">
+                <p>Se ha modificado un proveedor</p>
+                <br/>
+                <p>Modificado por: <t t-out="object.write_uid.partner_id.name"/></p>
+                <p>Proveedor: <t t-out="object.name"/></p>
+                <a t-att-href="object.get_url_folio()">Ver proveedor</a>
+                <br/><br/>
+            </field>
+        </record>
         <record id="pending_payment_template" model="mail.template">
             <field name="name">pending.payment.template</field>
             <field name="lang">${object.lang}</field>
