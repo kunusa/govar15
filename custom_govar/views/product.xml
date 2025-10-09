@@ -7,7 +7,7 @@
             <field name="inherit_id" ref="product.product_template_only_form_view"/>
             <field name="arch" type="xml">
                 <xpath expr="//button[@name='action_update_quantity_on_hand']" position="attributes">
-                    <attribute name="groups">custom_govar.permission_update_product_quantity</attribute>
+                    <attribute name="groups">custom_govar.accept_product</attribute>
                 </xpath>
             </field>
         </record>

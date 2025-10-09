@@ -8,8 +8,8 @@
         </record>
 
         <!-- Grupo para confirmar remisiones -->
-        <record id="group_confirm_rem" model="res.groups">
-            <field name="name">Confirmar Remisiones</field>
+        <record id="confirm_rem" model="res.groups">
+            <field name="name">Confirmar remisión Publico en General</field>
             <field name="comment">Permite confirmar remisiones</field>
         </record>
         <record id="parcial_quotation" model="res.groups">

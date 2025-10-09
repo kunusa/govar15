@@ -228,12 +228,12 @@
       <field name="res_model">remision</field>
       <field name="view_mode">tree,form</field>
       <field name="domain">[('state','=','draft')]</field>
-      <field name="groups_id" eval="[(4, ref('remisiones.group_confirm_rem'))]"/>
+      <field name="groups_id" eval="[(4, ref('remisiones.confirm_rem'))]"/>
     </record>
 
 <!-- delete="false" edit="false" create="false" --> 
     <menuitem name="Remisiones" id="menu_remisionesgovar_remisiones" parent="sale.sale_menu_root" action="action_remisionesgovar_remisiones"/>
-    <menuitem name="Remisiones cerradas" id="menu_close_remisiones" parent="sale.sale_menu_root" action="action_remisionesgovar_close_remisiones"/>
-    <menuitem name="Pendientes a validar CyC" id="menu_validate_remisiones" parent="account.menu_finance_receivables" sequence="103" action="action_remisionesgovar_validate_remisiones"/>
+    <menuitem name="Remisiones cerradas" id="menu_close_remisiones" parent="sale.sale_menu_root" action="action_remisionesgovar_close_remisiones" groups="remisiones.group_close_remision"/>
+    <menuitem name="Pendientes a validar CyC" id="menu_validate_remisiones" parent="account.menu_finance_receivables" sequence="103" action="action_remisionesgovar_validate_remisiones" groups="remisiones.confirm_rem"/>
   </data>
 </odoo>
