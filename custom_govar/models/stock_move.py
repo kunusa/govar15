@@ -45,3 +45,25 @@ class StockMove(models.Model):
         readonly=True,
         help="Unidad de medida del producto"
     )
+
+    stock_popup = fields.Text(string='ST', compute="_get_stock_popup")
+
+    @api.depends('product_id')
+    def _get_stock_popup(self):
+        for rec in self:
+            if rec.product_id:
+                stock_string = ""
+                warehouse_obj = self.env['stock.warehouse']
+                product = rec.product_id
+                
+                # Buscar almacenes que se muestren en ventas
+                warehouse_list = warehouse_obj.search([('view_on_sale', '=', True)])
+                
+                for warehouse in warehouse_list:
+                    # Obtener cantidad disponible en el almacén específico
+                    available_qty = product.with_context(warehouse=warehouse.id).qty_available
+                    stock_string += f"{warehouse.code} -> {available_qty}\n"
+                
+                rec.stock_popup = stock_string
+            else:
+                rec.stock_popup = ""

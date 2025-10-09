@@ -145,7 +145,7 @@
                 <page name="Lineas" string="Productos">
                   <field name="remisiones_line_id" attrs="{'readonly': [('state','!=','draft')]}">
                     <tree string="Lineas de Captura" colors="blue:product_to_invoice > 0">
-                      <!-- <field name="avaible_stock"/> -->
+                      <field name="stock_popup"/>
                       <field name="producto" string="Producto" options="{'no_create': True, 'no_open': True}" domain="[('active', '=', True)]"/>
                       <field name="description" />
                       <field name="inernt_category" readonly="1"/>

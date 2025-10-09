@@ -11,6 +11,9 @@
                     <field name="categ_id" string="Categoria"/>
                     <field name="uom_id" string="Unidad de medida"/>
                 </xpath>
+                <xpath expr="//field[@name='move_ids_without_package']/tree//field[@name='product_uom_qty']" position="before">
+                    <field name="stock_popup" />
+                </xpath>
                 <xpath expr="//field[@name='move_ids_without_package']" position="after">
                     <table>
                         <tr>

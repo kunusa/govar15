@@ -765,7 +765,27 @@ class remisiones_line(models.Model):
     # category_layout =fields.Many2one(comodel_name='sale.layout_category', string="Sección")
     delivery_time = fields.Integer(string="Tiempo inicial entrega")
     quantity_delivery = fields.Integer(string="Cantidad Entregada")
+    stock_popup = fields.Text(string='ST', compute="_get_stock_popup")
 
+    @api.depends('producto')
+    def _get_stock_popup(self):
+        for rec in self:
+            if rec.producto:
+                stock_string = ""
+                warehouse_obj = self.env['stock.warehouse']
+                product = rec.producto
+                
+                # Buscar almacenes que se muestren en ventas
+                warehouse_list = warehouse_obj.search([('view_on_sale', '=', True)])
+                
+                for warehouse in warehouse_list:
+                    # Obtener cantidad disponible en el almacén específico
+                    available_qty = product.with_context(warehouse=warehouse.id).qty_available
+                    stock_string += f"{warehouse.code} -> {available_qty}\n"
+                
+                rec.stock_popup = stock_string
+            else:
+                rec.stock_popup = ""
     
                      
     
@@ -773,12 +793,7 @@ class remisiones_line(models.Model):
     def onchange_importe(self):
         """Calcula el importe automáticamente"""
         for line in self:
-            print("****************")
-            print("Entrooo")
-            print(line.cantidad)
-            print(line.valor_unitario)
-            print(line.cantidad * line.valor_unitario)
-            print("****************")
+
             line.importe = line.cantidad * line.valor_unitario
 
     @api.depends('remisiones_line_id.importe')

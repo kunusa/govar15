@@ -40,7 +40,7 @@ class SaleOrderLine(models.Model):
                 for warehouse in warehouse_list:
                     # Obtener cantidad disponible en el almacén específico
                     available_qty = product.with_context(warehouse=warehouse.id).qty_available
-                    stock_string += f"{warehouse.name} ({warehouse.code}) -> {available_qty}\n"
+                    stock_string += f"{warehouse.code} -> {available_qty}\n"
                 
                 rec.stock_popup = stock_string
             else:
