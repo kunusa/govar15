@@ -9,3 +9,14 @@ class ResCompanyInherit(models.Model):
     rfc_to_send = fields.Char(string = 'Rfc para envio')
     slogan = fields.Char(string='Slogan')
     message_stock = fields.Boolean('Mensaje stock')
+    banks_line_id =fields.One2many(comodel_name='banks.company',inverse_name='id_bank',index=True)
+
+class res_company_field(models.Model):
+	_name = 'banks.company'
+
+	name = fields.Char(string = 'Nombre')
+	account = fields.Char(string = 'Cuenta')
+	clabe = fields.Char(string = 'Clabe interbancaria')
+	id_bank = fields.Many2one(inverse_name='banks_line_id',comodel_name="res.company", string="Bancos",invisible=True)
+	secuence = fields.Integer(string = 'Secuencia')
+    

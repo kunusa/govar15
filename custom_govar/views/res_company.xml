@@ -16,4 +16,26 @@
             </xpath>
         </field>
     </record>
+
+        <record model="ir.ui.view" id="view_company_banks_form_inherit" >
+            <field name="name">res.company.banks.form</field>
+            <field name="model">res.company</field>
+            <field name="inherit_id" ref="base.view_company_form"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//notebook" position="inside">
+                    <page string="Bancos" >
+                        <field name = "banks_line_id">
+                            <tree >
+                                <field name="secuence"/>
+                                <field name="name"/>
+                                <field name="account" />
+                                <field name="clabe" />
+                            </tree>
+                        </field>                
+                    </page>  
+                </xpath>    
+            </field>
+        </record> 
+
 </odoo>
