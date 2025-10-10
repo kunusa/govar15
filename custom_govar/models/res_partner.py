@@ -5,6 +5,60 @@ import base64
 class ResPartner(models.Model):
     _inherit = 'res.partner'
 
+    credit_note_count = fields.Integer(string='Notas de Crédito', compute='_compute_credit_note_count')
+    cancelled_invoice_count = fields.Integer(string='Facturas Canceladas', compute='_compute_cancelled_invoice_count')
+
+    @api.depends()
+    def _compute_credit_note_count(self):
+        """Calcula el número de notas de crédito del partner"""
+        for partner in self:
+            partner.credit_note_count = self.env['account.move'].search_count([
+                ('partner_id', '=', partner.id),
+                ('move_type', '=', 'out_refund')
+            ])
+
+    @api.depends()
+    def _compute_cancelled_invoice_count(self):
+        """Calcula el número de facturas canceladas del partner"""
+        for partner in self:
+            partner.cancelled_invoice_count = self.env['account.move'].search_count([
+                ('partner_id', '=', partner.id),
+                ('move_type', '=', 'out_invoice'),
+                ('state', '=', 'cancel')
+            ])
+
+    def action_view_credit_notes(self):
+        """Abre la vista de notas de crédito del partner"""
+        self.ensure_one()
+        action = {
+            'name': 'Notas de Crédito',
+            'type': 'ir.actions.act_window',
+            'res_model': 'account.move',
+            'view_mode': 'tree,form',
+            'domain': [('partner_id', '=', self.id), ('move_type', '=', 'out_refund')],
+            'context': {
+                'default_partner_id': self.id,
+                'default_move_type': 'out_refund'
+            }
+        }
+        return action
+
+    def action_view_cancelled_invoices(self):
+        """Abre la vista de facturas canceladas del partner"""
+        self.ensure_one()
+        action = {
+            'name': 'Facturas Canceladas',
+            'type': 'ir.actions.act_window',
+            'res_model': 'account.move',
+            'view_mode': 'tree,form',
+            'domain': [('partner_id', '=', self.id), ('move_type', '=', 'out_invoice'), ('state', '=', 'cancel')],
+            'context': {
+                'default_partner_id': self.id,
+                'default_move_type': 'out_invoice'
+            }
+        }
+        return action
+
     def get_message_post(self, message):
         display_msg = f"""
                         <p> El cliente ha sido {message} por {self.write_uid.partner_id.name} </p>
