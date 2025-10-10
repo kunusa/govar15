@@ -13,6 +13,7 @@
             <xpath expr="//field[@name='currency_id']" position="after">
                 <field name="rfc_to_send"/>
                 <field name="slogan" string="Lema"/>
+                <field name="message_stock"/>
             </xpath>
         </field>
     </record>
