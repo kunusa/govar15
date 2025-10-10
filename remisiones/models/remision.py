@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-
+from odoo.tools import float_compare
 from datetime import date, datetime, timedelta
 from odoo import api, fields, models, _,SUPERUSER_ID
 from odoo import exceptions
@@ -848,17 +848,50 @@ class remisiones_line(models.Model):
 
 
 
-    # @api.onchange('producto')
-    # def _get_stock_popup_rem(self):
-    #     for rec in self:
-    #         stock_string=""
-    #         warehouse_obj = self.env['stock.warehouse']
-    #         product = self.env['product.product'].search([('product_tmpl_id','=',rec.producto.id)])
-    #         warehouse_list = warehouse_obj.search([('view_on_sale','=',True)])
-    #         for warehouse in  warehouse_list:
-    #             available_qty = product.with_context({'warehouse' : warehouse.id}).free_qty
-    #             stock_string = stock_string + warehouse.code + " -> " + str(available_qty) + ("\n")
-    #         rec.avaible_stock=stock_string
+    @api.onchange('cantidad', 'unidad_medida')
+    def _onchange_product_id_check_availability(self):
+        
+        if not self.producto or not self.cantidad or not self.unidad_medida:
+            return {}
+
+
+        if self.producto.type == 'product':
+            precision = self.env['decimal.precision'].precision_get('Product Unit of Measure')
+            product_qty = self.unidad_medida._compute_quantity(self.cantidad, self.producto.uom_id)
+            if float_compare(self.producto.virtual_available, product_qty, precision_digits=precision) == -1:
+                # Check if product is Make To Order (MTO) - if so, no warning needed
+                if not self._is_mto_route():
+                    warning_mess = {
+                        'title': _('¡No hay suficiente inventario!'),
+                        'message': _('Usted planea vender %s %s pero solo tiene %s %s disponible!\nEl stock disponible es %s %s. ') % \
+                            (self.cantidad, self.unidad_medida.name, self.producto.virtual_available, self.producto.uom_id.name, self.producto.qty_available, self.producto.uom_id.name)
+                    }
+                    return {'warning': warning_mess}
+        return {}
+
+    def _is_mto_route(self):
+        """
+        Check if the product is configured for Make To Order (MTO) route.
+        If it's MTO, no stock warning should be shown.
+        """
+        self.ensure_one()
+        if not self.producto or not self.id_precotizador.default_warehouse:
+            return False
+            
+        # Get product routes
+        product_routes = self.producto.route_ids + self.producto.categ_id.total_route_ids
+        
+        # Check MTO route
+        mto_route = self.id_precotizador.default_warehouse.mto_pull_id.route_id
+        if not mto_route:
+            try:
+                mto_route = self.env['stock.warehouse']._find_global_route('stock.route_warehouse0_mto', _('Make To Order'))
+            except:
+                # If MTO route not found, treat as MTS (Make To Stock)
+                return False
+        
+        # Return True if MTO route is in product routes
+        return mto_route and mto_route in product_routes
 
 
 

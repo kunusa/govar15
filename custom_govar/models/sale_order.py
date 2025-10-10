@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from odoo import models, api, fields
-
+from odoo import models, api, fields, _
+from odoo.tools import float_compare
 
 
 class SaleOrderLine(models.Model):
@@ -60,3 +60,48 @@ class SaleOrderLine(models.Model):
             for l in line.order_id.order_line:
                 no += 1
                 l.sequence_ref = no  
+
+    @api.onchange('product_uom_qty', 'product_uom')
+    def _onchange_product_id_check_availability(self):
+        
+        if not self.product_id or not self.product_uom_qty or not self.product_uom:
+            return {}
+
+        if self.env.user.company_id.message_stock == False and not self.user_has_groups('custom_govar.avoid_message_stock'):
+            if self.product_id.type == 'product':
+                precision = self.env['decimal.precision'].precision_get('Product Unit of Measure')
+                product_qty = self.product_uom._compute_quantity(self.product_uom_qty, self.product_id.uom_id)
+                if float_compare(self.product_id.virtual_available, product_qty, precision_digits=precision) == -1:
+                    # Check if product is Make To Order (MTO) - if so, no warning needed
+                    if not self._is_mto_route():
+                        warning_mess = {
+                            'title': _('¡No hay suficiente inventario!'),
+                            'message': _('Usted planea vender %s %s pero solo tiene %s %s disponible!\nEl stock disponible es %s %s. ') % \
+                                (self.product_uom_qty, self.product_uom.name, self.product_id.virtual_available, self.product_id.uom_id.name, self.product_id.qty_available, self.product_id.uom_id.name)
+                        }
+                        return {'warning': warning_mess}
+        return {}
+
+    def _is_mto_route(self):
+        """
+        Check if the product is configured for Make To Order (MTO) route.
+        If it's MTO, no stock warning should be shown.
+        """
+        self.ensure_one()
+        if not self.product_id or not self.order_id.warehouse_id:
+            return False
+            
+        # Get product routes
+        product_routes = self.route_id or (self.product_id.route_ids + self.product_id.categ_id.total_route_ids)
+        
+        # Check MTO route
+        mto_route = self.order_id.warehouse_id.mto_pull_id.route_id
+        if not mto_route:
+            try:
+                mto_route = self.env['stock.warehouse']._find_global_route('stock.route_warehouse0_mto', _('Make To Order'))
+            except:
+                # If MTO route not found, treat as MTS (Make To Stock)
+                return False
+        
+        # Return True if MTO route is in product routes
+        return mto_route and mto_route in product_routes
