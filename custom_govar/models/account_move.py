@@ -6,6 +6,7 @@ from odoo.exceptions import UserError
 class accountMoveInherit(models.Model):
     _inherit = 'account.move'
 
+    email_message = fields.Char("Mensaje enviado")
 
     def action_post(self):
         """

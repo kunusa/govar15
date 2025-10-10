@@ -18,15 +18,14 @@ class accountInvoiceSendEmail(models.Model):
 
 
     def check_invoices(self,date_from,date_to):
-        
 
-        query = """SELECT am.destination_invoice, am.invoice_date_due, am.state, am.invoice_origin, rp.name, am.invoice_date, am.cfdi_fecha_timbrado, am.email_message, am.name, aj.name as diario, ct.nombre as metodo_pago, rpn.name as comercial, am.amount_total, am.amount_residual FROM account_move am
+        query = f"""SELECT am.destination_invoice, am.invoice_date_due, am.state, am.invoice_origin, rp.name, am.invoice_date, am.fecha_timbrado, am.email_message, am.name, aj.name as diario, ct.c_metodo_pago as metodo_pago, rpn.name as comercial, am.amount_total, am.amount_residual FROM account_move am
         inner join res_partner rp on rp.id = am.partner_id
         inner join account_journal aj on aj.id = am.journal_id
-        inner join catalogo_sat ct on ct.id = am.metodo_pago_id
+        inner join cfdi_metodo_pago ct on ct.id = am.metodo_pago_id
         inner join res_users rus on rus.id = am.invoice_user_id
         inner join res_partner rpn on rpn.id = rus.partner_id
-        where am.state = 'posted' and am.move_type = 'out_invoice' and am.invoice_date BETWEEN '{}' AND '{}' """.format(date_from,date_to)
+        where am.state = 'posted' and am.move_type = 'out_invoice' and am.invoice_date BETWEEN '{date_from}' AND '{date_to}' """
 
         self.env.cr.execute(query)
         invoices = self.env.cr.dictfetchall()

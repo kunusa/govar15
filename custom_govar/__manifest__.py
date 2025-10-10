@@ -24,6 +24,7 @@
 
     # always loaded
     'data': [
+        'data/data.xml',
         'security/security.xml',
         'security/ir.model.access.csv',
         'views/denied_product.xml',
