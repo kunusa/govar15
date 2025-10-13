@@ -28,6 +28,37 @@
             </field>
         </record>
 
+        <!--Email block client one year-->
+        <record id="block_email_one_year_template" model="mail.template">
+            <field name="name">block.email.one.year.template</field>
+            <field name="lang">${object.lang}</field>
+            <field name="model_id" ref="model_res_partner"/>
+            <field name="auto_delete" eval="True"/>
+            <field name="body_html">
+                <![CDATA[
+                <p>${object.get_data_base()}</p>
+                <p>Clientes bloqueados sin movimientos</p>
+                </br>
+                ${object.block_customers | safe}
+                </br></br>
+                ]]>
+            </field>
+        </record>
+
+        <!--Email block client one year-->
+        <record id="block_email_one_year_non_template" model="mail.template">
+            <field name="name">block.email.one.year.non.template</field>
+            <field name="lang">${object.lang}</field>
+            <field name="model_id" ref="model_res_partner"/>
+            <field name="auto_delete" eval="True"/>
+            <field name="body_html">
+                <![CDATA[
+                <p>No se ha bloqueado ningun cliente</p>
+                </br></br>
+                ]]>
+            </field>
+        </record>
+
         <record id="block_email_template" model="mail.template">
             <field name="name">block.email.template</field>
             <field name="lang">${object.lang}</field>

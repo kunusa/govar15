@@ -1,5 +1,6 @@
 from odoo.exceptions import UserError
 from odoo import api, fields, models
+from datetime import datetime, date
 import base64
 
 class ResPartner(models.Model):
@@ -7,6 +8,72 @@ class ResPartner(models.Model):
 
     credit_note_count = fields.Integer(string='Notas de Crédito', compute='_compute_credit_note_count')
     cancelled_invoice_count = fields.Integer(string='Facturas Canceladas', compute='_compute_cancelled_invoice_count')
+    block_customers = fields.Html(string= 'Clientes bloqueados')
+
+
+    def block_customer(self):
+        import ipdb; ipdb.set_trace()
+        customers = self.env['res.partner'].search([('customer_rank','>',True),('active','=',True)])
+        company = self.env['res.company'].search([],limit = 1)
+        date_today = datetime.today()
+        date_today = date_today.date()
+        diff = 0
+        customer_list = [] 
+        flag_customer = False
+
+        for customer in customers:
+            if len(customer.invoice_ids) >= 1:
+                if customer.invoice_ids[0].invoice_date:
+                    old_invoice = customer.invoice_ids[0].invoice_date
+
+                    diff = abs((date_today - old_invoice).days)
+
+                    if diff >= 365 and customer.sale_warn != 'block': 
+                        customer.update({
+                            'sale_warn': "block",
+                            'sale_warn_msg': "Bloqueado por inactividad"
+                        })
+                        flag_customer = True
+                        customer_list.append(customer)
+                    if diff >= 365 and customer.sale_warn_msg == 'Bloqueado por inactividad':
+                        flag_customer = True
+                        customer_list.append(customer)						
+
+        if flag_customer == True:
+            customer.block_customers = self.create_list_customer(customer_list)
+            self.env['custom.helpers'].send_email_cp('custom_govar.block_email_one_year_template','Clientes bloqueados',self.env['ir.config_parameter'].sudo().get_param('email_block_all', ''),company.email,customer.id,'res.partner',None)
+        else:
+            self.env['custom.helpers'].send_email_cp('custom_govar.block_email_one_year_non_template','Clientes bloqueados',self.env['ir.config_parameter'].sudo().get_param('email_block_all', ''),company.email,customer.id,'res.partner',None)
+    def get_data_base(self):
+        if self.env.cr.dbname == 'Repara':
+            today = date.today()
+            date_base = f"{'Repara'} {today}"
+            return date_base
+        
+        elif self.env.cr.dbname == 'Reno':
+
+            today = date.today()
+            date_base = f"{'Reno'} {today}"
+            
+            return date_base	
+        else:
+            return ""
+        		
+
+    def create_list_customer(self,customer_list):
+        html_td = ""
+        html_td += '''<table style="with:100%;">'''
+        table = '''</table>'''
+        tr = '''<tr >''' 
+        tr2 = '''</tr>'''
+
+        for customer in customer_list:
+            html_td += tr
+            html_td += f'''<td >{customer.name}</td>'''
+            html_td += tr2
+
+        html_td += table
+        return html_td
 
     @api.depends()
     def _compute_credit_note_count(self):

@@ -42,6 +42,7 @@
         'views/purchase.xml',
         'views/stock.xml',
         'views/product.xml',
+        'views/customer_block.xml',
         'report/label_invoice.xml',
         'report/label_remision.xml',
         'report/report_overdue.xml',

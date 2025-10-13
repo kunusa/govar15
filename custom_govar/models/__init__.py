@@ -18,3 +18,4 @@ from . import purchase
 from . import stock_move
 from . import product
 from . import send_invoice
+from . import customer_block
