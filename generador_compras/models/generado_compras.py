@@ -221,6 +221,7 @@ class generador_compras(models.Model):
                 }
             # lines = []
             purchase_order = purchase_obj.create(header)
+
             for line in self.lines_ids:
             # for line in rec.env['mfg.material.extra.line'].search([('default_supplier','=',p['default_supplier'])]):
                 detail= {
@@ -234,7 +235,8 @@ class generador_compras(models.Model):
                     'order_id':purchase_order.id,
                     }
                 if line.pedido > 0:
-                    Newrow = purchase_line_obj.create(detail)
+                    purchase_line_obj.create(detail)
+
                 else:
                     continue
                 # lines.append(Newrow)
@@ -262,7 +264,7 @@ class generador_compras(models.Model):
                     'order_id':purchase_order.id,
                     }
                 if line.pedido_b > 0 :
-                    Newrow = purchase_line_obj.create(detail)
+                    purchase_line_obj.create(detail)
                 else:
                     continue
         

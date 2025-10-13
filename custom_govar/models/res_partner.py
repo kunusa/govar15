@@ -12,7 +12,7 @@ class ResPartner(models.Model):
 
 
     def block_customer(self):
-        import ipdb; ipdb.set_trace()
+
         customers = self.env['res.partner'].search([('customer_rank','>',True),('active','=',True)])
         company = self.env['res.company'].search([],limit = 1)
         date_today = datetime.today()
