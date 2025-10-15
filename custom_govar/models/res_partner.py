@@ -3,6 +3,11 @@ from odoo import api, fields, models
 from datetime import datetime, date
 import base64
 
+class ResUserInherit(models.Model):
+    _inherit = 'res.users'
+
+    default_journal = fields.Many2one(comodel_name='account.journal',string='Serie Facturacion')
+
 class ResPartner(models.Model):
     _inherit = 'res.partner'
 

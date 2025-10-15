@@ -20,7 +20,7 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'sale', 'stock', 'purchase', 'remisiones', 'account','open-facturacion'],
+    'depends': ['base', 'sale', 'stock', 'purchase', 'remisiones', 'account','open-facturacion','fixed_prices'],
 
     # always loaded
     'data': [
