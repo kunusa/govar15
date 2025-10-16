@@ -101,6 +101,12 @@ class accountMoveInherit(models.Model):
         type_account = self._context.get('type_account')
         res = super().create(vals)
 
+        if not self.env.user.default_journal.id:
+            raise UserError(_('Favor de definir el diario(serie de facturacón) del usuario.'))
+
+        if res.move_type in ['out_invoice','out_refund']:
+            res.journal_id = self.env.user.default_journal.id
+
         if res.move_type == 'out_refund' or res.move_type == 'in_refund':
 
             if vals.get('move_type') == "out_refund":
@@ -147,6 +153,14 @@ class accountMoveInherit(models.Model):
             res.ref = self._context.get('reference')
                     
         return res
+    
+            # if not self.env.user.has_group('custom_govar.craete_several_invoices_so'):
+            #     if self._context['params']['action'] in [239]:
+            #         type_c = self.env['catalogo.sat'].search([('id','=',vals.get('tipo_comprobante_id'))], limit = 1)
+            #         origin = self.env['stock.picking'].search([('origin','=',vals.get('origin'))], limit = 1)
+            #         if origin:
+            #             if origin.state != 'done' and type_c.clave != 'T':
+            #                 raise exceptions.UserError("No se puede generar una factura sin una SO validada")
         
     def _apply_account_to_lines(self, move, account_id):
         """
@@ -167,3 +181,47 @@ class accountMoveLineInherit(models.Model):
     line_delete = fields.Boolean(string=' ', default=False, store=True)
 
 
+    # def write(self, vals):
+        
+    #     res = super(accountMoveLineInherit, self).write(vals)
+        
+    #     if not self.env.user.has_group('custom_govar.craete_several_invoices_so'):
+    #         if self.origin and vals.get('invoice_line_ids') and self.type == 'out_invoice' and self.state == 'draft' and self.tipo_comprobante_id.clave != 'T':
+    #             for rec in vals.get('invoice_line_ids'):
+    #                 if rec[2] != False:      
+               
+    #                     name = rec[2].get('name')
+    #                     quantity = rec[2].get('quantity')
+    #                     product = rec[2].get('product_id')
+    #                     category = rec[2].get('uom_id')
+    #                     price = rec[2].get('price_unit')
+
+    #                     invoice_line_id = self.env['account.invoice.line'].search([('id','=',rec[1])])
+
+    #                     if product:
+    #                         product_id = self.env['product.product'].search([('id','=',product)])
+
+    #                         if product_id.product_tmpl_id.type == 'product':
+    #                             raise exceptions.UserError("No se puede agregar un producto de tipo almacenable \n de una factura con una SO validada")
+
+    #                     if len(invoice_line_id)>=1:
+    #                         if invoice_line_id.product_id.product_tmpl_id.type == 'product':
+    #                             if product: 
+    #                                 raise exceptions.UserError("No se puede modificar el producto \n de una factura con una SO validada")
+    #                             if name:
+    #                                 raise exceptions.UserError("No se puede modificar la descripción de un producto \n de una factura con una SO validada")
+    #                             if quantity and self.origin[:2] == 'SO':
+    #                                 raise exceptions.UserError("No se puede modificar la cantidad de un producto \n de una factura con una SO validada")
+    #                             if category:
+    #                                 raise exceptions.UserError("No se puede modificar la unidad de medeida de un producto \n de una factura con una SO validada")
+    #                             if price:
+    #                                 raise exceptions.UserError("No se puede modificar el precio de un producto \n de una factura con una SO validada")                 
+    #     return res
+
+    def unlink(self):
+        if not self.env.user.has_group('custom_govar.craete_several_invoices_so') and self.move_id.move_type == 'out_invoice':
+            for rec in self:
+                if rec.product_id.product_tmpl_id.type == 'product':
+                    raise exceptions.UserError("No se puede eliminar un producto tipo almacenable  \n de una factura con una SO validada")
+
+        return super(accountMoveLineInherit, self).unlink()

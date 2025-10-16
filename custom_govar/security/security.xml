@@ -20,5 +20,8 @@
 				Ver coste y precio
     		</field>
     	</record>
+        <record id="craete_several_invoices_so" model="res.groups">
+            <field name="name">Crear varias facturas desde la SO</field>
+        </record> 
   </data>
 </odoo>
