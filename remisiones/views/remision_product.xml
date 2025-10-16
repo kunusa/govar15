@@ -24,7 +24,6 @@
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='website']" position="after">
                     <field name="message_rem_mot" />
-                    <field name="list_validate" />
                 </xpath> 
                 <xpath expr="//notebook" position="inside">
                     <page string="Direcciones" >

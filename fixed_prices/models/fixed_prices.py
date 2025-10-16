@@ -38,8 +38,3 @@ class product_fixed_prices(models.Model):
 
 	fixed_list_price_ids = fields.One2many(comodel_name='fixed.prices',inverse_name='product_id')
 	currency_fixed_id = fields.Many2one(comodel_name='res.currency',string='Moneda de Costo',track_visibility='onchange')
-
-class SalePriceListPartner(models.Model):
-	_inherit = 'res.partner'
-	
-	list_num = fields.Integer(string='Lista',index=True)

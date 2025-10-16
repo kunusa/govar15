@@ -38,7 +38,6 @@ class remisionesPartner(models.Model):
 
     count_rem_p = fields.Integer(string='Remisiones', compute='_compute_remision_ids')
     rem_ids = fields.Many2many(comodel_name='remision', string= 'Remisiones')
-    less_price = fields.Boolean('Precio venta menor', help = "Activar opciones de limite de precio") 
 
     @api.depends('rem_ids')
     def _compute_remision_ids(self):
@@ -55,11 +54,8 @@ class remisionesPartner(models.Model):
 class resCmpanyRemision(models.Model):
     _inherit = 'res.company'
 
-    list_validate = fields.Boolean('Lista de precio', help = "Activa la validación de lista de precio menor a 3")
     message_rem_mot = fields.Boolean('Motivos remisión', help = "Aparece los motivos en las remisiones")
     directions_line_id =fields.One2many(comodel_name='directions.report',inverse_name='id_direction',index=True)
-
-
 
 class directions_report(models.Model):
 	_name = 'directions.report'

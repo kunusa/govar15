@@ -15,33 +15,6 @@ except ImportError:
 class saleOrderCheckInventory(models.Model):
     _inherit ='sale.order'
 	
-
-    def action_confirm(self):
-        warning = {}
-        title = False
-        message = False
-        partner = self.partner_id		
-
-        # self.validate_price()
-        if partner.sale_warn != 'no-message':
-            title = ("Warning for %s") % partner.name
-            message = partner.sale_warn_msg
-            warning = {
-                    'title': title,
-                    'message': message,
-            }
-            if partner.sale_warn == 'block':
-                raise exceptions.UserError(_('ClIENTE BLOQUEADO \n {} ').format(message))	
-
-        # Llamar al método original usando super()
-        result = super().action_confirm()
-        
-        # Ejecutar la lógica adicional después del método original
-        self.check_inventory()
-        
-        return result
-
-
     def check_inventory(self):
         products = []
         for rec in self.order_line:

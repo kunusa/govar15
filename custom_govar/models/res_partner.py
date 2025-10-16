@@ -1,7 +1,10 @@
 from odoo.exceptions import UserError
+from odoo import exceptions
 from odoo import api, fields, models
 from datetime import datetime, date
 import base64
+import re
+
 
 class ResUserInherit(models.Model):
     _inherit = 'res.users'
@@ -14,7 +17,6 @@ class ResPartner(models.Model):
     credit_note_count = fields.Integer(string='Notas de Crédito', compute='_compute_credit_note_count')
     cancelled_invoice_count = fields.Integer(string='Facturas Canceladas', compute='_compute_cancelled_invoice_count')
     block_customers = fields.Html(string= 'Clientes bloqueados')
-
 
     def block_customer(self):
 
@@ -230,3 +232,17 @@ class ResPartner(models.Model):
                 'res.partner',
                 attatchment_state
             )
+
+    @api.constrains('email')
+    def _check_email(self):
+        mail = self.email
+        if mail:
+            reg = re.findall("@", mail)
+
+            if len(reg)>1:
+                raise exceptions.UserError('No es posible agregar dos correos \n Si desea agregar mas correos utilizar el apartado de Notificaciones')
+            
+            reg = re.findall("[;,:]", mail)
+
+            if len(reg)>=1:
+                raise exceptions.UserError('No es posible  agregar dos correos \n Si desea agregar mas correos utilizar el apartado de Notificaciones')

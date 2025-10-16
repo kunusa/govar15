@@ -60,9 +60,8 @@ class DeniedProductsSave(models.TransientModel):
 		motive_desc = self.get_motive()
 
 		fecha=date.today()
-		# FIXME cambiar a lista de precios
-		preciol3=self.env['product.template'].search([('id','=',self.dps_name.id)]).list_price
-		# preciol3=self.env['fixed.prices'].search([('product_id','=',self.dps_name.id),('list_num','=',3)])
+
+		preciol3=self.env['fixed.prices'].search([('product_id','=',self.dps_name.id),('list_num','=',3)]).price
 		total=0.00
 		total=int(self.dps_cantidad)*preciol3
 		self.get_pos()
@@ -115,9 +114,7 @@ class DeniedProductsSave(models.TransientModel):
 		motive_desc = self.get_motive()
 
 		fecha=date.today()
-		# FIXME cambiar a lista de precios
-		preciol3=self.env['product.template'].search([('id','=',self.dps_name.id)]).list_price
-		# preciol3=self.env['fixed.prices'].search([('product_id','=',self.dps_name.id),('list_num','=',3)])
+		preciol3=self.env['fixed.prices'].search([('product_id','=',self.dps_name.id),('list_num','=',3)]).price
 		total=0.00
 		total=int(self.dps_cantidad)*preciol3
 		self.get_pos()

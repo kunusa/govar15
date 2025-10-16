@@ -10,7 +10,7 @@
           <field name="dp_usuario" />
           <field name="name" invisible="1" />
           <field name="dp_res_partner" />
-          <field name="dp_purchase_order" />
+          <field name="dp_purchase_order" widget="many2many_tags" />
           <field name="db_descripcion" />
           <field name="dp_code" />
           <field name="dp_motivo" />

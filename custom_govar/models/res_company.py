@@ -10,7 +10,7 @@ class ResCompanyInherit(models.Model):
     slogan = fields.Char(string='Slogan')
     message_stock = fields.Boolean('Mensaje stock')
     banks_line_id =fields.One2many(comodel_name='banks.company',inverse_name='id_bank',index=True)
-
+    list_validate = fields.Boolean('Lista de precio', help = "Activa la validación de lista de precio menor a 3")
 class res_company_field(models.Model):
 	_name = 'banks.company'
 

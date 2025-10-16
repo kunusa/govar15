@@ -25,7 +25,8 @@
         'security/ir.model.access.csv',
         'security/security.xml',
         'views/fixed_prices.xml',
-        'views/update_fixed_prices.xml'
+        'views/update_fixed_prices.xml',
+        'views/validation_fields.xml'
         
     ],
     # only loaded in demonstration mode
