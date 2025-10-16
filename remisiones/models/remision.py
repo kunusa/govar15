@@ -221,7 +221,7 @@ class remisiones(models.Model):
                 'other_terms': self[0].condiciones,
                 'package': self[0].package,
                 'destination_invoice': self[0].destiny,
-                # 'comment': order.note,
+
         })
         # Crear líneas de factura usando el método estándar de Odoo
         invoice_lines = []
@@ -303,12 +303,12 @@ class remisiones(models.Model):
                 'partner_id':line.partner_id.id,
                 'payment_term_id':line.partner_id.property_payment_term_id.id,
                 'warehouse_id':line.default_warehouse.id,
-                # 'user_id':line.partner_id.user_id.id,
+                'user_id':line.partner_id.user_id.id,
                 'picking_policy':'direct',
                 'client_order_ref':line.clave_de_cliente,
-                # 'v_observations':line.observaciones,
-                # 'v_delivery_method':line.forma_entrega,
-                # 'v_terms':line.condiciones,
+                'v_observations':line.observaciones,
+                'v_delivery_method':line.forma_entrega,
+                'v_terms':line.condiciones,
                 'origin':line.name,
             })
             line.write({'id_sale':sale.id})
@@ -319,7 +319,7 @@ class remisiones(models.Model):
                     'product_uom_qty':rec.cantidad,
                     'price_unit':rec.valor_unitario,
                     'tax_id':[(6,0,[rec.tax_id.id])],
-                    # 'price_list':rec.price_list,  # Campo no disponible en Odoo 15
+                    'price_list':rec.price_list,
                     'order_id':sale.id,
                     'name':"["+producto.default_code+"] "+producto.product_tmpl_id.name,
                     })
@@ -557,7 +557,7 @@ class remisiones(models.Model):
         partner = self.partner_id		
 
 
-        if not self.user_has_groups('remisiones.price_rem_so') and self.partner_id.less_price == False and self.partner_id.company_id.list_validate == True:
+        if not self.env.user.has_group('fixed_prices.price_rem_so') and self.partner_id.less_price == False and self.company_id.list_validate == True:
             self.validate_price_rem_3()
         
         if self.motive_flag == True:
@@ -624,11 +624,11 @@ class remisiones(models.Model):
         for rec in self.remisiones_line_id:
             if not rec.producto.id == False:
                 pass
-                # price_list_3 = self.env['fixed.prices'].sudo().search([('list_num','=',3),('product_id','=',rec.producto.id)]).price  # Modelo personalizado no disponible en Odoo 15
-                # if rec.valor_unitario < round((price_list_3 ),2 ) and rec.valor_unitario > 0.00 and price_list_3 > 0.00:
-                #     raise UserError(u"El precio unitario del producto {} no puede ser menor al precio de {}".format(rec.producto.name,round((price_list_3),2 )))  # Validación deshabilitada por modelo personalizado no disponible                 
-                # else:
-                #     rec.importe=rec.cantidad*rec.valor_unitario
+                price_list_3 = self.env['fixed.prices'].sudo().search([('list_num','=',3),('product_id','=',rec.producto.id)]).price  # Modelo personalizado no disponible en Odoo 15
+                if rec.valor_unitario < round((price_list_3 ),2 ) and rec.valor_unitario > 0.00 and price_list_3 > 0.00:
+                    raise UserError(u"El precio unitario del producto {} no puede ser menor al precio de {}".format(rec.producto.name,round((price_list_3),2 )))  # Validación deshabilitada por modelo personalizado no disponible                 
+                else:
+                    rec.importe=rec.cantidad*rec.valor_unitario
 
 
     
@@ -692,9 +692,9 @@ class remisiones(models.Model):
                 'payment_term_id':line.partner_id.property_payment_term_id.id,
                 'warehouse_id':line.default_warehouse.id,
                 'user_id':line.partner_id.user_id.id,
-                # 'picking_policy':'direct',
+                'picking_policy':'direct',
                 # 'client_order_ref':line.clave_de_cliente,
-                # 'note':line.observaciones + ' - ' + line.condiciones if line.observaciones or line.condiciones else '',
+                'note':line.observaciones + ' - ' + line.condiciones if line.observaciones or line.condiciones else '',
                 'origin':line.name,
             })
             line.write({'id_sale':sale.id})
@@ -705,7 +705,7 @@ class remisiones(models.Model):
                     'product_uom_qty':rec.cantidad,
                     'price_unit':rec.valor_unitario,
                     'tax_id':[(6,0,producto.taxes_id.ids)],
-                    # 'price_list':rec.price_list,  # Campo no disponible en Odoo 15
+                    'price_list':rec.price_list,
                     'order_id':sale.id,
                     'name': f"[{producto.default_code}] {producto.product_tmpl_id.name}",
                     })
@@ -744,10 +744,10 @@ class remisiones(models.Model):
 class remisiones_line(models.Model):
     _name = 'remision_line'
 
-    # FIXME Pendiente a precio de lista
-    # @api.depends('producto')
-    # def _compute_price_list(self):
-    #     return self.id_precotizador.partner_id.list_num
+
+    @api.depends('producto')
+    def _compute_price_list(self):
+        return self.id_precotizador.partner_id.list_num
 
     producto=fields.Many2one(string="Producto",comodel_name='product.template')
     tax_id = fields.Many2many(comodel_name='account.tax',string='Impuestos')
@@ -757,12 +757,10 @@ class remisiones_line(models.Model):
     valor_unitario=fields.Float(string="Precio unitario")
     importe=fields.Float(string="Importe", compute='_compute_importe', store=True)
     id_precotizador=fields.Many2one(inverse_name='remisiones_line_id',comodel_name="remision", string="remision",invisible=True)
-    # price_list = fields.Integer(string="Lista",default = _compute_price_list, store= True)
-    # avaible_stock = fields.Char(string='Stock', compute = '_get_stock_popup_rem')
+    price_list = fields.Integer(string="Lista",default = _compute_price_list, store= True)
     inernt_category = fields.Char(related='producto.categ_id.name',string="Categoria interna")
     product_to_invoice = fields.Float(string = 'Cantidad facturada')
     description = fields.Char(string = 'Descripcion')
-    # category_layout =fields.Many2one(comodel_name='sale.layout_category', string="Sección")
     delivery_time = fields.Integer(string="Tiempo inicial entrega")
     quantity_delivery = fields.Integer(string="Cantidad Entregada")
     stock_popup = fields.Text(string='ST', compute="_get_stock_popup")
@@ -812,23 +810,12 @@ class remisiones_line(models.Model):
             remision.total_tree = sum(line.importe for line in remision.remisiones_line_id)
 
 
-    # @api.onchange('producto')
-    # def _onchange_listprice(self):
-    #     for line in self:
-            # line.price_list = line.id_precotizador.partner_id.list_num or 1  # Campo no disponible en Odoo 15
-            # if not line.producto.id == False:
-            #     pass
-                # line.valor_unitario = self.env['fixed.prices'].sudo().search([('list_num','=',line.price_list),('product_id','=',line.producto.id)]).price  # Modelo personalizado no disponible en Odoo 15
-                # line.importe=line.cantidad*line.valor_unitario
-                # line.description = "[{}]{}".format(line.producto.default_code,line.producto.name.encode('utf-8'))
 
     @api.onchange('producto')
     def _onchange_producto(self):
         """Actualiza automáticamente precio, impuestos y descripción al seleccionar un producto"""
         for line in self:
             if line.producto:
-                # Actualizar precio unitario
-                line.valor_unitario = line.producto.list_price
                 
                 # Obtener impuestos del producto
                 if line.producto.taxes_id:
@@ -892,6 +879,22 @@ class remisiones_line(models.Model):
         
         # Return True if MTO route is in product routes
         return mto_route and mto_route in product_routes
+
+    @api.onchange("cantidad","producto")
+    def _get_valor(self):
+
+        for line in self:
+            if not line.producto.id == False:
+                line.valor_unitario = self.env['fixed.prices'].sudo().search([('list_num','=',line.price_list),('product_id','=',line.producto.id)]).price
+
+    @api.onchange("price_list")
+    def _onchange_listprice(self):
+        for line in self:
+            line.price_list = line.id_precotizador.partner_id.list_num or 1
+            if not line.producto.id == False:
+                # line.valor_unitario = self.env['fixed.prices'].sudo().search([('list_num','=',line.price_list),('product_id','=',line.producto.id)]).price
+                line.importe=line.cantidad*line.valor_unitario
+                line.description = "[{}]{}".format(line.producto.default_code,line.producto.name.encode('utf-8'))
 
 
 
