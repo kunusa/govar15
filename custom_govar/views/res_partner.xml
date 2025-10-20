@@ -26,6 +26,10 @@
                 <xpath expr="//field[@name='vat']" position="after">
                         <field name="supplier_rank" invisible="1"/>
                 </xpath>
+                <xpath expr="//field[@name='property_supplier_payment_term_id']" position="after">
+                        <field name="account_supplier" />
+                        <field name="account_creditor" />
+                </xpath>                
             </field>
         </record>
 

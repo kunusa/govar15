@@ -8,6 +8,7 @@ class StettingsConfig(models.TransientModel):
     """Add options to easily install the submodules"""
     _inherit = 'res.config.settings'
 
+    #Notificaciones
     email_product_min = fields.Char(string='Envio de correo')
     email_product_min_3 = fields.Char(string='Envio de correo')
     email_block = fields.Char(string=' ')
@@ -21,6 +22,10 @@ class StettingsConfig(models.TransientModel):
     refaund_sale_account = fields.Many2one(comodel_name="account.account", string="Cuenta de devolución sobre venta")
     discount_purchase_account = fields.Many2one(comodel_name="account.account", string="Cuenta de descuento sobre compra")
     refaund_purchase_account = fields.Many2one(comodel_name="account.account", string="Cuenta de devolución sobre compra")
+    # Cuentas
+    prov_account = fields.Char(string=' ')
+    acre_account = fields.Char(string=' ')
+    customer_account = fields.Char(string=' ')
 
     def set_values(self):
         super().set_values()
@@ -37,6 +42,10 @@ class StettingsConfig(models.TransientModel):
         self.env['ir.config_parameter'].sudo().set_param('refaund_sale_account', self.refaund_sale_account.id if self.refaund_sale_account else '')
         self.env['ir.config_parameter'].sudo().set_param('discount_purchase_account', self.discount_purchase_account.id if self.discount_purchase_account else '')
         self.env['ir.config_parameter'].sudo().set_param('refaund_purchase_account', self.refaund_purchase_account.id if self.refaund_purchase_account else '')
+        # Cuentas
+        self.env['ir.config_parameter'].sudo().set_param('prov_account', self.prov_account or '')
+        self.env['ir.config_parameter'].sudo().set_param('acre_account', self.acre_account or '')
+        self.env['ir.config_parameter'].sudo().set_param('customer_account', self.customer_account or '')
     @api.model
     def get_values(self):
         res = super().get_values()
@@ -55,6 +64,9 @@ class StettingsConfig(models.TransientModel):
             email_payment=self.env['ir.config_parameter'].sudo().get_param('email_payment', ''),
             email_users=self.env['ir.config_parameter'].sudo().get_param('email_users', ''),
             email_cyc=self.env['ir.config_parameter'].sudo().get_param('email_cyc', ''),
+            prov_account=self.env['ir.config_parameter'].sudo().get_param('prov_account', ''),
+            acre_account=self.env['ir.config_parameter'].sudo().get_param('acre_account', ''),
+            customer_account=self.env['ir.config_parameter'].sudo().get_param('customer_account', ''),
             discount_sale_account=int(discount_sale_account_id) if discount_sale_account_id and discount_sale_account_id.isdigit() else False,
             refaund_sale_account=int(refaund_sale_account_id) if refaund_sale_account_id and refaund_sale_account_id.isdigit() else False,
             discount_purchase_account=int(discount_purchase_account_id) if discount_purchase_account_id and discount_purchase_account_id.isdigit() else False,

@@ -17,6 +17,8 @@ class ResPartner(models.Model):
     credit_note_count = fields.Integer(string='Notas de Crédito', compute='_compute_credit_note_count')
     cancelled_invoice_count = fields.Integer(string='Facturas Canceladas', compute='_compute_cancelled_invoice_count')
     block_customers = fields.Html(string= 'Clientes bloqueados')
+    account_supplier = fields.Boolean(string= 'Cuenta proveedor',tracking=True)
+    account_creditor = fields.Boolean(string= 'Cuenta acreedor',tracking=True)
 
     def block_customer(self):
 
@@ -142,6 +144,57 @@ class ResPartner(models.Model):
 
     @api.model
     def create(self, vals):
+
+        if vals.get('supplier_rank') > 0 or vals.get('customer_rank') > 0:
+
+            data={
+                'name':vals['name'],
+                'reconcile':True,
+                # 'codigo_agrupador_id' : codigo_agrupador_id,
+                # 'naturaleza' : 'A',
+                # 'group_id' : group_id
+            }
+
+            if vals.get('supplier_rank') > 0:
+
+                data['user_type_id'] = 2
+
+                if vals.get('account_creditor') and vals.get('account_supplier'):
+                    raise exceptions.UserError("El proveedor solo puede tener un tipo de cuenta")					
+                if vals.get('account_creditor') == False and vals.get('account_supplier') == False:
+                    raise exceptions.UserError("Falta agregar el tipo de cuenta del proveedor \n En el apartado de Ventas y compras")	
+
+                if vals.get('account_supplier'):
+                    code = self.env['ir.config_parameter'].sudo().get_param('prov_account', '')
+                    # group_id =  self.env['account.group'].search([('code_prefix','=','201-01-0000')]).id
+                    # codigo_agrupador_id =  self.env['codigo.agrupador'].search([('description','=','Proveedores nacionales')]).id
+                elif vals.get('account_creditor'):
+                    code = self.env['ir.config_parameter'].sudo().get_param('acre_account', '')
+                    # group_id =  self.env['account.group'].search([('code_prefix','=','205-02-0000')]).id
+                    # codigo_agrupador_id =  self.env['codigo.agrupador'].search([('description','=','Acreedores diversos a corto plazo')]).id
+
+            else:
+                data['user_type_id'] = 1
+                code = self.env['ir.config_parameter'].sudo().get_param('customer_account', '')
+
+
+            query = f"""select code from account_account WHERE code LIKE '{code}' and char_length(code)>=11 order by code desc limit 1;"""
+            self.env.cr.execute(query)
+            code = self.env.cr.dictfetchall()
+            code = code[0]['code']
+            fijo = code[:7]
+            variable = int(code[7:])
+            variable += 1
+            variable = str(variable)
+            for i in range(0, 4):
+                if len(variable)<4:
+                    variable = '0{}'.format(variable)
+            code = '{}{}'.format(fijo,variable)				
+
+            data['code']= code
+            account_id = self.env['account.account'].sudo().create(data)
+            vals['property_account_payable_id'] = account_id.id
+
         res = super(ResPartner, self).create(vals)
         if res.customer_rank > 0:
             self.env['custom.helpers'].send_email_cp('custom_govar.create_client_email_template','Cliente creado',self.env['ir.config_parameter'].sudo().get_param('email_users', ''),res.create_uid.login,res.id,'res.partner',None)
