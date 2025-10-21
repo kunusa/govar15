@@ -150,14 +150,9 @@ class ResPartner(models.Model):
             data={
                 'name':vals['name'],
                 'reconcile':True,
-                # 'codigo_agrupador_id' : codigo_agrupador_id,
-                # 'naturaleza' : 'A',
-                # 'group_id' : group_id
             }
 
             if vals.get('supplier_rank') > 0:
-
-                data['user_type_id'] = 2
 
                 if vals.get('account_creditor') and vals.get('account_supplier'):
                     raise exceptions.UserError("El proveedor solo puede tener un tipo de cuenta")					
@@ -166,17 +161,23 @@ class ResPartner(models.Model):
 
                 if vals.get('account_supplier'):
                     code = self.env['ir.config_parameter'].sudo().get_param('prov_account', '')
-                    # group_id =  self.env['account.group'].search([('code_prefix','=','201-01-0000')]).id
-                    # codigo_agrupador_id =  self.env['codigo.agrupador'].search([('description','=','Proveedores nacionales')]).id
+                    codigo_agrupador_id =  self.env['codigo.agrupador'].search([('description','=','Proveedores nacionales')]).id
                 elif vals.get('account_creditor'):
                     code = self.env['ir.config_parameter'].sudo().get_param('acre_account', '')
-                    # group_id =  self.env['account.group'].search([('code_prefix','=','205-02-0000')]).id
-                    # codigo_agrupador_id =  self.env['codigo.agrupador'].search([('description','=','Acreedores diversos a corto plazo')]).id
-
+                    codigo_agrupador_id =  self.env['codigo.agrupador'].search([('description','=','Acreedores diversos a corto plazo')]).id
+                
+                if codigo_agrupador_id:
+                    data['codigo_agrupador_id'] = codigo_agrupador_id
+                data['user_type_id'] = 2
+                data['naturaleza'] = 'A'
             else:
-                data['user_type_id'] = 1
                 code = self.env['ir.config_parameter'].sudo().get_param('customer_account', '')
-
+                codigo_agrupador_id =  self.env['codigo.agrupador'].search([('description','=','Clientes nacionales')]).id
+                if codigo_agrupador_id:
+                    data['codigo_agrupador_id'] = codigo_agrupador_id
+                
+                data['user_type_id'] = 1
+                data['naturaleza'] = 'D'
 
             query = f"""select code from account_account WHERE code LIKE '{code}' and char_length(code)>=11 order by code desc limit 1;"""
             self.env.cr.execute(query)
