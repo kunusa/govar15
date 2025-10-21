@@ -7,11 +7,14 @@ class accountMoveInherit(models.Model):
     _inherit = 'account.move'
 
     email_message = fields.Char("Mensaje enviado")
+    ref = fields.Char(string='Referencia proveedor', copy=False, tracking=True)
 
     def action_post(self):
         """
         Hereda el método action_post y agrega el envío de correo
         """
+        if self.move_type == 'in_invoice' and not self.ref:
+            raise UserError(_('La referencia de proveedor es obligatoria para confirmar la factura'))
         # Llamar al método original
         result = super().action_post()
         # Enviar correo después de confirmar la factura
@@ -99,6 +102,12 @@ class accountMoveInherit(models.Model):
     @api.model
     def create(self, vals):
         type_account = self._context.get('type_account')
+
+        if  vals.get('move_type') == 'in_invoice':
+            del vals['ref']
+
+        if  vals.get('payment_reference'):
+            del vals['payment_reference']
         res = super().create(vals)
 
         if not self.env.user.default_journal.id:
