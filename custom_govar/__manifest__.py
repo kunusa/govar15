@@ -20,7 +20,7 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'sale', 'stock', 'purchase', 'remisiones', 'account','open-facturacion','fixed_prices'],
+    'depends': ['base', 'sale', 'stock', 'purchase', 'remisiones', 'account','open-facturacion','fixed_prices','mail'],
 
     # always loaded
     'data': [
@@ -43,6 +43,7 @@
         'views/stock.xml',
         'views/product.xml',
         'views/customer_block.xml',
+        'views/stock_move_line.xml',
         'report/label_invoice.xml',
         'report/label_remision.xml',
         'report/report_overdue.xml',
