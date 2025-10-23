@@ -41,7 +41,7 @@
         'views/wizard_cfdi.xml',
         'views/purchase.xml',
         'views/stock.xml',
-        'views/product.xml',
+        # 'views/product.xml',
         'views/customer_block.xml',
         'views/stock_move_line.xml',
         'report/label_invoice.xml',

@@ -61,7 +61,7 @@
             <button name="send_email_remission" type="object" string="Enviar por correo electrónico" states="draft,send,proceso,remission,to_invoice,invoiced,done"/>
             <button name="print_pdf" type="object" string="Imprimir" states="draft,proceso,remission,to_invoice,invoiced,done"/>
             <button name="crear_pickin" type="object" string="Confirmar remisión" states="draft" />
-            <button name="cancel_referral" type="object" string="Cancelar" states="draft,proceso,remission"/>
+            <button name="cancel_referral" type="object" string="Cancelar" states="draft,proceso,remission" states="draft,proceso,remission" groups="remisiones.cancel_remision"/>
             <button name="close_remision" type="object" string="Cerrar remision" class="oe_highlight" groups="remisiones.close_remision" attrs="{'invisible': [('state', '=','closed')]}"/>
             <field name="state" widget="statusbar"
             statusbar_visible="draft,proceso,send,remission,done,to_invoice,invoiced,cancelled"/>

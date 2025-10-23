@@ -28,5 +28,23 @@
 				Transferir material
     		</field>
     	</record>
+    	<record id="show_label_menu" model="res.groups">
+    		<field name="name">
+				Menu etiquetas
+    		</field>
+    	</record>
+    	<record id="permission_create_products" model="res.groups">
+    		<field name="name">
+				Permiso crear productos
+    		</field>
+    	</record>
+        <record id="permission_crete_vendors" model="res.groups">
+            <field name="name">Permiso crear proveedores</field>
+        </record>
+    	<record id="permission_create_products" model="res.groups">
+    		<field name="name">
+				Permiso crear productos
+    		</field>
+    	</record>
   </data>
 </odoo>

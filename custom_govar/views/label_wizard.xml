@@ -30,12 +30,13 @@
     <menuitem id="menu_label_wz" name="Generar etiqueta" action="create_label_wizard"
         parent="stock.menu_stock_warehouse_mgmt" />
 
-    <!-- <menuitem id="menu_label" name="Etiquetas" groups="ventas_govar.show_label_menu" />
+    <menuitem id="menu_label" name="Etiquetas" groups="custom_govar.show_label_menu" />
     <menuitem id="menu_product_label" name="Productos" action="stock.product_template_action_product"
         parent="menu_label" sequence="1" />
     <menuitem id="make_label" name="Generar etiqueta" parent="menu_label"
-        action="create_label_wizard" groups="ventas_govar.show_label_menu" sequence="2"/>
-        
+        action="create_label_wizard" groups="custom_govar.show_label_menu" sequence="2"/>
+
+     <!--    
     <menuitem id="menu_only_products" name="Inventario" groups="ventas_govar.show_products_menu" />
     <menuitem id="menu_product_only" name="Productos" action="stock.product_template_action_product"
         parent="menu_only_products" sequence="1" />

@@ -15,5 +15,10 @@
         <record id="parcial_quotation" model="res.groups">
             <field name="name">Presupuesto parcial</field>
         </record>
+    	<record id="cancel_remision" model="res.groups">
+    		<field name="name">
+				Cancelar remisiones 
+    		</field>
+    	</record>
     </data>
 </odoo>

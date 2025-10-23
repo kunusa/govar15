@@ -32,7 +32,7 @@
             <button type="object" name="return_draft" class="oe_highlight" string="Regresar a Nuevo"
               states="revision" />
             <button type="object" name="cancel_sales" class="oe_highlight" string="Cancelar"
-              states="nuevo,revision,aplicado" groups="compras_govar.close_sales" />
+              states="nuevo,revision,aplicado" groups="generador_compras.close_sales" />
             <button type="object" name="validate" class="oe_highlight" string="Validar"
               states="nuevo" />
             <field name="state" widget="statusbar"
