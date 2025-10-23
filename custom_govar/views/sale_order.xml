@@ -48,4 +48,28 @@
             </xpath>
         </field>
     </record>
+
+    <record id="view_order_form_inherit_stock" model="ir.ui.view">
+        <field name="name">sale.order.form</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Transferir" groups="custom_govar.transfer_material">
+                    <h4>Transferir material de almacen a almacen </h4>
+                    <group col="2">
+                        <field name="stock_location_id" options="{'no_create': True, 'no_open': True}"/>
+                        <field name="stock_location_dest_id" options="{'no_create': True, 'no_open': True}"/>
+                        <field name="stock_picking_type_id" options="{'no_create': True, 'no_open': True}"/>
+                        <field name="transfer_all"/>
+                    </group>
+                    <button name= "transfer_stock"  type="object"  class="oe_highlight" string= 'Transferir material'/>
+                </page>
+            </xpath>    
+            <xpath expr="//field[@name='order_line']/tree//field[@name='price_subtotal']" position="after">
+                    <field name="transfer_flag" groups="custom_govar.transfer_material" optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+
 </odoo>

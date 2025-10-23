@@ -23,5 +23,10 @@
         <record id="craete_several_invoices_so" model="res.groups">
             <field name="name">Crear varias facturas desde la SO</field>
         </record> 
+    	<record id="transfer_material" model="res.groups">
+    		<field name="name">
+				Transferir material
+    		</field>
+    	</record>
   </data>
 </odoo>

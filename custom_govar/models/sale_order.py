@@ -8,6 +8,7 @@ class SaleOrderLine(models.Model):
     _order = "sequence_ref"
 
     sequence_ref = fields.Integer('No.', compute="_sequence_ref", store = True)
+    transfer_flag = fields.Boolean(string = 'Transferir')
 
     categ_id = fields.Many2one(
         'product.category',
@@ -109,6 +110,98 @@ class SaleOrderLine(models.Model):
         
 class SaleOrderInherit(models.Model):
     _inherit ='sale.order'
+
+
+    stock_location_id = fields.Many2one(comodel_name='stock.location', string="Ubicación de origen",track_visibility='onchange')
+    stock_location_dest_id = fields.Many2one(comodel_name='stock.location', string="Ubicación de destino",track_visibility='onchange')
+    stock_picking_type_id = fields.Many2one(comodel_name='stock.picking.type', string="Tipo de Albarán",track_visibility='onchange')
+    transfer_all = fields.Boolean(string="Transferir todo el material",track_visibility='onchange')
+    state = fields.Selection(selection_add=[('close','Cerrado')])
+
+    def close_quotation(self):
+        self.action_cancel()
+        self.update({
+            'state':'close'
+        })
+        
+    def transfer_stock(self):
+        import ipdb; ipdb.set_trace()
+
+        if self.invoice_ids:
+            raise exceptions.UserError("No se puede transferir el material debido a que la SO cuenta con una factura")
+
+        if not self.stock_location_id:
+            raise exceptions.UserError("Se requiere agregar la ubicación de origen")
+        if not self.stock_location_dest_id:
+            raise exceptions.UserError("Se requiere agregar la ubicación de destino")			
+        if not self.stock_picking_type_id:
+            raise exceptions.UserError("Se requiere agregar el tipo de albarán")
+
+        view_id = self.env.ref('stock.view_picking_form').id
+
+        product = self.env['stock.picking'].create({
+                'partner_id':self.env.user.partner_id.id,
+                'origin': self.name,
+                'location_id': self.stock_location_id.id,
+                'location_dest_id':self.stock_location_dest_id.id,
+                'picking_type_id': self.stock_picking_type_id.id,
+        })
+
+        if self.transfer_all == False:
+            for rec in self.order_line:
+                
+                if rec.transfer_flag == True:
+                    product_move = self.env['stock.move'].create({
+                            'name':rec.product_id.name,
+                            'product_id':rec.product_id.id,
+                            'state':'draft',
+                            'price_unit': rec.price_unit,
+                            'product_uom_qty': rec.product_uom_qty,
+                            'procure_method': 'make_to_stock',
+                            'product_uom' : rec.product_uom.id,
+                            'location_id': self.stock_location_id.id,
+                            'location_dest_id':self.stock_location_dest_id.id,
+                            'picking_id': product.id
+                    })
+            
+
+        if self.transfer_all == True:
+            for rec in self.order_line:
+                
+                if rec.transfer_flag == False:
+                    product_move = self.env['stock.move'].create({
+                        'name':rec.product_id.name,
+                        'product_id':rec.product_id.id,
+                        'state':'draft',
+                        'price_unit': rec.price_unit,
+                        'product_uom_qty': rec.product_uom_qty,
+                        'procure_method': 'make_to_stock',
+                        'product_uom' : rec.product_uom.id,
+                        'location_id': self.stock_location_id.id,
+                        'location_dest_id':self.stock_location_dest_id.id,
+                        'picking_id': product.id
+                    })
+
+                    vals = {
+                        'transfer_flag':True
+                    }
+                    rec.write(vals)
+
+        self.transfer_all = False
+        self.stock_location_id = None
+        self.stock_location_dest_id = None
+        self.stock_picking_type_id = None
+
+        return {
+            'name': _('Returned Picking'),
+            'view_mode': 'form',
+            'view_type': 'form',
+            'res_model': 'stock.picking',
+            'res_id': product.id,
+            'type': 'ir.actions.act_window',
+            'views': [[view_id,'form']],
+
+        }
 
     def action_confirm(self):
         warning = {}
