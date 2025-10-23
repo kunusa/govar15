@@ -184,6 +184,14 @@ class accountMoveInherit(models.Model):
             # Log del error pero no interrumpir el proceso
             pass
 
+    def change_account_line_sales(self):
+        if self.invoice_line_ids and self.move_type == 'out_invoice':
+            type_account = 'sales'
+        else:
+            type_account = 'buys'
+        account = self.env['number.account'].search([(type_account,'=',True)],limit = 1)
+        for invoice_line in self.invoice_line_ids:
+            invoice_line.account_id = account.account_id
 class accountMoveLineInherit(models.Model):
     _inherit = 'account.move.line'
 

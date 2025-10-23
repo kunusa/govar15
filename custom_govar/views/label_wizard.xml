@@ -36,11 +36,11 @@
     <menuitem id="make_label" name="Generar etiqueta" parent="menu_label"
         action="create_label_wizard" groups="custom_govar.show_label_menu" sequence="2"/>
 
-     <!--    
-    <menuitem id="menu_only_products" name="Inventario" groups="ventas_govar.show_products_menu" />
+        
+    <menuitem id="menu_only_products" name="Inventario" groups="custom_govar.show_products_menu" />
     <menuitem id="menu_product_only" name="Productos" action="stock.product_template_action_product"
         parent="menu_only_products" sequence="1" />
     <menuitem id="menu_product_category" name="Categorías de productos" action="product.product_category_action_form"
-    parent="menu_only_products" sequence="1" /> -->
+    parent="menu_only_products" sequence="1" />
 
 </odoo>

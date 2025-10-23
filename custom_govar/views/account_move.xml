@@ -17,6 +17,11 @@
                 <xpath expr="//field[@name='ref']" position="replace">
                     <field name="ref" string = "Referencia proveedor"/>
                 </xpath>
+                <xpath expr="//notebook" position="inside">
+                    <page string="Cambiar No. de cuentas" groups="custom_govar.see_account_buys,account.group_account_user">
+                       <button name="change_account_line_sales" string="Cambiar cuentas" type="object"  class="oe_highlight " />
+                    </page>
+                </xpath>
           </field>
       </record>
 
