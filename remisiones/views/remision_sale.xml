@@ -37,7 +37,7 @@
                 <xpath expr="//field[@name='tag_ids']" position="after">
                     <field name="flag_other_info" invisible="1"/>
                     <field name="v_observations" string="Observaciones" attrs="{'readonly': [('flag_other_info','=',True)]}"/>
-                    <field name="v_delivery_method" string="Forma de entrega" attrs="{'readonly': [('flag_other_info','=',True)]}"/>
+                    <field name="v_delivery_method" string="Forma de entrega" required="1" attrs="{'readonly': [('flag_other_info','=',True)]}"/>
                     <field name="v_terms" string="Condiciones" attrs="{'readonly': [('flag_other_info','=',True)]}"/>
                     <field name="destiny_so" string="Destino" attrs="{'readonly': [('flag_other_info','=',True)]}"/>
                 </xpath>

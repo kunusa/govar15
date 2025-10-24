@@ -125,7 +125,6 @@ class SaleOrderInherit(models.Model):
         })
         
     def transfer_stock(self):
-        import ipdb; ipdb.set_trace()
 
         if self.invoice_ids:
             raise exceptions.UserError("No se puede transferir el material debido a que la SO cuenta con una factura")
@@ -236,3 +235,37 @@ class SaleOrderInherit(models.Model):
                     if rec.price_unit < round((price_list_3),2 )  and rec.price_unit > 0.00 and price_list_3 > 0.00:
                         raise UserError(u"El precio unitario del producto {} no puede ser menor al precio de lista tres de {}".format(rec.product_id.name,round(price_list_3,2)))  
 
+    def action_cancel(self):
+        flag_move = False
+        flag_dev = False
+
+        cancel_warning = self._show_cancel_wizard()
+        if cancel_warning:
+            return {
+                'name': _('Cancel Sales Order'),
+                'view_mode': 'form',
+                'res_model': 'sale.order.cancel',
+                'view_id': self.env.ref('sale.sale_order_cancel_view_form').id,
+                'type': 'ir.actions.act_window',
+                'context': {'default_order_id': self.id},
+                'target': 'new'
+            }
+
+        if self.picking_ids and self.name[:1] == 'S':
+            
+            flag_move =  any(move.state == 'done' and move.picking_type_code == 'outgoing' for move in self.picking_ids)
+            flag_dev =  any(move.state == 'done' and move.picking_type_code == 'incoming' for move in self.picking_ids)
+            
+            if any(invoice.state in ['posted','paid'] for invoice in self.invoice_ids) and flag_move == False and flag_dev == False:
+                raise exceptions.ValidationError('No es posible cancelar/cerrar un presupuesto que tenga una factura validada')
+            
+            if any( (move.state == 'assigned' or move.state == 'cancel') and move.picking_type_code == 'outgoing' for move in self.picking_ids):
+                return self._action_cancel()
+           
+             
+            # if flag_move and flag_dev:                
+            #     return self._action_cancel()
+            # else:
+            #     raise exceptions.ValidationError('No es posible cancelar/cerrar el presupuesto hasta devolver el material')
+        else:
+            return self._action_cancel()
