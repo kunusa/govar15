@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="update_file_form" name="Subir archivo">
+        <t t-call="website.layout">
+            <div class="container" style="max-width: 600px;">
+
+
+                    <form action="*" method="post"  class="p-4 shadow rounded bg-light">
+                        <input type="hidden" name="csrf_token"
+                            t-att-value="request.csrf_token()" />
+                        <t t-if="file_state == True">
+                            
+
+                            <div class="text-center mb-4">
+                                <i class="fa fa-check-circle fa-4x text-success mb-3"></i>
+                                <h2 class="text-success">Archivo enviado correctamente</h2>
+                            </div>
+
+                            <div class="text-center">
+                                <a href="/customer_page" class="btn btn-primary btn-lg">
+                                    <i class="fa fa-arrow-left"></i> Volver </a>
+                            </div>
+                        </t>
+                        <t t-else="file_state == False">
+                            <div class="text-center mb-4">
+                                <i class="fa fa-times-circle fa-4x text-danger mb-3"></i>
+                                <h2 class="text-denger">El archivo es demasiado grande. El tamaño máximo permitido es de 5 MB</h2>
+                            </div>
+
+                            <div class="text-center">
+                                <a href="/result/claim" class="btn btn-primary btn-lg">
+                                    <i class="fa fa-arrow-left"></i> Volver </a>
+                            </div>                        
+                        </t>
+                    </form>
+
+            </div>
+        </t>
+    </template>
+
+</odoo>

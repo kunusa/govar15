@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="claim_view_id_inherit_website" model="ir.ui.view">
+        <field name="name">website.view.form.inherit.claim</field>
+        <field name="model">website.support.ticket</field>
+        <field name="inherit_id" ref="website_support.website_support_ticket_view_form" />
+        <field name="arch" type="xml">
+
+
+            <xpath expr="//field[@name='priority_id']" position="before">
+                <field name="folio_claim" />
+            </xpath>
+            <xpath expr="//field[@name='subject']" position="after">
+                <field name="state_claim" attrs="{'invisible': [('is_claim', '=', False)]}" />
+                <field name="is_claim" invisible="1" />
+                <field name="category_claim" readonly="1" />
+            </xpath>
+            <xpath expr="//group" position="after">
+                <notebook>
+                    <page string="Reclamo">
+                        <field name="web_main_id" attrs="{'invisible': [('is_claim', '=', False)]}">
+                            <tree string="Reclamos">
+                                <field name="invoice_id"
+                                    options="{'no_create': True, 'no_open': True}" string="Factura" />
+                                <field name="product_id" string="Producto"
+                                    options="{'no_create': True, 'no_open': True}" />
+                                <field name="quantity_invoice" readonly="1"/>
+                                <field name="quantity" readonly="1" />
+                                <field name="price_unit" string="Precio unitario" readonly="1" />
+                            </tree>
+                        </field>
+                    </page>
+                    <page string="Otra información">
+                        <group col="4">
+                            <field name="mobile" readonly="1" />
+                            <field name="phone" readonly="1" />
+                            <field name="contact" readonly="1" />
+                            <field name="agent" readonly="1" />
+                        </group>
+                    </page>
+                </notebook>
+                <group col="2">
+                    <field name="support_rating" readonly="1" />
+                    <field name="support_comment" readonly="1" />
+                    <field name="close_comment" />
+                    <field name="close_time" />
+                </group>
+            </xpath>
+
+            <xpath expr="//field[@name='description']" position="attributes">
+                <attribute name="attrs">{'invisible': [('is_claim', '=', True)]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='partner_id']" position="attributes">
+                <attribute name="attrs">{'invisible': [('is_claim', '=', True)]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='ticket_number']" position="attributes">
+                <attribute name="attrs">{'invisible': [('is_claim', '=', True)]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='create_user_id']" position="attributes">
+                <attribute name="attrs">{'invisible': [('is_claim', '=', True)]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='user_id']" position="attributes">
+                <attribute name="attrs">{'invisible': [('is_claim', '=', True)]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='category']" position="attributes">
+                <attribute name="attrs">{'invisible': [('is_claim', '=', True)]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='sub_category_id']" position="attributes">
+                <attribute name="attrs">{'invisible': [('is_claim', '=', True)]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='attachment_ids']" position="attributes">
+                <attribute name="attrs">{'invisible': [('is_claim', '=', True)]}</attribute>
+            </xpath>
+            <xpath expr="//button[@name='request_approval']" position="attributes">
+                <attribute name="attrs">{'invisible': [('is_claim', '=', True)]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='approval_id']" position="attributes">
+                <attribute name="attrs">{'invisible': [('is_claim', '=', True)]}</attribute>
+            </xpath>
+            <xpath expr="//button[@name='request_approval']" position="after">
+                <button name="attend_claim" type="object"
+                    attrs="{'invisible': ['|',('is_claim', '=', False),('state_claim','!=','waiting')]}"
+                    string="Responder reclamo" />
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

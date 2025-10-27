@@ -1,0 +1,80 @@
+<odoo>
+    <template id="customer_claim_form" name="Customer Claim Page">
+        <t t-call="website.layout">
+            <!-- Botón Buscar Reclamo -->
+            <div class="col-md-12 mt16 mb16">
+                <div class="pull-right">
+                    <a href="/status/claim"
+                        class="btn btn-outline-secondary w-100">
+                        Buscar Reclamo </a>| <a href="#"
+                        class=" open-popup "> Politicas de reclamo </a>
+                </div>
+            </div>
+            <!-- Estructura del pop-up -->
+            <div class="modal fade" id="myModal" tabindex="-1" role="dialog"
+                aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="myModalLabel">Politicas</h5>
+                            <button type="button" class="close" data-dismiss="modal"
+                                aria-label="Close">
+                                <span aria-hidden="true">&#215;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Aqui van las politicas</p>
+                        </div>
+                        <div class="modal-footer">
+                            <!-- <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                Cerrar</button> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- JavaScript para manejar el clic -->
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                var popupLink = document.querySelector('.open-popup');
+                if (popupLink) {
+                popupLink.addEventListener('click', function(event) {
+                event.preventDefault(); // Evita que el enlace recargue la página
+                $('#myModal').modal('show'); // Muestra el pop-up
+                });
+                }
+                });
+            </script>
+            <!-- Formulario -->
+            <div class="container" style="max-width: 600px;">
+                <form action="/search_invoice" method="post"
+                    enctype="multipart/form-data">
+
+                    <!-- Encabezado -->
+                    <div class="container" style="text-align: center;">
+                        <h3 class="text-primary mb-4">
+                            <i class="fa fa-file-invoice"></i> Reclamo </h3>
+                    </div>
+                    <input type="hidden" name="csrf_token"
+                        t-att-value="request.csrf_token()" />
+
+                    <!-- Campo Factura -->
+                    <div class="form-group">
+                        <label for="invoice" class="font-weight-bold">Número de
+                            Factura</label>
+                        <input type="text" id="invoice" name="invoice"
+                            class="form-control text-center"
+                            placeholder="Ingrese su número de factura" required="1" />
+                    </div>
+
+                    <!-- Botón Buscar -->
+                    <div class="mt-4">
+                        <button type="submit"
+                            class="btn btn-primary btn-lg w-100">
+                            <i class="fa fa-search"></i> Buscar </button>
+                    </div>
+                </form>
+            </div>
+        </t>
+    </template>
+</odoo>

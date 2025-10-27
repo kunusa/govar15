@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="website_support_id_inherit_ticket" model="ir.ui.view">
+        <field name="name">website.support.settings.inherit</field>
+        <field name="model">website.support.settings</field>
+        <field name="inherit_id" ref="website_support.website_support_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='max_ticket_attachment_filesize']" position="after">
+                <field name="email_claim" />
+            </xpath>
+            <xpath expr="//field[@name='max_ticket_attachment_filesize']" position="after">
+                <field name="telefono_claim" />
+            </xpath>
+            <xpath expr="//field[@name='max_ticket_attachment_filesize']" position="after">
+                <field name="email_claim_show" />
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

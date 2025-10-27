@@ -1,0 +1,29 @@
+<odoo>
+    <template id="search_claim_form" name="Custom Page">
+        <t t-call="website.layout">
+            <div class="container" style="text-align: center;">
+                        <h2 class="text-primary mb-4">
+                            <i class="fa fa-file-invoice"></i> Reclamo </h2>
+            </div>
+            <div class="d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+                <div class="container" style="max-width: 600px;">
+                    <form action="/result/claim" method="post" enctype="multipart/form-data"
+                        class="p-4 shadow rounded bg-light">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" />
+                        <!-- Campo de Nombre -->
+                        <div class="form-group d-flex align-items-center mb-3">
+                            <label for="claim" class="mr-3" style="min-width: 100px;">Número de reclamo</label>
+                            <input type="text" id="claim" name="claim" class="form-control" placeholder="Ingrese su número de reclamo" required="1" />
+                        </div>
+
+                        <!-- Botón Buscar -->
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary"><i class="fa fa-search"></i>Buscar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </t>
+    </template>
+</odoo>

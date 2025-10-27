@@ -1,0 +1,36 @@
+<odoo>
+    <template id="form_sent" name="form_sent">
+        <t t-call="website.layout">
+            <!-- Contenedor principal centrado -->
+            <div class="container" style="max-width: 600px;">
+                <!-- Formulario con sombra y borde -->
+                <form action="*" method="post" class="p-4 shadow rounded bg-white text-center">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" />
+
+                    <!-- Icono de éxito -->
+                    <div class="mb-4">
+                        <i class="fa fa-check-circle fa-5x text-success"></i>
+                    </div>
+
+                    <!-- Mensaje de éxito -->
+                    <h2 class="text-success mb-3">¡Reclamo Registrado!</h2>
+                    <p class="lead"> Su reclamo ha sido registrado con éxito con el número de
+                        seguimiento: <strong>
+                            <t t-esc="claim.folio_claim" />
+                        </strong> </p>
+                    <p>
+                        En breve, nuestro agente de atención al cliente se pondrá en contacto con
+                        usted.
+                    </p>
+                    <p>Información de contacto <strong>Telefono</strong> <t t-esc="phone" /> <strong>Correo</strong> <t t-esc="email" /></p>
+                    <!-- Botón para volver al inicio -->
+                    <div class="mt-4">
+                        <a href="/customer_page" class="btn btn-primary btn-lg">
+                            <i class="fa fa-home"></i> Volver al Inicio </a>
+                    </div>
+                </form>
+
+            </div>
+        </t>
+    </template>
+</odoo>

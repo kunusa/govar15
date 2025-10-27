@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_wizard_claimform" model="ir.ui.view">
+        <field name="name">wizard.claim.form</field>
+        <field name="model">claim.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Mensaje">
+                <script>
+                    $(document).ready(function(){
+                    $('.modal-dialog').css({'width': '50%', 'height': '70%'});
+                    $('.modal-content').css({'height': '50%'});
+                    $('.modal-body').css({'height': '50%'});
+                    });
+                </script>
+                <group>
+                    <field name="note_claim" string="Motivo" required="1"/>
+                </group>
+                <footer>
+                    <button string="Aceptar reclamo" type="object" name="accept_claim" class="btn-primary" />
+                    <button string="Rechazar reclamo" type="object" name="denied_claim" class="btn-primary" />
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>
