@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="default_change_user_email_template_id" model="ir.config_parameter">
+            <field name="key">website_support.change_user_email_template_id</field>
+            <field name="value" eval="ref('website_support.support_ticket_user_change')"/>
+        </record>
+
+        <record id="default_close_ticket_email_template_id" model="ir.config_parameter">
+            <field name="key">website_support.close_ticket_email_template_id</field>
+            <field name="value" eval="ref('website_support.support_ticket_closed')"/>
+        </record>
+
+        <record id="default_staff_reply_email_template_id" model="ir.config_parameter">
+            <field name="key">website_support.staff_reply_email_template_id</field>
+            <field name="value" eval="ref('website_support.support_ticket_reply_wrapper')"/>
+        </record>
+
+        <record id="default_max_ticket_attachments" model="ir.config_parameter">
+            <field name="key">website_support.max_ticket_attachments</field>
+            <field name="value">2</field>
+        </record>
+
+        <record id="default_max_ticket_attachment_filesize" model="ir.config_parameter">
+            <field name="key">website_support.max_ticket_attachment_filesize</field>
+            <field name="value">500</field>
+        </record>
+
+        <record id="default_auto_send_survey" model="ir.config_parameter">
+            <field name="key">website_support.auto_send_survey</field>
+            <field name="value">False</field>
+        </record>
+
+        <record id="default_allow_user_signup" model="ir.config_parameter">
+            <field name="key">website_support.allow_user_signup</field>
+            <field name="value">False</field>
+        </record>
+
+        <record id="default_google_recaptcha_active" model="ir.config_parameter">
+            <field name="key">website_support.google_recaptcha_active</field>
+            <field name="value">False</field>
+        </record>
+
+        <record id="default_allow_website_priority_set" model="ir.config_parameter">
+            <field name="key">website_support.allow_website_priority_set</field>
+            <field name="value">partner</field>
+        </record>
+
+    </data>
+</odoo>

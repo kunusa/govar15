@@ -49,7 +49,7 @@ class websiteInherit(models.Model):
         
         
         #(BACK COMPATABILITY) Fail safe if no template is selected, future versions will allow disabling email by removing template
-        ticket_open_email_template = self.env['ir.model.data'].get_object('website_support', 'website_ticket_state_open').mail_template_id
+        ticket_open_email_template = self.env.ref('website_support.website_ticket_state_open').mail_template_id
         if ticket_open_email_template == False:
             ticket_open_email_template = self.env['ir.model.data'].sudo().get_object('website_support', 'support_ticket_new')
             ticket_open_email_template.send_mail(new_id.id, True)
@@ -57,9 +57,9 @@ class websiteInherit(models.Model):
             ticket_open_email_template.send_mail(new_id.id, True)
 
         #Send an email out to everyone in the category
-        notification_template = self.env['ir.model.data'].sudo().get_object('website_support', 'new_support_ticket_category')
-        support_ticket_menu = self.env['ir.model.data'].sudo().get_object('website_support', 'website_support_ticket_menu')
-        support_ticket_action = self.env['ir.model.data'].sudo().get_object('website_support', 'website_support_ticket_action')
+        notification_template = self.env.ref('website_support.new_support_ticket_category') 
+        support_ticket_menu = self.env.ref('website_support.website_support_ticket_menu')
+        support_ticket_action = self.env.ref('website_support.website_support_ticket_action') 
         for my_user in new_id.category.cat_user_ids:
             values = notification_template.generate_email(new_id.id)
             values['body_html'] = values['body_html'].replace("_ticket_url_", "web#id=" + str(new_id.id) + "&view_type=form&model=website.support.ticket&menu_id=" + str(support_ticket_menu.id) + "&action=" + str(support_ticket_action.id) ).replace("_user_name_",  my_user.partner_id.name)

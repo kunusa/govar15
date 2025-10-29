@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+
+      <record id="website_support_ticket_action_partner" model="ir.actions.act_window">
+        <field name="name">Support Tickets</field>
+        <field name="res_model">website.support.ticket</field>
+        <field name="view_mode">tree,kanban,form,graph</field>
+        <field name="help" type="html">
+            <p>
+                No se han encontrado tickets
+            </p>
+        </field>
+      </record>
+
+    </data>
+</odoo>
