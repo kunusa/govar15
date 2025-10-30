@@ -11,6 +11,13 @@ class ResUserInherit(models.Model):
 
     default_journal = fields.Many2one(comodel_name='account.journal',string='Serie Facturacion')
 
+    @api.model
+    def action_update_user_groups_view(self):
+        """Regenera la vista dinámica de grupos de usuarios."""
+        self.env['res.groups']._update_user_groups_view()
+        self.env['ir.ui.view'].clear_caches()
+        return True
+
 class ResPartner(models.Model):
     _inherit = 'res.partner'
 

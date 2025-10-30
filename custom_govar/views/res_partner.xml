@@ -44,4 +44,15 @@
             </field>
         </record>
 
+        <record id="ir_cron_update_user_groups_view" model="ir.cron">
+            <field name="name">Regenerar vista de grupos de usuarios</field>
+            <field name="model_id" ref="base.model_res_users"/>
+            <field name="state">code</field>
+            <field name="code">model.action_update_user_groups_view()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="active">True</field>
+        </record>
+
 </odoo>

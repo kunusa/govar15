@@ -147,7 +147,7 @@
             <field name="model">website.support.ticket</field>
             <field name="arch" type="xml">
                 <tree >
-                    <field name="create_user_id" invisible="True"/>
+                    <field name="create_user_id" string="Fecha de creación" invisible="True"/>
                     <field name="ticket_color" invisible="True"/>
                     <field name="create_date"/>
                     <field name="ticket_number"/>

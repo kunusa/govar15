@@ -1,11 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <template id="customer_claim_form" name="Customer Claim Page">
         <t t-call="website.layout">
             <!-- Botón Buscar Reclamo -->
             <div class="col-md-12 mt16 mb16">
                 <div class="pull-right">
-                    <a href="/status/claim"
-                        class="btn btn-outline-secondary w-100">
+                    <a href="/status/claim">
                         Buscar Reclamo </a>| <a href="#"
                         class=" open-popup "> Politicas de reclamo </a>
                 </div>

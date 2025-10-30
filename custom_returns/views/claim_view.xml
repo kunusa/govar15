@@ -57,19 +57,13 @@
             <xpath expr="//field[@name='ticket_number']" position="attributes">
                 <attribute name="attrs">{'invisible': [('is_claim', '=', True)]}</attribute>
             </xpath>
-            <xpath expr="//field[@name='create_user_id']" position="attributes">
-                <attribute name="attrs">{'invisible': [('is_claim', '=', True)]}</attribute>
-            </xpath>
             <xpath expr="//field[@name='user_id']" position="attributes">
                 <attribute name="attrs">{'invisible': [('is_claim', '=', True)]}</attribute>
             </xpath>
-            <xpath expr="//field[@name='category']" position="attributes">
+            <xpath expr="//field[@name='category_id']" position="attributes">
                 <attribute name="attrs">{'invisible': [('is_claim', '=', True)]}</attribute>
             </xpath>
             <xpath expr="//field[@name='sub_category_id']" position="attributes">
-                <attribute name="attrs">{'invisible': [('is_claim', '=', True)]}</attribute>
-            </xpath>
-            <xpath expr="//field[@name='attachment_ids']" position="attributes">
                 <attribute name="attrs">{'invisible': [('is_claim', '=', True)]}</attribute>
             </xpath>
             <xpath expr="//button[@name='request_approval']" position="attributes">

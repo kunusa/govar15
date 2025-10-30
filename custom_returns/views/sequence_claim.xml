@@ -27,7 +27,7 @@
                 'default_create_user_id': uid}</field>
             <field name="help" type="html">
                 <p>
-                    No Support Tickets found
+                    No se encontraron tickets
                 </p>
             </field>
         </record>
@@ -37,13 +37,8 @@
             <field name="model">website.support.ticket</field>
             <field name="inherit_id" ref="website_support.website_support_ticket_view_tree" />
             <field name="arch" type="xml">
-                <xpath expr="//field[@name='ticket_number_display']" position="after">
+                <xpath expr="//field[@name='ticket_number']" position="after">
                     <field name="folio_claim" />
-                </xpath>
-                <xpath expr="//field[@name='ticket_number_display']" position="after">
-                    <field name="is_claim" invisible="1" />
-                </xpath>
-                <xpath expr="//field[@name='ticket_number_display']" position="after">
                     <field name="is_claim" invisible="1" />
                 </xpath>
             </field>
