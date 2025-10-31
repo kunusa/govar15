@@ -22,6 +22,7 @@ class StettingsConfig(models.TransientModel):
     refaund_sale_account = fields.Many2one(comodel_name="account.account", string="Cuenta de devolución sobre venta")
     discount_purchase_account = fields.Many2one(comodel_name="account.account", string="Cuenta de descuento sobre compra")
     refaund_purchase_account = fields.Many2one(comodel_name="account.account", string="Cuenta de devolución sobre compra")
+    product = fields.Many2one(comodel_name="product.product", string="Producto para la nota")
     # Cuentas
     prov_account = fields.Char(string=' ')
     acre_account = fields.Char(string=' ')
@@ -42,6 +43,7 @@ class StettingsConfig(models.TransientModel):
         self.env['ir.config_parameter'].sudo().set_param('refaund_sale_account', self.refaund_sale_account.id if self.refaund_sale_account else '')
         self.env['ir.config_parameter'].sudo().set_param('discount_purchase_account', self.discount_purchase_account.id if self.discount_purchase_account else '')
         self.env['ir.config_parameter'].sudo().set_param('refaund_purchase_account', self.refaund_purchase_account.id if self.refaund_purchase_account else '')
+        self.env['ir.config_parameter'].sudo().set_param('nc_default_product_id', self.product.id if self.product else '')
         # Cuentas
         self.env['ir.config_parameter'].sudo().set_param('prov_account', self.prov_account or '')
         self.env['ir.config_parameter'].sudo().set_param('acre_account', self.acre_account or '')
@@ -71,5 +73,6 @@ class StettingsConfig(models.TransientModel):
             refaund_sale_account=int(refaund_sale_account_id) if refaund_sale_account_id and refaund_sale_account_id.isdigit() else False,
             discount_purchase_account=int(discount_purchase_account_id) if discount_purchase_account_id and discount_purchase_account_id.isdigit() else False,
             refaund_purchase_account=int(refaund_purchase_account_id) if refaund_purchase_account_id and refaund_purchase_account_id.isdigit() else False,
+            product=int(self.env['ir.config_parameter'].sudo().get_param('nc_default_product_id', '') or 0) or False,
         )
         return res

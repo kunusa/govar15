@@ -45,6 +45,7 @@
         # 'views/product.xml',
         'views/customer_block.xml',
         'views/stock_move_line.xml',
+        'views/notas_credit.xml',
         'report/label_invoice.xml',
         'report/label_remision.xml',
         'report/report_overdue.xml',

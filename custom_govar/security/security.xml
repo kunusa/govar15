@@ -60,5 +60,10 @@
 				Ver cuentas en compras 
     		</field>
     	</record>
+
+        <record id="user_descuento_promocion" model="res.groups">
+            <field name="name">Aplicar descuentos por promocion</field>
+        </record>
+
   </data>
 </odoo>
