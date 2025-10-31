@@ -203,7 +203,8 @@ class accountMoveInherit(models.Model):
         if res.move_type == 'in_invoice':
             res._onchange_allowed_purchase_ids()
             name_origin = res.invoice_line_ids.mapped('purchase_line_id.order_id')
-            res.document_origin = name_origin
+            if name_origin:
+                res.document_origin = name_origin.name
 
         if not self.env.user.default_journal.id:
             raise UserError(_('Favor de definir el diario(serie de facturacón) del usuario.'))
@@ -286,17 +287,30 @@ class accountMoveInherit(models.Model):
     def _onchange_purchase_id_custom(self):
 
         self._onchange_allowed_purchase_ids()
-        if not self.purchase_id_custom or self.move_type != 'in_invoice':
+        selected_po = self.purchase_id_custom
+        if not selected_po or self.move_type != 'in_invoice':
             return
 
         # Verificar que el proveedor coincide
-        if self.partner_id and self.purchase_id_custom.partner_id != self.partner_id:
+        if self.partner_id and selected_po.partner_id != self.partner_id:
             return {
                 'warning': {
                     'title': _('Advertencia'),
                     'message': _('El pedido de compra seleccionado no pertenece al mismo proveedor que la factura.'),
                 }
             }
+
+        # Actualizar document_origin agregando el nuevo nombre sin duplicados
+        current_origin = (self.document_origin or '').strip()
+        new_name = (selected_po.name or '').strip()
+        if new_name:
+            if current_origin:
+                parts = [p.strip() for p in current_origin.split(',') if p.strip()]
+                if new_name not in parts:
+                    parts.append(new_name)
+                self.document_origin = ','.join(parts)
+            else:
+                self.document_origin = new_name
 
         # Obtener las líneas del pedido de compra que ya están en la factura
         # En Odoo 15, usar line_ids para facturas y invoice_line_ids para compatibilidad
@@ -308,7 +322,7 @@ class accountMoveInherit(models.Model):
         # 2. Han sido recibidas (qty_received > 0)
         # 3. Tienen cantidad pendiente por facturar (qty_to_invoice > 0)
         # 4. No son de tipo display (section/note)
-        po_lines_to_add = self.purchase_id_custom.order_line.filtered(
+        po_lines_to_add = selected_po.order_line.filtered(
             lambda l: l not in existing_purchase_lines
             and not l.display_type
             and float_compare(l.qty_received, 0.0, precision_rounding=l.product_uom.rounding) > 0
@@ -344,6 +358,8 @@ class accountMoveInherit(models.Model):
             # Agregar las nuevas líneas a las líneas existentes
             # En Odoo 15, usar line_ids (el campo estándar de account.move)
             self.line_ids = self.line_ids + new_lines
+            # Recalcular impuestos, términos de pago y líneas dinámicas
+            self._recompute_dynamic_lines()
             
             # Actualizar el origen de la factura
             # Obtener todas las líneas de factura actualizadas

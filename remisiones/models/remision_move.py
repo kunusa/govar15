@@ -54,26 +54,27 @@ class productTemplateInherit(models.Model):
                 self.package = rem.package
                 self.destination_invoice=rem.destiny
 
-    @api.depends('document_origin')
+    @api.depends('document_origin', 'move_type')
     def _fill_fields(self):
         for record in self:
-            if record.document_origin:
+            # Default values to ensure assignment for every record
+            record.other_observations = False
+            record.other_delivery_method = False
+            record.other_terms = False
+
+            if record.move_type in ['out_invoice', 'out_refund'] and record.document_origin:
                 if record.document_origin[:1] == 'S':
-                    SaleOrder = self.env['sale.order'].search([('name', '=', record.document_origin)], limit=1)
-                    if SaleOrder:
-                        record.other_observations = SaleOrder.v_observations
-                        record.other_delivery_method = SaleOrder.v_delivery_method
-                        record.other_terms = SaleOrder.v_terms
+                    sale_order = self.env['sale.order'].search([('name', '=', record.document_origin)], limit=1)
+                    if sale_order:
+                        record.other_observations = sale_order.v_observations
+                        record.other_delivery_method = sale_order.v_delivery_method
+                        record.other_terms = sale_order.v_terms
                 elif record.document_origin[:3] == 'REM':
-                    rem = self.env['remision'].search([('name', '=', record.document_origin)], limit=1)
-                    if rem:
-                        record.other_observations = rem.observaciones
-                        record.other_delivery_method = rem.forma_entrega
-                        record.other_terms = rem.condiciones
-            else:
-                record.other_observations = False
-                record.other_delivery_method = False
-                record.other_terms = False
+                    remission = self.env['remision'].search([('name', '=', record.document_origin)], limit=1)
+                    if remission:
+                        record.other_observations = remission.observaciones
+                        record.other_delivery_method = remission.forma_entrega
+                        record.other_terms = remission.condiciones
 
 
     def action_post(self):
