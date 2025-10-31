@@ -1,6 +1,7 @@
 from odoo import api, fields, models, _
 from odoo import exceptions
 from odoo.exceptions import UserError
+from odoo.tools.float_utils import float_compare
 
 
 class accountMoveInherit(models.Model):
@@ -8,6 +9,88 @@ class accountMoveInherit(models.Model):
 
     email_message = fields.Char("Mensaje enviado")
     ref = fields.Char(string='Referencia proveedor', copy=False, tracking=True)
+    
+    # Campo personalizado para agregar pedidos de compra (similar a Odoo 10)
+    purchase_id_custom = fields.Many2one(
+        'purchase.order',
+        string='Añadir un pedido de compra',
+        store=False,
+        readonly=True,
+        states={'draft': [('readonly', False)]},
+        domain="[('id', 'in', allowed_purchase_ids)]",
+        help="Seleccione un pedido de compra del mismo proveedor para agregar líneas recibidas y no facturadas"
+    )
+
+    # Lista de pedidos de compra permitidos para seleccionar en la factura
+    allowed_purchase_ids = fields.Many2many(
+        'purchase.order',
+        compute='_compute_allowed_purchase_ids',
+        string='Pedidos de compra disponibles',
+        store=False,
+    )
+
+    def _get_purchase_domain(self):
+        """
+        Calcula el dominio para el campo purchase_id_custom.
+        Retorna el dominio para filtrar pedidos de compra con productos por facturar.
+        """
+        # Solo ejecutar si es factura de proveedor
+        if not self.move_type or self.move_type != 'in_invoice':
+            return [('id', '=', False)]
+        
+        # Obtener las líneas de pedido de compra que ya están en la factura
+        invoice_lines = self.line_ids.filtered(lambda l: l.exclude_from_invoice_tab == False)
+        purchase_line_ids = invoice_lines.mapped('purchase_line_id')
+        purchase_ids = invoice_lines.mapped('purchase_line_id.order_id')
+        
+        # Dominio base: solo pedidos con estado "to invoice" (tienen productos por facturar)
+        # y que pertenecen al mismo proveedor
+        domain = [('invoice_status', '=', 'to invoice')]
+        if self.partner_id:
+            domain += [('partner_id', 'child_of', self.partner_id.id)]
+        if purchase_ids:
+            # Excluir pedidos que ya tienen todas sus líneas en la factura
+            domain += [('id', 'not in', purchase_ids.ids)]
+        
+        return domain
+
+
+
+    @api.depends('move_type', 'state', 'partner_id', 'line_ids.purchase_line_id', 'line_ids.exclude_from_invoice_tab')
+    def _compute_allowed_purchase_ids(self):
+        """
+        Calcula los pedidos de compra disponibles para el campo purchase_id_custom.
+        Se ejecuta al abrir/crear la factura y cuando cambian los campos relevantes.
+        """
+        PurchaseOrder = self.env['purchase.order']
+        for move in self:
+            if move.move_type != 'in_invoice' or not move.partner_id:
+                move.allowed_purchase_ids = False
+                continue
+
+            invoice_lines = move.line_ids.filtered(lambda l: not l.exclude_from_invoice_tab)
+            purchase_ids = invoice_lines.mapped('purchase_line_id.order_id')
+
+            domain = [
+                ('invoice_status', '=', 'to invoice'),
+                ('state', 'in', ['purchase', 'done']),
+                ('partner_id', 'child_of', move.partner_id.id),
+            ]
+            if purchase_ids:
+                domain += [('id', 'not in', purchase_ids.ids)]
+
+            move.allowed_purchase_ids = PurchaseOrder.search(domain)
+
+    @api.onchange('move_type', 'state', 'partner_id', 'line_ids')
+    def _onchange_allowed_purchase_ids(self):
+        """
+        Define el dominio para los pedidos de compra disponibles.
+        Se ejecuta cuando cambia move_type, state, partner_id o line_ids.
+        """
+        result = {}
+        domain = self._get_purchase_domain()
+        result['domain'] = {'purchase_id_custom': domain}
+        return result
 
     def action_post(self):
         """
@@ -115,6 +198,12 @@ class accountMoveInherit(models.Model):
         if  vals.get('payment_reference'):
             del vals['payment_reference']
         res = super().create(vals)
+        
+        # Llamar directamente al método para establecer el dominio cuando se crea una factura de proveedor
+        if res.move_type == 'in_invoice':
+            res._onchange_allowed_purchase_ids()
+            name_origin = res.invoice_line_ids.mapped('purchase_line_id.order_id')
+            res.document_origin = name_origin
 
         if not self.env.user.default_journal.id:
             raise UserError(_('Favor de definir el diario(serie de facturacón) del usuario.'))
@@ -192,6 +281,88 @@ class accountMoveInherit(models.Model):
         account = self.env['number.account'].search([(type_account,'=',True)],limit = 1)
         for invoice_line in self.invoice_line_ids:
             invoice_line.account_id = account.account_id
+
+    @api.onchange('purchase_id_custom')
+    def _onchange_purchase_id_custom(self):
+
+        self._onchange_allowed_purchase_ids()
+        if not self.purchase_id_custom or self.move_type != 'in_invoice':
+            return
+
+        # Verificar que el proveedor coincide
+        if self.partner_id and self.purchase_id_custom.partner_id != self.partner_id:
+            return {
+                'warning': {
+                    'title': _('Advertencia'),
+                    'message': _('El pedido de compra seleccionado no pertenece al mismo proveedor que la factura.'),
+                }
+            }
+
+        # Obtener las líneas del pedido de compra que ya están en la factura
+        # En Odoo 15, usar line_ids para facturas y invoice_line_ids para compatibilidad
+        invoice_lines = self.line_ids.filtered(lambda l: l.exclude_from_invoice_tab == False)
+        existing_purchase_lines = invoice_lines.mapped('purchase_line_id')
+        
+        # Filtrar líneas que:
+        # 1. No están ya en la factura
+        # 2. Han sido recibidas (qty_received > 0)
+        # 3. Tienen cantidad pendiente por facturar (qty_to_invoice > 0)
+        # 4. No son de tipo display (section/note)
+        po_lines_to_add = self.purchase_id_custom.order_line.filtered(
+            lambda l: l not in existing_purchase_lines
+            and not l.display_type
+            and float_compare(l.qty_received, 0.0, precision_rounding=l.product_uom.rounding) > 0
+            and float_compare(l.qty_to_invoice, 0.0, precision_rounding=l.product_uom.rounding) > 0
+        )
+
+        if not po_lines_to_add:
+            self.purchase_id_custom = False
+            return {
+                'warning': {
+                    'title': _('Sin líneas disponibles'),
+                    'message': _('No hay líneas recibidas y no facturadas disponibles en este pedido de compra.'),
+                }
+            }
+
+        # Preparar las nuevas líneas de factura
+        new_lines = self.env['account.move.line']
+        sequence = max(invoice_lines.mapped('sequence')) + 1 if invoice_lines else 10
+        
+        for po_line in po_lines_to_add:
+            # Usar el método estándar de Odoo 15 para preparar la línea
+            line_vals = po_line._prepare_account_move_line(self)
+            line_vals.update({'sequence': sequence})
+            new_line = new_lines.new(line_vals)
+            sequence += 1
+            # Obtener la cuenta correcta
+            new_line.account_id = new_line._get_computed_account()
+            new_line._onchange_price_subtotal()
+            new_lines += new_line
+
+        if new_lines:
+            new_lines._onchange_mark_recompute_taxes()
+            # Agregar las nuevas líneas a las líneas existentes
+            # En Odoo 15, usar line_ids (el campo estándar de account.move)
+            self.line_ids = self.line_ids + new_lines
+            
+            # Actualizar el origen de la factura
+            # Obtener todas las líneas de factura actualizadas
+            updated_invoice_lines = self.line_ids.filtered(lambda l: l.exclude_from_invoice_tab == False)
+            purchase_orders = updated_invoice_lines.mapped('purchase_line_id.order_id')
+            if purchase_orders:
+                origins = purchase_orders.mapped('name')
+                if self.invoice_origin:
+                    existing_origins = set(self.invoice_origin.split(', '))
+                    new_origins = set(origins)
+                    all_origins = existing_origins | new_origins
+                    self.invoice_origin = ', '.join(sorted(all_origins))
+                else:
+                    self.invoice_origin = ', '.join(origins)
+
+        # Limpiar el campo después de usar
+        self.purchase_id_custom = False
+
+
 class accountMoveLineInherit(models.Model):
     _inherit = 'account.move.line'
 

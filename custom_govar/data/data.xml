@@ -14,5 +14,30 @@
             <field name="doall">False</field>
             <field name="user_id" ref="base.user_root"/>
         </record>
+        
+        <!-- Cuentas contables solicitadas -->
+        <record id="account_custom_clientes" model="account.account">
+            <field name="name">Clientes</field>
+            <field name="code">105-01-0000</field>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="user_type_id" ref="account.data_account_type_receivable"/>
+            <field name="reconcile" eval="True"/>
+        </record>
+
+        <record id="account_custom_proveedores" model="account.account">
+            <field name="name">Proveedores</field>
+            <field name="code">201-01-0000</field>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="user_type_id" ref="account.data_account_type_payable"/>
+            <field name="reconcile" eval="True"/>
+        </record>
+
+        <record id="account_custom_acreedores" model="account.account">
+            <field name="name">Acreedores</field>
+            <field name="code">205-02-0000</field>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="user_type_id" ref="account.data_account_type_payable"/>
+            <field name="reconcile" eval="True"/>
+        </record>
     </data>
 </odoo>
