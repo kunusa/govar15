@@ -345,6 +345,11 @@ class accountMoveInherit(models.Model):
         for po_line in po_lines_to_add:
             # Usar el método estándar de Odoo 15 para preparar la línea
             line_vals = po_line._prepare_account_move_line(self)
+            # En modo onchange (new()), si la moneda de la OC es igual a la de la compañía,
+            # Odoo retorna currency_id=False. Eso provoca un singleton en _recompute_tax_lines
+            # al hacer browse(False). Forzamos la moneda de la factura.
+            if not line_vals.get('currency_id'):
+                line_vals['currency_id'] = self.currency_id.id
             line_vals.update({'sequence': sequence})
             new_line = new_lines.new(line_vals)
             sequence += 1
