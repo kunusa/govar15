@@ -97,7 +97,13 @@ class generador_compras(models.Model):
         start_period = fields.Datetime.from_string(end_period) - relativedelta(days=dias)
         start_period = start_period.date()
 
-        query="""Select ROW_NUMBER() OVER(ORDER BY prod.id DESC) AS  partida, prod.id as producto,prod.default_code as code,(
+        # Construir la lista de placeholders para las categorías
+        if not categorias:
+            return
+        categorias_ids = categorias if isinstance(categorias, list) else list(categorias)
+        placeholders = ','.join(['%s'] * len(categorias_ids))
+        
+        query = f"""Select ROW_NUMBER() OVER(ORDER BY prod.id DESC) AS  partida, prod.id as producto,prod.default_code as code,(
                     Select sum(case when  line.balance < 0 then line.quantity*-1
                     else line.quantity end) as qty from account_move_line as line 
                     inner join account_move as fact 
@@ -123,16 +129,17 @@ class generador_compras(models.Model):
                     from product_product as prod
                     inner join product_template as temp	
                     on temp.id=prod.product_tmpl_id
-                    where temp."type"='product' and temp.categ_id in (%s)
+                    where temp."type"='product' and temp.categ_id in ({placeholders})
                 
     """
-    
+        print("Categorias ------------------>")
+        print(placeholders)
+        print(categorias_ids)
         params = (
             start_period, end_period,  # Primer BETWEEN
             start_period, end_period,  # Segundo BETWEEN
             start_period, end_period,  # Tercer BETWEEN
-            tuple(categorias.ids) if hasattr(categorias, 'ids') else tuple(categorias)
-        )
+        ) + tuple(categorias_ids)
 
         self.env.cr.execute(query,params)
         line={}
@@ -157,21 +164,16 @@ class generador_compras(models.Model):
     def create(self, vals):
         sugeridoa = ""
         sugeridob = ""
+        dias = ""
         if vals.get('name', 'nuevo') == 'nuevo': 
-            categorias=[]
             vals['name'] = self.env['ir.sequence'].next_by_code('generador.compras') or 'Nuevo'
-            sugeridoa= vals['dias_inventario_a']
-            sugeridob= vals['dias_inventario_b']
-            dias = vals['dias_laborables']
-            for x  in  vals['product_category']:
-                word_categs=str(x)
-            word_categs = word_categs.replace('[','(').replace(']',')')
-            ids_categ=word_categs.split('(')[-1].split(')')[0]
-            ids_categ = ids_categ.replace(' ','')
-            for each in ids_categ.split(','):
-                categorias.append(each)
+            sugeridoa = vals.get('dias_inventario_a', 0)
+            sugeridob = vals.get('dias_inventario_b', 0)
+            dias = vals.get('dias_laborables', 0)
         res = super(generador_compras,self).create(vals)
-        self.fill_lines(res.id,sugeridoa,sugeridob,ids_categ,dias)
+        # Obtener los IDs de categorías directamente del registro creado
+        categorias_ids = res.product_category.ids
+        self.fill_lines(res.id, sugeridoa, sugeridob, categorias_ids, dias)
         for line in  res.lines_ids:
             line.write({'pedido':line.sugerido_a-line.stock,
                         'pedido_b':line.sugerido_b-line.stock-line.back_order-line.purchase_planning})
