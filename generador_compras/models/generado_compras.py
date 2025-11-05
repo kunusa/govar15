@@ -132,9 +132,7 @@ class generador_compras(models.Model):
                     where temp."type"='product' and temp.categ_id in ({placeholders})
                 
     """
-        print("Categorias ------------------>")
-        print(placeholders)
-        print(categorias_ids)
+
         params = (
             start_period, end_period,  # Primer BETWEEN
             start_period, end_period,  # Segundo BETWEEN

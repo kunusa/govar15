@@ -890,9 +890,10 @@ class remisiones_line(models.Model):
     @api.onchange("price_list")
     def _onchange_listprice(self):
         for line in self:
-            line.price_list = line.id_precotizador.partner_id.list_num or 1
+            if not line.price_list:
+                line.price_list = line.id_precotizador.partner_id.list_num or 1
             if not line.producto.id == False:
-                # line.valor_unitario = self.env['fixed.prices'].sudo().search([('list_num','=',line.price_list),('product_id','=',line.producto.id)]).price
+                line.valor_unitario = self.env['fixed.prices'].sudo().search([('list_num','=',line.price_list),('product_id','=',line.producto.id)]).price
                 line.importe=line.cantidad*line.valor_unitario
                 line.description = "[{}]{}".format(line.producto.default_code,line.producto.name.encode('utf-8'))
 
