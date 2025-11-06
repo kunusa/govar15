@@ -9,5 +9,10 @@
 				Precio menor lista 3
     		</field>
     	</record>
+    	<record id="cost_and_price" model="res.groups">
+    		<field name="name">
+				Ver coste y precio
+    		</field>
+    	</record>
   </data>
 </odoo>
