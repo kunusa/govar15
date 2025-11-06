@@ -27,7 +27,8 @@ class fixed_prices(models.Model):
 		for rec in self:
 			# SI NO ES MONEDA LOCAL
 			if rec.product_id.currency_fixed_id.name != 'MXN':
-				rec.price = (self.divzero(rec.product_id.standard_price,rec.product_id.currency_fixed_id.rate)) * ( 1 + rec.margin_pctg/100)
+				rec.price = (self.divzero(rec.product_id.standard_price,rec.product_id.currency_fixed_id.rate_ids[0].company_rate)) * ( 1 + rec.margin_pctg/100)
+
 			else:
 				rec.price = rec.product_id.standard_price * ( 1 + rec.margin_pctg/100)
 
