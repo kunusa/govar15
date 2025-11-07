@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<odoo>
+    <data>
+        <!-- ROLES -->
+        <record id="close_back_order" model="res.groups">
+            <field name="name">Cerrar back orders</field>
+        </record>
+    </data>
+</odoo>

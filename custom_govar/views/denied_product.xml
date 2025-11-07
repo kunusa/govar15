@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+    <record model="ir.ui.view" id="view_denied_products_tree">
+      <field name="name">denied.products.tree</field>
+      <field name="model">denied.products</field>
+      <field name="arch" type="xml">
+        <tree delete="false" edit="false" create="false">
+          <field name="dp_fecha" />
+          <field name="dp_usuario" />
+          <field name="name" invisible="1" />
+          <field name="dp_res_partner" />
+          <field name="dp_purchase_order" widget="many2many_tags" />
+          <field name="db_descripcion" />
+          <field name="dp_code" />
+          <field name="dp_motivo" />
+          <field name="dp_desc" />
+          <field name="dp_precio" sum="Total" />
+          <field name="dp_cantidad" />
+          <field name="dp_total" sum="Total" />
+        </tree>
+      </field>
+    </record>
+
+    <record id="view_denied_products_filter" model="ir.ui.view">
+      <field name="name">denied.products.select</field>
+      <field name="model">denied.products</field>
+      <field name="arch" type="xml">
+        <search string="Search Productos negados">
+          <field name="db_descripcion" string="Producto" />
+          <field name="dp_code" string="Referencia interna" />
+          <field name="dp_fecha" string="Fecha" />
+          <filter string="Producto" name="group_by_product" context="{'group_by':'name'}" />
+          <filter string="Fecha" name="group_by_date" context="{'group_by':'dp_fecha'}" />
+        </search>
+      </field>
+    </record>
+
+    <!-- Smart button en la vista de productos -->
+         <record id="remision_count_inherit_sale" model="ir.ui.view">
+            <field name="name">product.template.inherit.form</field>
+            <field name="inherit_id" ref="sale.product_template_form_view_sale_order_button" />
+            <field name="model">product.template</field>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@name='button_box']" position="inside">
+                    <button type="object"
+                        name="view_product_denied"
+                        class="oe_stat_button"
+                        icon="fa-times-circle "
+                        groups="base.group_user"
+                        string="Producto negado">
+
+                    </button>
+                </xpath>
+            </field>
+        </record>   
+
+    <record model="ir.actions.act_window" id="action_denied_products">
+      <field name="name">Productos negados</field>
+      <field name="res_model">denied.products</field>
+      <field name="view_mode">tree</field>
+      <field name="view_id" ref="view_denied_products_tree" />
+    </record>
+
+    <record model="ir.actions.act_window" id="denied_product_save_action">
+      <field name="name">Producto negado</field>
+      <field name="res_model">denied.product_save</field>
+      <field name="view_mode">form</field>
+      <field name="target">new</field>
+    </record>
+
+    <!-- Actions para menú de inventario con grupos -->
+    <record model="ir.actions.act_window" id="action_denied_products_inventory">
+      <field name="name">Productos negados</field>
+      <field name="res_model">denied.products</field>
+      <field name="view_mode">tree</field>
+      <field name="view_id" ref="view_denied_products_tree" />
+      <field name="groups_id" eval="[(4, ref('custom_govar.see_menu_product_denied'))]"/>
+    </record>
+
+    <record model="ir.actions.act_window" id="denied_product_save_action_inventory">
+      <field name="name">Producto negado</field>
+      <field name="res_model">denied.product_save</field>
+      <field name="view_mode">form</field>
+      <field name="target">new</field>
+      <field name="groups_id" eval="[(4, ref('custom_govar.see_menu_product_denied'))]"/>
+    </record>
+    <record id="denied_products_save" model="ir.ui.view">
+      <field name="name">Producto negado</field>
+      <field name="model">denied.product_save</field>
+      <field name="arch" type="xml">
+        <form>
+
+          <group col="4">
+            <field name="dps_res_partner" options="{'no_create': True, 'no_open': True}" domain="[('customer_rank', '>', 0)]" />
+            <field name="motive" string="Motivo" />
+            <field name="dps_name" string="Producto" options="{'no_create': True, 'no_open': True}" />
+            <field name="other_m" string="Descripción"
+              attrs="{'invisible': [('motive', '!=', 'other')]}" />
+            <field name="dps_cantidad" string="Cantidad" />
+          </group>
+          <group col="2">
+            <field name="dps_purchase_order" options="{'no_create': True, 'no_open': True}" widget="many2many_tags" 
+              attrs="{'invisible': [('dps_purchase_order','=',[]),('motive','!=','not_inventory')]}" readonly="1"/>
+          </group>
+
+          <footer>
+            <button name="save_close" type="object" string="Guardar y Cerrar" class="oe_highlight" />
+            <button name="save_denied_products" type="object" string="Guardar y Nuevo"  class="oe_highlight" />
+          
+            <span class="or_cancel"> / <button special="cancel" string="Cancelar" type="object"
+              class="oe_inline" />
+          </span>
+          </footer>
+        </form>
+      </field>
+    </record>
+
+    <record id="view_order_form_inherit_denied_product" model="ir.ui.view">
+        <field name="name">sale.order.form.inherit</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="%(denied_product_save_action)d" string="Producto negado" type="action"/>
+            </xpath>
+        </field>
+    </record>
+
+<!-- Menu en ventas -->
+    <menuitem name="Productos negados"
+      id="menu_denied_product"
+      parent="sale.sale_menu_root"
+    />
+
+    <menuitem name="Reporte productos negados" id="menu_denied_products_tree"
+      parent="menu_denied_product" action="action_denied_products" />
+    <menuitem name="Crear producto negado" id="menu_denied_products_wizard"
+      parent="menu_denied_product" action="denied_product_save_action" />
+
+<!-- Menu en Inventario -->
+    <menuitem name="Productos negados"
+    id="menu_denied_product_inventory"
+    parent="stock.menu_stock_warehouse_mgmt"
+    groups="custom_govar.see_menu_product_denied"
+    />
+
+    <menuitem name="Reporte productos negados" 
+    id="menu_denied_products_inventory_tree"
+    parent="menu_denied_product_inventory" 
+    groups="custom_govar.see_menu_product_denied"
+    action="action_denied_products_inventory" />
+
+    <menuitem name="Crear producto negado" 
+    id="menu_denied_products_inventory_wizard"
+    parent="menu_denied_product_inventory" 
+    groups="custom_govar.see_menu_product_denied"
+    action="denied_product_save_action_inventory" />
+
+  </data>
+</odoo>

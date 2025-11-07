@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+        <record id="user_govar_product" model="res.groups">
+            <field name="name">Permisos productos</field>
+        </record>
+    	<record id="price_rem_so" model="res.groups">
+    		<field name="name">
+				Precio menor lista 3
+    		</field>
+    	</record>
+    	<record id="cost_and_price" model="res.groups">
+    		<field name="name">
+				Ver coste y precio
+    		</field>
+    	</record>
+  </data>
+</odoo>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+<!--Tree-->
+    <record model="ir.ui.view" id="view_remisiones_line_tree">
+      <field name="name">remisiones.line.tree</field>
+      <field name="model">remision_line</field>
+      <field name="arch" type="xml">
+        <tree>
+            <field name="producto" string= "Producto" />
+            <field name="description" />
+            <field name="unidad_medida"/>
+            <field name="inernt_category" />
+            <field name="cantidad" />
+            <!-- <field name="price_list" /> -->
+            <field name="product_to_invoice"/>
+            <!-- <field name="avaible_stock" /> -->
+            <field name="valor_unitario"/>
+            <field name="id_precotizador" />
+            <field name="importe"/>
+        </tree>
+      </field>
+    </record> 
+    <record model="ir.actions.act_window" id="action_remisiones_line_tree">
+        <field name="name">Líneas de Remisión</field>
+        <field name="res_model">remision_line</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_remisiones_line_tree"/>
+    </record>
+
+  </data>
+</odoo>

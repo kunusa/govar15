@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <data>
+        <record id="remision_count_inherit_res_partner" model="ir.ui.view">
+            <field name="name">res.partner.remision.inherit.form</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="model">res.partner</field>
+            <field name="arch" type="xml">
+                <!-- Agregar el campo customer_rank a la vista -->
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="customer_rank" invisible="1"/>
+                </xpath>
+                <!-- Agregar el botón de remisiones -->
+                <xpath expr="//div[@name='button_box']" position="inside">
+                    <button type="object"
+                        name="action_view_remision_p"
+                        class="oe_stat_button"
+                        icon="fa-money"
+                        attrs="{'invisible': [('customer_rank', '=', 0)]}"
+                        groups="base.group_user">
+                        <field name="count_rem_p" widget="statinfo" string="Remisiones"/>
+                    </button>
+                </xpath>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="view_remisiones_button_tree">
+            <field name="name">Remisiones</field>
+            <field name="res_model">remision</field>
+        </record>
+
+    </data>
+</odoo>

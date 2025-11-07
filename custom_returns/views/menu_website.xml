@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+        <record id="website_menu_claim" model="website.menu" >
+            <field name="name" >Reclamo </field>
+            <field name="url" >/customer_page </field>
+            <field name="parent_id" ref = "website.main_menu"/>
+            <field name="sequence" type="int" >10 </field>
+        </record>
+</odoo>

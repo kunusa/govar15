@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Heredar la vista de stock.picking para agregar botones de remisión -->
+        <record id="view_picking_form_remision_inherit" model="ir.ui.view">
+            <field name="name">stock.picking.form.remision.inherit</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.view_picking_form"/>
+            <field name="arch" type="xml">
+                <!-- Agregar botones en el header después del botón de Cancel -->
+                <xpath expr="//header/button[@name='action_cancel']" position="after">
+                    <button name="delivered_logistic" string="Surtido Paquetería" type="object" 
+                            class="btn-primary"                 
+                            attrs="{'invisible': ['|',('flag_button', '=', True),('state','in',('waiting','done'))]}"           
+                            groups="stock.group_stock_user"/>
+                    <button name="delivered_sales" string="Surtido Mostrador" type="object" 
+                            class="btn-primary" 
+                            attrs="{'invisible': ['|',('flag_button', '=', True),('state','in',('waiting','done'))]}"
+                            groups="stock.group_stock_user"/>
+                    <button name="delivered_residence" string="Surtido Domicilio" type="object" 
+                            class="btn-primary" attrs="{'invisible': ['|',('flag_button', '=', True),('state','in',('waiting','done'))]}"
+                            groups="stock.group_stock_user"/>
+                    <button name= "parcial_remision" string= "Presupuesto parcial" type="object" class="oe_highlight" attrs="{'invisible': [('is_remision', '=', False)]}"  groups = "remisiones.parcial_quotation"/>
+                </xpath>
+                <xpath expr="//field[@name='origin']" position="after">
+                    <field name="bandera" invisible="1"/>
+                    <field name="flag_button" invisible="1"/>
+                    <field name="id_remision" invisible="1"/>
+                    <field name="is_remision" invisible="1"/>
+                    <div>
+                        <h4>
+                            <span>
+                                <field name="leabe_embarcado" string=" " class="label label-primary o_row" attrs="{'invisible': [('bandera', '!=', True)]}" nolabe="1"/>
+                            </span>
+                        </h4>
+                    </div>
+                </xpath>
+                <xpath expr="//field[@name='location_dest_id']" position="after">
+                    <field name="type_delivered" readonly="1"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

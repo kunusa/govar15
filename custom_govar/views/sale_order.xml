@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_order_form_inherit_sale_order" model="ir.ui.view">
+        <field name="name">sale.order.form.inherit</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_id']" position="attributes">
+                <attribute name="domain">[('customer_rank', '>', 0), ('active', '=', True)]</attribute>
+                <attribute name="options">{"no_create": True, "no_edit": True, "no_quick_create": True}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/tree//field[@name='product_id']" position="before">
+                <field name="sequence_ref"/>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/tree//field[@name='product_id']" position="attributes">
+                <attribute name="options">{"no_create": True, "no_edit": True}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/tree//field[@name='name']" position="after">
+                <field name="categ_id" string="Categoria"/>
+                <field name="uom_id" string="Unidad de medida"/>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/tree//field[@name='product_id']" position="before">
+                <field name="stock_popup" />
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Heredar la vista tree de sale.order para agregar el campo de entregas -->
+    <record id="view_order_tree_inherit_custom" model="ir.ui.view">
+        <field name="name">sale.order.tree.inherit.custom</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='amount_total']" position="before">
+                <field name="picking_ids" string="Movimientos" widget="many2many_tags"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Heredar la vista tree de sale.order para cotizaciones -->
+    <record id="view_quotation_tree_inherit_custom" model="ir.ui.view">
+        <field name="name">sale.order.quotation.tree.inherit.custom</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_quotation_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='amount_total']" position="before">
+                <field name="picking_ids" string="Movimientos" widget="many2many_tags"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_order_form_inherit_stock" model="ir.ui.view">
+        <field name="name">sale.order.form</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Transferir" groups="custom_govar.transfer_material">
+                    <h4>Transferir material de almacen a almacen </h4>
+                    <group col="2">
+                        <field name="stock_location_id" options="{'no_create': True, 'no_open': True}"/>
+                        <field name="stock_location_dest_id" options="{'no_create': True, 'no_open': True}"/>
+                        <field name="stock_picking_type_id" options="{'no_create': True, 'no_open': True}"/>
+                        <field name="transfer_all"/>
+                    </group>
+                    <button name= "transfer_stock"  type="object"  class="oe_highlight" string= 'Transferir material'/>
+                </page>
+            </xpath>    
+            <xpath expr="//field[@name='order_line']/tree//field[@name='price_subtotal']" position="after">
+                    <field name="transfer_flag" groups="custom_govar.transfer_material" optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

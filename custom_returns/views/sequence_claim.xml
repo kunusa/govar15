@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="seq_claim" model="ir.sequence">
+            <field name="name">Sequencia de reclamos</field>
+            <field name="code">customer.claim</field>
+            <field name="prefix">RC</field>
+            <field name="padding">4</field>
+            <field name="company_id" eval="False" />
+        </record>
+
+        <record model="ir.actions.act_window" id="action_claims">
+            <field name="name">Reclamos</field>
+            <field name="res_model">website.support.ticket</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('is_claim','=',True)]</field>
+        </record>
+
+
+        <record id="website_support_ticket_claim_action" model="ir.actions.act_window">
+            <field name="name">Support Tickets Claim</field>
+            <field name="res_model">website.support.ticket</field>
+            <field name="view_mode">tree,kanban,form,graph</field>
+            <field name="domain">[('is_claim','=',False)]</field>
+            <field name="context">{"search_default_unattended_tickets":1, 'auto_refresh': 1,
+                'default_create_user_id': uid}</field>
+            <field name="help" type="html">
+                <p>
+                    No se encontraron tickets
+                </p>
+            </field>
+        </record>
+
+        <record id="tickets_claim_fields_inherit" model="ir.ui.view">
+            <field name="name">claim.tickets.tree</field>
+            <field name="model">website.support.ticket</field>
+            <field name="inherit_id" ref="website_support.website_support_ticket_view_tree" />
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='ticket_number']" position="after">
+                    <field name="folio_claim" />
+                    <field name="is_claim" invisible="1" />
+                </xpath>
+            </field>
+        </record>
+
+        <record id="website_support_ticket_action" model="ir.actions.act_window">
+            <field name="name">Tickets</field>
+            <field name="res_model">website.support.ticket</field>
+            <field name="view_mode">tree,kanban,form,graph</field>
+            <field name="domain">[('is_claim','=',False)]</field>
+
+        </record>
+
+        <!-- Menú para acceder a la acción -->
+        <menuitem name="Reclamos" id="menu_claims"
+            parent="website_support.website_support_parent_menu" action="action_claims" />
+        
+        <menuitem name="Tickets" id="menu_claims_tickts"
+            parent="website_support.website_support_parent_menu"
+            action="website_support_ticket_claim_action" />
+
+
+    </data>
+</odoo>

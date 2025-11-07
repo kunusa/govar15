@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_account_config_settings_inherit" model="ir.ui.view">
+        <field name="name">Account Settings: Email Configuration</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="account.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='default_taxes_setting_container']" position="after">
+                <h2>Notificaciones</h2>
+                <div class="row mt16 o_settings_container" name="email_settings_container">
+                    <div class="col-12 col-lg-6 o_setting_box">
+                        <div class="o_setting_left_pane"/>
+                        <div class="o_setting_right_pane">
+                            <div class="text-muted">
+                                Correo para notificaciones de bloqueo/desbloqueo de clientes
+                            </div>
+                            <div class="content-group">
+                                <div class="row mt16">
+                                    <label for="email_block" class="col-lg-3 o_light_label"/>
+                                    <field name="email_block" string=" "/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-6 o_setting_box">
+                        <div class="o_setting_left_pane"/>
+                        <div class="o_setting_right_pane">
+                            <div class="text-muted">
+                                Correo para notificaciones generales de bloqueo
+                            </div>
+                            <div class="content-group">
+                                <div class="row mt16">
+                                    <label for="email_block_all" class="col-lg-3 o_light_label"/>
+                                    <field name="email_block_all" string=" "/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-6 o_setting_box">
+                        <div class="o_setting_left_pane"/>
+                        <div class="o_setting_right_pane">
+                            <div class="text-muted">
+                                Correo para notificaciones entre empresas
+                            </div>
+                            <div class="content-group">
+                                <div class="row mt16">
+                                    <label for="email_company" class="col-lg-3 o_light_label"/>
+                                    <field name="email_company" string=" "/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-6 o_setting_box">
+                        <div class="o_setting_left_pane"/>
+                        <div class="o_setting_right_pane">
+                            <div class="text-muted">
+                                Correo para notificaciones de pagos
+                            </div>
+                            <div class="content-group">
+                                <div class="row mt16">
+                                    <label for="email_payment" class="col-lg-3 o_light_label"/>
+                                    <field name="email_payment" string=" "/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-6 o_setting_box">
+                        <div class="o_setting_left_pane"/>
+                        <div class="o_setting_right_pane">
+                            <div class="text-muted">
+                                Notificaciones en creacion de clientes/proveedores y productos
+                            </div>
+                            <div class="content-group">
+                                <div class="row mt16">
+                                    <label for="email_users" class="col-lg-3 o_light_label"/>
+                                    <field name="email_users" string=" "/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-6 o_setting_box">
+                        <div class="o_setting_left_pane"/>
+                        <div class="o_setting_right_pane">
+                            <div class="text-muted">
+                                Notificaciones facturas pendientes de pago (CYC)
+                            </div>
+                            <div class="content-group">
+                                <div class="row mt16">
+                                    <label for="email_cyc" class="col-lg-3 o_light_label"/>
+                                    <field name="email_cyc" string=" "/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>          
+            </xpath>
+            <xpath expr="//div[@name='default_taxes_setting_container']" position="after">
+                <h2>Notas de credito</h2>
+                <div class="row mt16 o_settings_container" name="credit_note_settings_container">
+                    <div class="col-12 col-lg-6 o_setting_box">
+                        <div class="o_setting_left_pane"/>
+                        <div class="o_setting_right_pane">
+                            <div class="text-muted">
+                                Cuenta de descuento sobre venta
+                            </div>
+                            <div class="content-group">
+                                <div class="row mt16">
+                                    <label for="discount_sale_account" class="col-lg-3 o_light_label"/>
+                                    <field name="discount_sale_account" string=" "/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-6 o_setting_box">
+                        <div class="o_setting_left_pane"/>
+                        <div class="o_setting_right_pane">
+                            <div class="text-muted">
+                                Cuenta de devolución sobre venta
+                            </div>
+                            <div class="content-group">
+                                <div class="row mt16">
+                                    <label for="refaund_sale_account" class="col-lg-3 o_light_label"/>
+                                    <field name="refaund_sale_account" string=" "/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-6 o_setting_box">
+                        <div class="o_setting_left_pane"/>
+                        <div class="o_setting_right_pane">
+                            <div class="text-muted">
+                                Cuenta de descuento sobre compra
+                            </div>
+                            <div class="content-group">
+                                <div class="row mt16">
+                                    <label for="discount_purchase_account" class="col-lg-3 o_light_label"/>
+                                    <field name="discount_purchase_account" string=" "/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-6 o_setting_box">
+                        <div class="o_setting_left_pane"/>
+                        <div class="o_setting_right_pane">
+                            <div class="text-muted">
+                                Cuenta de devolución sobre compra
+                            </div>
+                            <div class="content-group">
+                                <div class="row mt16">
+                                    <label for="refaund_purchase_account" class="col-lg-3 o_light_label"/>
+                                    <field name="refaund_purchase_account" string=" "/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-6 o_setting_box">
+                        <div class="o_setting_left_pane"/>
+                        <div class="o_setting_right_pane">
+                            <div class="text-muted">
+                                Producto para la nota
+                            </div>
+                            <div class="content-group">
+                                <div class="row mt16">
+                                    <label for="product" class="col-lg-3 o_light_label"/>
+                                    <field name="product" string=" "/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+            <xpath expr="//div[@name='default_taxes_setting_container']" position="after">
+                <h2>Contabilidad cuentas</h2>
+                <div class="row mt16 o_settings_container" name="credit_note_settings_container">
+                    <div class="col-12 col-lg-6 o_setting_box">
+                        <div class="o_setting_left_pane"/>
+                        <div class="o_setting_right_pane">
+                            <div class="text-muted">
+                                Cuenta de proveedor
+                            </div>
+                            <div class="content-group">
+                                <div class="row mt16">
+                                    <label for="prov_account" class="col-lg-3 o_light_label"/>
+                                    <field name="prov_account" string=" "/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-6 o_setting_box">
+                        <div class="o_setting_left_pane"/>
+                        <div class="o_setting_right_pane">
+                            <div class="text-muted">
+                                Cuenta de acreedor
+                            </div>
+                            <div class="content-group">
+                                <div class="row mt16">
+                                    <label for="acre_account" class="col-lg-3 o_light_label"/>
+                                    <field name="acre_account" string=" "/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-6 o_setting_box">
+                        <div class="o_setting_left_pane"/>
+                        <div class="o_setting_right_pane">
+                            <div class="text-muted">
+                                Cuenta de Cliente
+                            </div>
+                            <div class="content-group">
+                                <div class="row mt16">
+                                    <label for="customer_account" class="col-lg-3 o_light_label"/>
+                                    <field name="customer_account" string=" "/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+        </field>
+    </record>
+</odoo>

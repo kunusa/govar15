@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="claim_info_form" name="Información de Factura">
+        <t t-call="website.layout">
+            <div class="container" style="max-width: 350px;">
+
+                <t t-if="ticket">
+                    <form action="/update_file" method="post" enctype="multipart/form-data" onsubmit="return validarArchivo()"
+                        class="p-4 shadow rounded bg-light">
+                        <input type="hidden" name="csrf_token"
+                            t-att-value="request.csrf_token()" />
+                        <t t-if="ticket.state_claim == 'acept'">
+                            <div class="text-center mb-4">
+                                <i class="fa fa-check-circle fa-4x text-success mb-3"></i>
+                                <h2 class="text-success">Reclamo Aceptado</h2>
+                            </div>
+                            <div class="text-center  form-group mb-3">
+                                <p class="lead">Folio de reclamo: <strong>
+                                        <t t-esc="ticket.folio_claim" />
+                                    </strong></p>
+                                <!-- Campo oculto para enviar el folio del reclamo -->
+                                <input type="hidden" name="folio_claim"
+                                    t-att-value="ticket.folio_claim" />
+                            </div>
+                            <div class="text-center form-group mb-4">
+                                <p class="lead">
+                                    <span class="text-success">Si Procede</span>
+                                </p>
+                                <p>
+                                    <t t-esc="ticket.reponse_claim" />
+                                </p>
+                                <div class="text-center form-group d-flex justify-content-center align-items-center mb-3">
+                                    <label for="attachment" class="mr-3">
+                                        Favor de adjuntar su documento
+                                    </label>
+                                    <input name="file_claim" id="file_claim" type="file" multiple="multiple" style="width: 400px;" onchange="validarArchivo()"/>
+                                </div>
+                            </div>
+                            <!-- Script para validar el tamaño del archivo -->
+                            <script>
+                                function validarArchivo() {
+                                    var archivoInput = document.getElementById("file_claim");
+                                    var archivo = archivoInput.files[0];
+
+                                    // Tamaño máximo permitido (en bytes) 3 MB = 3145728 bytes
+                                    var tamañoMaximo = 3145728;
+
+                                    if (archivo &amp;&amp; archivo.size &gt; tamañoMaximo) {
+                                        alert("El archivo es demasiado grande. El tamaño máximo permitido es de 3 MB.");
+                                        archivoInput.value = ""; // Resetea el input para que el usuario seleccione otro archivo
+                                        return false;
+                                    }
+
+                                    return true;
+                                }
+                            </script>
+                            <!-- <script>
+                                function validarArchivo() {
+                                    const archivoInput = document.getElementById(&apos;file_claim&apos;);
+                                    const archivo = archivoInput.files[0];
+
+                                    // Tamaño máximo permitido (en bytes) 3145728
+                                    const tamañoMaximo = 10; // 3 MB
+
+                                    if (archivo &amp;&amp; archivo.size &gt; tamañoMaximo) {
+                                        alert(&apos;El archivo es demasiado grande. El tamaño máximo permitido es de 3 MB.&apos;);
+                                        return false; // Evita que se envíe el formulario
+                                    }
+
+                                    return true; // Permite que se envíe el formulario
+                                }
+                            </script> -->
+                            <div class="text-center">
+                                <a href="/customer_page" class="btn btn-primary btn-lg">
+                                    <i class="fa fa-arrow-left"></i> Volver </a>
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="fa fa-file-o"></i> Enviar archivo </button>
+                            </div>
+                        </t>
+                        <t t-if="ticket.state_claim == 'refused'">
+                            <div class="text-center mb-4">
+                                <i class="fa fa-times-circle fa-4x text-danger mb-3"></i>
+                                <h2 class="text-danger">Reclamo Rechazado</h2>
+                            </div>
+                            <div class="text-center  form-group mb-3 ">
+                                <p class="lead">Folio de reclamo: <strong>
+                                        <t t-esc="ticket.folio_claim" />
+                                    </strong></p>
+                            </div>
+                            <div class="text-center  form-group mb-4">
+                                <p class="lead">
+                                    <span class="text-danger">No Procede</span>
+                                </p>
+                                <p>
+                                    <t t-esc="ticket.reponse_claim" />
+                                </p>
+                            </div>
+                            <div class="text-center">
+                                <a href="/customer_page" class="btn btn-primary btn-lg">
+                                    <i class="fa fa-arrow-left"></i> Volver </a>
+                            </div>
+                        </t>
+                        <t t-if="ticket.state_claim == 'waiting'">
+                            <div class="text-center mb-4">
+                                <i class="fa fa-hourglass-half fa-4x text-warning mb-3"></i>
+                                <h2 class="text-warning">Reclamo en Espera</h2>
+                            </div>
+                            <div class="form-group mb-4">
+                                <p class="lead">Folio de reclamo: <strong>
+                                        <t t-esc="ticket.folio_claim" />
+                                    </strong></p>
+                                <p>El reclamo está en espera para ser atendido.</p>
+                            </div>
+                            <div class="text-center">
+                                <a href="/customer_page" class="btn btn-primary btn-lg">
+                                    <i class="fa fa-arrow-left"></i> Volver </a>
+                            </div>
+                        </t>
+                    </form>
+                </t>
+                <t t-else="">
+                    <div class="text-center mb-4">
+                        <i class="fa fa-exclamation-circle fa-4x text-danger mb-3"></i>
+                        <h2 class="text-danger">Reclamo No Encontrado</h2>
+                    </div>
+                    <div class="text-center form-group mb-4">
+                        <p class="lead">No se encontró ningún reclamo con ese número.</p>
+                    </div>
+                    <div class="text-center">
+                        <a href="/customer_page" class="btn btn-primary btn-lg">
+                            <i class="fa fa-arrow-left"></i> Volver </a>
+                    </div>
+                </t>
+            </div>
+        </t>
+    </template>
+
+</odoo>

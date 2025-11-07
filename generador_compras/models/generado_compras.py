@@ -72,7 +72,7 @@ class generador_compras(models.Model):
             return 0
 
     def _get_period(self):
-        # import ipdb; ipdb.set_trace()
+
         date = fields.Date.today()
 
         for rec in self:
@@ -96,8 +96,14 @@ class generador_compras(models.Model):
         end_period = fields.Date.today()
         start_period = fields.Datetime.from_string(end_period) - relativedelta(days=dias)
         start_period = start_period.date()
-        # import ipdb; ipdb.set_trace()
-        query="""Select ROW_NUMBER() OVER(ORDER BY prod.id DESC) AS  partida, prod.id as producto,prod.default_code as code,(
+
+        # Construir la lista de placeholders para las categorías
+        if not categorias:
+            return
+        categorias_ids = categorias if isinstance(categorias, list) else list(categorias)
+        placeholders = ','.join(['%s'] * len(categorias_ids))
+        
+        query = f"""Select ROW_NUMBER() OVER(ORDER BY prod.id DESC) AS  partida, prod.id as producto,prod.default_code as code,(
                     Select sum(case when  line.balance < 0 then line.quantity*-1
                     else line.quantity end) as qty from account_move_line as line 
                     inner join account_move as fact 
@@ -123,16 +129,15 @@ class generador_compras(models.Model):
                     from product_product as prod
                     inner join product_template as temp	
                     on temp.id=prod.product_tmpl_id
-                    where temp."type"='product' and temp.categ_id in (%s)
+                    where temp."type"='product' and temp.categ_id in ({placeholders})
                 
     """
-    
+
         params = (
             start_period, end_period,  # Primer BETWEEN
             start_period, end_period,  # Segundo BETWEEN
             start_period, end_period,  # Tercer BETWEEN
-            tuple(categorias.ids) if hasattr(categorias, 'ids') else tuple(categorias)
-        )
+        ) + tuple(categorias_ids)
 
         self.env.cr.execute(query,params)
         line={}
@@ -157,21 +162,16 @@ class generador_compras(models.Model):
     def create(self, vals):
         sugeridoa = ""
         sugeridob = ""
+        dias = ""
         if vals.get('name', 'nuevo') == 'nuevo': 
-            categorias=[]
             vals['name'] = self.env['ir.sequence'].next_by_code('generador.compras') or 'Nuevo'
-            sugeridoa= vals['dias_inventario_a']
-            sugeridob= vals['dias_inventario_b']
-            dias = vals['dias_laborables']
-            for x  in  vals['product_category']:
-                word_categs=str(x)
-            word_categs = word_categs.replace('[','(').replace(']',')')
-            ids_categ=word_categs.split('(')[-1].split(')')[0]
-            ids_categ = ids_categ.replace(' ','')
-            for each in ids_categ.split(','):
-                categorias.append(each)
+            sugeridoa = vals.get('dias_inventario_a', 0)
+            sugeridob = vals.get('dias_inventario_b', 0)
+            dias = vals.get('dias_laborables', 0)
         res = super(generador_compras,self).create(vals)
-        self.fill_lines(res.id,sugeridoa,sugeridob,ids_categ,dias)
+        # Obtener los IDs de categorías directamente del registro creado
+        categorias_ids = res.product_category.ids
+        self.fill_lines(res.id, sugeridoa, sugeridob, categorias_ids, dias)
         for line in  res.lines_ids:
             line.write({'pedido':line.sugerido_a-line.stock,
                         'pedido_b':line.sugerido_b-line.stock-line.back_order-line.purchase_planning})
@@ -221,6 +221,7 @@ class generador_compras(models.Model):
                 }
             # lines = []
             purchase_order = purchase_obj.create(header)
+
             for line in self.lines_ids:
             # for line in rec.env['mfg.material.extra.line'].search([('default_supplier','=',p['default_supplier'])]):
                 detail= {
@@ -234,7 +235,8 @@ class generador_compras(models.Model):
                     'order_id':purchase_order.id,
                     }
                 if line.pedido > 0:
-                    Newrow = purchase_line_obj.create(detail)
+                    purchase_line_obj.create(detail)
+
                 else:
                     continue
                 # lines.append(Newrow)
@@ -262,7 +264,7 @@ class generador_compras(models.Model):
                     'order_id':purchase_order.id,
                     }
                 if line.pedido_b > 0 :
-                    Newrow = purchase_line_obj.create(detail)
+                    purchase_line_obj.create(detail)
                 else:
                     continue
         
@@ -359,7 +361,7 @@ class generador_compras_line(models.Model):
 
     def _get_stock_avalaible(self):
         for rec in self:
-            rec.stock = rec.product_id.immediately_usable_qty
+            rec.stock = rec.product_id.free_qty
 
 
 
@@ -386,7 +388,7 @@ class ExtraFieldsFacturasProvedor(models.Model):
 
 
     def get_account_pay(self):
-        if self.type == 'in_invoice':
+        if self.move_type == 'in_invoice':
             self.write({
                 'account_id': self.partner_id.property_account_payable_id.id
             })
@@ -394,12 +396,12 @@ class ExtraFieldsFacturasProvedor(models.Model):
 
 
     def _get_amount_mxn_update(self):
-        sup_invoices = self.env['account.move'].search([('type','=','in_invoice')])
+        sup_invoices = self.env['account.move'].search([('move_type','=','in_invoice')])
         for rec in sup_invoices:
-            if rec.move_id.line_ids:
-                if rec.move_id.line_ids[0].amount_currency != 0.0:
-                    if rec.move_id.line_ids[0].credit != 0.0:
-                        rec.diary_value = (rec.move_id.line_ids[0].credit/(rec.move_id.line_ids[0].amount_currency*-1))
+            if rec.line_ids:
+                if rec.line_ids[0].amount_currency != 0.0:
+                    if rec.line_ids[0].credit != 0.0:
+                        rec.diary_value = (rec.line_ids[0].credit/(rec.line_ids[0].amount_currency*-1))
             if rec.currency_id.name != 'MXN':
                 rec.amount_mxn = rec.amount_total * rec.diary_value
             else:
@@ -412,7 +414,7 @@ class invoicecrearnuevo(models.Model):
 
 
 	def get_filds_cfdi(self):
-		if self.type == 'out_invoice':
+		if self.move_type == 'out_invoice':
 			client = self.env['res.partner'].search([('id','=',self.partner_id.id)])
 
 			self.write({

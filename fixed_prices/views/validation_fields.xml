@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <data>
+        <record id="res_partner_inherit_less_price" model="ir.ui.view">
+            <field name="name">res.partner.less.inherit.form</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="model">res.partner</field>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='category_id']" position="after">
+                    <field name="less_price" groups="fixed_prices.price_rem_so"/>
+                </xpath>
+            </field>
+        </record>
+        <record id="res_company_inherit_less_price" model="ir.ui.view">
+            <field name="name">res.company.less.inherit.formm</field>
+            <field name="inherit_id" ref="base.view_company_form"/>
+            <field name="model">res.company</field>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='parent_id']" position="before">
+                    <field name="list_validate"/>
+                </xpath>
+            </field>
+        </record>
+
+    <record id="view_order_form_inherit_price_list_sale_order" model="ir.ui.view">
+        <field name="name">sale.order.form.inherit</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='order_line']/tree//field[@name='product_uom_qty']" position="before">
+                <field name="price_list" />
+            </xpath>
+        </field>
+    </record>
+    </data>
+</odoo>

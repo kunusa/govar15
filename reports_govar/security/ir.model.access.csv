@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_report_stock_buys,access_report_stock_buys,model_report_stock_buys,base.group_user,1,1,1,0
+access_report_stock_line,access_report_stock_line,model_report_stock_line,base.group_user,1,1,1,0
+access_report_stock_compare_line,access_report_stock_compare_line,model_report_stock_compare_line,base.group_user,1,1,1,0
+access_product_report_inventory,access_product_report_inventory,model_product_report_inventory,base.group_user,1,1,1,0
+access_product_report_stock,access_product_report_stock,model_product_report_stock,base.group_user,1,1,1,0
+access_product_sales_report,access_product_sales_report,model_product_sales_report,base.group_user,1,1,1,0

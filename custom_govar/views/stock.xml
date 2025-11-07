@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Heredar la vista de stock.picking para agregar botones de remisión -->
+        <record id="view_picking_form_remision_inherit_custom" model="ir.ui.view">
+            <field name="name">stock.picking.form.remision.inherit.custom</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.view_picking_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='move_ids_without_package']/tree//field[@name='product_id']" position="after">
+                    <field name="categ_id" string="Categoria"/>
+                    <field name="uom_id" string="Unidad de medida"/>
+                </xpath>
+                <xpath expr="//field[@name='move_ids_without_package']/tree//field[@name='product_uom_qty']" position="before">
+                    <field name="stock_popup" />
+                </xpath>
+                <xpath expr="//field[@name='move_ids_without_package']" position="after">
+                    <table>
+                        <tr>
+                          <td style="width:100px"></td>
+                          <td style="width:100px"></td>
+                          <td style="width:100px"></td>
+                          <td style="width:100px"></td>
+                          <td style="width:100px"></td>
+                          <td style="width:100px"></td>
+                          <td style="width:100px"></td>
+                          <td style="width:100px"></td>
+                          <td style="width:90px text-align:right">
+                             <b><field name="total_to_do"/></b>
+                          </td>
+                          <td style="width:100px"></td>
+                          <td style="width:100px"></td>
+                          <td style="width:90px text-align:right">
+                             <b><field name="total_qty_done"/></b>
+                          </td>
+                        </tr>
+                      </table>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

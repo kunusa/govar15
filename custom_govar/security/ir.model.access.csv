@@ -1,0 +1,11 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_denied_products,access.denied.products,model_denied_products,base.group_user,1,1,1,0
+access_denied_product_save,access.denied.product_save,model_denied_product_save,base.group_user,1,1,1,0
+access_wz_label,access.wz.label,model_wz_label,base.group_user,1,1,1,0
+access_product_avaibility,access.product.avaibility,model_product_avaibility,base.group_user,1,1,1,0
+access_cfdi_issue,access.cfdi.issue,model_cfdi_issue,base.group_user,1,1,1,0
+access_banks_company,access.banks_company,model_banks_company,base.group_user,1,1,1,0
+access_customer_block,access.customer_block,model_customer_block,base.group_user,1,1,1,0
+access_number_account,access.number_account,model_number_account,base.group_user,1,1,1,0
+access_nota_credito,access.nota_credito,model_nota_credito,base.group_user,1,1,1,0
+access_nota_credito_line,access.nota_credito_line,model_nota_credito_line,base.group_user,1,1,1,1

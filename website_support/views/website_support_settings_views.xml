@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="res_config_settings_view_form" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.website.support</field>
+        <field name="model">res.config.settings</field>
+        <field name="priority" eval="90"/>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[hasclass('settings')]" position="inside">
+                <div class="app_settings_block" data-string="Tickets" string="Tickets" data-key="website_support" groups="website_support.support_manager">
+                    <h2>Tickets de Soporte</h2>
+                    <div class="row mt16 o_settings_container">
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane"/>
+                            <div class="o_setting_right_pane">
+                                <label string="Plantilla de cambio de usuario" for="change_user_email_template_id"/>
+                                <div class="text-muted">
+                                    Plantilla de correo cuando se cambia el usuario asignado
+                                </div>
+                                <div class="content-group">
+                                    <div class="mt16">
+                                        <field name="change_user_email_template_id" context="{'default_model':'website.support.ticket'}" class="oe_inline"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane"/>
+                            <div class="o_setting_right_pane">
+                                <label string="Plantilla de respuesta del personal" for="staff_reply_email_template_id"/>
+                                <div class="text-muted">
+                                    Plantilla de correo para respuestas del personal
+                                </div>
+                                <div class="content-group">
+                                    <div class="mt16">
+                                        <field name="staff_reply_email_template_id" context="{'default_model':'website.support.ticket.compose'}" class="oe_inline"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <h2>Configuración de Sitio Web</h2>
+                    <div class="row mt16 o_settings_container">
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane"/>
+                            <div class="o_setting_right_pane">
+                                <label string="Permitir establecer prioridad" for="allow_website_priority_set"/>
+                                <div class="text-muted">
+                                    Permite a los clientes establecer la prioridad del ticket
+                                </div>
+                                <div class="content-group">
+                                    <div class="mt16">
+                                        <field name="allow_website_priority_set" class="oe_inline"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane"/>
+                            <div class="o_setting_right_pane">
+                                <label string="Archivos adjuntos máximos" for="max_ticket_attachments"/>
+                                <div class="text-muted">
+                                    Número máximo de archivos adjuntos por ticket
+                                </div>
+                                <div class="content-group">
+                                    <div class="mt16">
+                                        <field name="max_ticket_attachments" class="oe_inline"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane"/>
+                            <div class="o_setting_right_pane">
+                                <label string="Tamaño máximo de archivo (KB)" for="max_ticket_attachment_filesize"/>
+                                <div class="text-muted">
+                                    Tamaño máximo de archivo adjunto en KB
+                                </div>
+                                <div class="content-group">
+                                    <div class="mt16">
+                                        <field name="max_ticket_attachment_filesize" class="oe_inline"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane">
+                                <field name="google_recaptcha_active"/>
+                            </div>
+                            <div class="o_setting_right_pane">
+                                <label string="Google reCAPTCHA" for="google_recaptcha_active"/>
+                                <div class="text-muted">
+                                    Activar validación con Google reCAPTCHA
+                                </div>
+                                <div class="content-group" attrs="{'invisible': [('google_recaptcha_active', '=', False)]}">
+                                    <div class="row mt16">
+                                        <label string="Client Key" for="google_captcha_client_key" class="col-3 o_light_label"/>
+                                        <field name="google_captcha_client_key" class="oe_inline"/>
+                                    </div>
+                                    <div class="row mt16">
+                                        <label string="Secret Key" for="google_captcha_secret_key" class="col-3 o_light_label"/>
+                                        <field name="google_captcha_secret_key" password="True" class="oe_inline"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <h2>Configuración de Tickets</h2>
+                    <div class="row mt16 o_settings_container">
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane"/>
+                            <div class="o_setting_right_pane">
+                                <label string="Categoría por defecto" for="email_default_category_id"/>
+                                <div class="text-muted">
+                                    Categoría predeterminada para tickets creados por correo
+                                </div>
+                                <div class="content-group">
+                                    <div class="mt16">
+                                        <field name="email_default_category_id" class="oe_inline"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane">
+                                <field name="auto_send_survey"/>
+                            </div>
+                            <div class="o_setting_right_pane">
+                                <label string="Enviar encuesta automáticamente" for="auto_send_survey"/>
+                                <div class="text-muted">
+                                    Enviar encuesta de satisfacción al cerrar el ticket
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane">
+                                <field name="allow_user_signup"/>
+                            </div>
+                            <div class="o_setting_right_pane">
+                                <label string="Permitir registro de usuarios" for="allow_user_signup"/>
+                                <div class="text-muted">
+                                    Permite que los usuarios se registren desde el portal
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane"/>
+                            <div class="o_setting_right_pane">
+                                <label string="Horario de atención" for="business_hours_id"/>
+                                <div class="text-muted">
+                                    Define el horario laboral para cálculos de SLA
+                                </div>
+                                <div class="content-group">
+                                    <div class="mt16">
+                                        <field name="business_hours_id" class="oe_inline"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="website_support_settings_action" model="ir.actions.act_window">
+        <field name="name">Ajustes</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field>
+        <field name="target">inline</field>
+        <field name="context">{'module': 'website_support', 'bin_size': False}</field>
+    </record>
+
+</odoo>

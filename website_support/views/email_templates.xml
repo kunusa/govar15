@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="support_ticket_survey" model="mail.template">
+        <field name="name">Support Ticket Survey</field>
+        <field name="model_id" ref="model_website_support_ticket"></field>
+        <field name="email_from"><![CDATA[${object.company_id.name} <${object.company_id.email}>]]></field>
+        <field name="email_to">${object.email|safe}</field>
+        <field name="subject">Encuesta de soporte (#${object.ticket_number or object.id})</field>
+        <field name="auto_delete" eval="False"/>
+        <field name="built_in" eval="True"/>
+        <field name="body_html"><![CDATA[
+            % if object.person_name :
+                <p>Dear ${object.person_name},</p>
+            % endif
+            <p>NOs gustaria recibir  sus comentarios acerca del soporte</p>
+            <p><a href="/support/survey/${object.portal_access_key}">here</a></p>
+            <hr/>
+            <b>Numero de ticket:</b> ${object.ticket_number or object.id}<br/>
+            <b>Categoria de ticket:</b> 
+            % if object.category_id.name :
+                ${object.category_id.name}
+            % endif
+            <br/>
+            <b>Descripcion de ticket:</b><br/>
+            ${object.description|safe}
+        ]]>
+        </field>
+    </record>
+
+        <record id="support_ticket_sla_alert" model="mail.template">
+            <field name="name">Ticker SLA alerta</field>
+            <field name="model_id" ref="model_website_support_ticket"></field>
+            <field name="email_from"><![CDATA[${object.company_id.name} <${object.company_id.email}>]]></field>
+            <field name="subject">SLA alerta</field>
+            <field name="auto_delete" eval="False"/>
+            <field name="built_in" eval="True"/>
+            <field name="body_html"><![CDATA[
+                <p>Estimado _user_name_,</p>
+                %if object.sla_timer > 0:
+                    <p>Tienes ${object.sla_timer_format} timepo restante para este ticket</p>
+                %endif
+                %if object.sla_timer < 0:
+                    <p>El SLA actualmente esta ${object.sla_timer_format} con estas horas sobrepasadas</p>
+                %endif
+                <p>Nombre: ${object.person_name}</p>
+                <p>Categoria: ${object.category_id.name}</p>
+                <p>Sujeto: ${object.subject}</p>
+                <p>${object.description|safe}</p>
+            ]]>
+            </field>
+        </record>
+        
+        <record id="new_support_ticket_category" model="mail.template">
+            <field name="name">Support Ticket New Ticket (Category)</field>
+            <field name="model_id" ref="model_website_support_ticket"></field>
+            <field name="email_from"><![CDATA[${object.company_id.name} <${object.company_id.email}>]]></field>
+            <field name="subject">Nuevo ticket para su categoria</field>
+            <field name="auto_delete" eval="False"/>
+            <field name="built_in" eval="True"/>
+            <field name="body_html"><![CDATA[
+                <p>Estimado _user_name_,</p>
+                <p>Un nuevo ticket a sido creado en su categoria</p>
+                <p>Nombre: ${object.person_name}</p>
+                <p>Categoria: ${object.category_id.name}</p>
+                <p>Asunto: ${object.subject}</p>
+                <p>${object.description|safe}</p>
+                <p>Click <a href="_ticket_url_">aqui</a> para ver el ticket</p>
+            ]]>
+            </field>
+        </record>
+
+        <record id="support_ticket_user_change" model="mail.template">
+            <field name="name">Support Ticket User Change</field>
+            <field name="model_id" ref="model_website_support_ticket"></field>
+            <field name="email_from"><![CDATA[${object.company_id.name} <${object.company_id.email}>]]></field>            
+            <field name="subject">Un ticket se le ha asignado</field>
+            <field name="auto_delete" eval="False"/>
+            <field name="built_in" eval="True"/>
+            <field name="body_html"><![CDATA[
+                <p>Estimado _user_name_,</p>
+                <p>Un ticket se le ha asignado, aqui estan los detalles</p>
+                <hr/>
+                <b>Numero de ticket :</b> ${object.ticket_number or object.id}<br/>
+                <b>Categoria de ticket:</b> 
+                % if object.category_id.name :
+                    ${object.category_id.name}
+                % endif
+                <br/>
+                <b>Descripcion:</b><br/>
+                ${object.description|safe}
+                
+            ]]>
+            </field>
+        </record>
+
+        <record id="new_support_ticket_category_change" model="mail.template">
+            <field name="name">Support Ticket Category Change</field>
+            <field name="model_id" ref="model_website_support_ticket"></field>
+            <field name="email_from"><![CDATA[${object.company_id.name} <${object.company_id.email}>]]></field>            
+            <field name="email_to">${object.email|safe}</field>
+            <field name="subject">Su ticket ha sido actualizado</field>
+            <field name="auto_delete" eval="False"/>
+            <field name="built_in" eval="True"/>
+            <field name="body_html"><![CDATA[
+                <p>Estimado ${object.person_name},</p>
+                <p>Su ticket a sido actulizado y ahora esta en la categoria  '${object.category_id.name}' </p>
+                <hr/>
+                <b>Numero de ticket:</b> ${object.ticket_number or object.id}<br/>
+                <b>Categoria de ticker :</b> 
+                % if object.category_id.name :
+                    ${object.category_id.name}
+                % endif
+                <br/>
+                <b>Descripción:</b><br/>
+                ${object.description|safe}
+                
+            ]]>
+            </field>
+        </record>
+
+        <record id="support_ticket_closed" model="mail.template">
+            <field name="name">Support Ticket Closed</field>
+            <field name="model_id" ref="model_website_support_ticket"></field>
+            <field name="email_from"><![CDATA[${object.company_id.name} <${object.company_id.email}>]]></field>
+            <field name="email_to">${object.email|safe}</field>
+            <field name="subject">Su ticket ha sido</field>
+            <field name="auto_delete" eval="False"/>
+            <field name="built_in" eval="True"/>
+            <field name="body_html"><![CDATA[
+                <p>Estimado ${object.person_name},</p>
+                <p>Su ticket ha ido cerrado por nuestro equipo,aqui esta la espuesto final</p>
+                <p>${object.close_comment|safe}</p>
+                <hr/>
+                <b>Numero de ticket:</b> ${object.ticket_number or object.id}<br/>
+                <b>Categoria de ticket:</b> 
+                % if object.category_id.name :
+                    ${object.category_id.name}
+                % endif
+                <br/>
+                <b>Descripcion:</b><br/>
+                ${object.description|safe}
+                
+            ]]>
+            </field>
+        </record>
+
+        <record id="support_ticket_new" model="mail.template">
+            <field name="name">Support Ticket New</field>
+            <field name="model_id" ref="model_website_support_ticket"></field>
+            <field name="email_from"><![CDATA[${object.company_id.name} <${object.company_id.email}>]]></field>
+            <field name="email_to">${object.email|safe}</field>
+            <field name="subject">Hemos recibido su ticker '${object.subject}' y le responderemos lo mas pronto posible</field>
+            <field name="auto_delete" eval="False"/>
+            <field name="built_in" eval="True"/>
+            <field name="body_html"><![CDATA[
+                % if object.person_name :
+                    <p>Estimado ${object.person_name},</p>
+                % endif
+                <p>Gracias por enviarnos el ticket, le contestaremos en la brevedad posible</p>
+                <hr/>
+                <b>Ver ticket:</b> <a href="/support/portal/ticket/view/${object.portal_access_key}">here</a><br/>
+                <b>Numero de tickert:</b> ${object.ticket_number or object.id}<br/>
+                <b>Categoria de ticket:</b> 
+                % if object.category_id.name :
+                    ${object.category_id.name}
+                % endif
+                <br/>
+                % if object.category_id.name :
+                    <b>SLA:</b> 
+                    ${object.sla_id.name}
+                % endif
+                <br/>                
+                <b>Descripción:</b><br/>
+                ${object.description|safe}
+                
+            ]]>
+            </field>
+        </record>
+
+        <record id="support_ticket_customer_reply_wrapper" model="mail.template">
+            <field name="name">Support Ticket Customer Reply Wrapper</field>
+            <field name="email_from"><![CDATA[${object.ticket_id.company_id.name} <${object.ticket_id.company_id.email}>]]></field>
+            <field name="reply_to">SendReplyViaSystem@example.com</field>
+            <field name="model_id" ref="model_website_support_ticket_message"></field>
+            <field name="subject">${object.ticket_id.subject}</field>
+            <field name="auto_delete" eval="False"/>
+            <field name="built_in" eval="True"/>
+            <field name="body_html" type="html">
+                <t t-out="object.content"/>
+                <hr/>
+                <b>Numero de ticket:</b> <t t-out="object.ticket_id.ticket_number or object.ticket_id.id"/><br/>
+                <b>Categoria de ticket:</b> <t t-out="object.ticket_id.category_id.name or ''"/><br/>
+                <t t-if="object.ticket_id.planned_time_format">
+                    <b>Fecha planeada:</b> <t t-out="object.ticket_id.planned_time_format"/><br/>
+                </t>
+                <b>Descripción:</b><br/>
+                <t t-out="object.ticket_id.description"/>
+            </field>
+        </record>
+
+        <record id="support_ticket_reply_wrapper" model="mail.template">
+            <field name="name">Support Ticket Reply Wrapper</field>
+            <field name="model_id" ref="model_website_support_ticket_compose"></field>
+            <field name="subject">${object.subject}</field>
+            <field name="email_from"><![CDATA[${object.ticket_id.company_id.name} <${object.ticket_id.company_id.email}>]]></field>            
+            <field name="email_to">${object.email|safe}</field>
+            <field name="auto_delete" eval="False"/>
+            <field name="built_in" eval="True"/>
+            <field name="body_html" type="html">
+                <t t-out="object.body"/>
+                <hr/>
+                <t t-if="object.ticket_id.portal_access_key">
+                    <b>Ver ticket:</b> <a t-attf-href="/support/portal/ticket/view/{{object.ticket_id.portal_access_key}}">aquí</a><br/>
+                </t>
+                <b>Numero de ticket:</b> <t t-out="object.ticket_id.ticket_number or object.ticket_id.id"/><br/>
+                <b>Categoria de ticket:</b> <t t-out="object.ticket_id.category_id.name or ''"/><br/>
+                <t t-if="object.ticket_id.planned_time_format">
+                    <b>Fecha planeada:</b> <t t-out="object.ticket_id.planned_time_format"/><br/>
+                </t>
+                <b>Descripción:</b><br/>
+                <t t-out="object.ticket_id.description"/>
+            </field>
+        </record>
+
+        <record id="support_ticket_reply_wrapper_user" model="mail.template">
+            <field name="name">Support Ticket Reply Wrapper (User)</field>
+            <field name="model_id" ref="model_website_support_ticket_compose"></field>
+            <field name="subject">${object.subject}</field>
+            <field name="email_from">${user.email|safe}</field>            
+            <field name="email_to">${object.email|safe}</field>
+            <field name="auto_delete" eval="False"/>
+            <field name="built_in" eval="True"/>
+            <field name="body_html" type="html">
+                <t t-out="object.body"/>
+                <hr/>
+                <t t-if="object.ticket_id.portal_access_key">
+                    <b>Ver ticket:</b> <a t-attf-href="/support/portal/ticket/view/{{object.ticket_id.portal_access_key}}">aquí</a><br/>
+                </t>
+                <b>Numero de ticket:</b> <t t-out="object.ticket_id.ticket_number or object.ticket_id.id"/><br/>
+                <b>Categoria de ticket:</b> <t t-out="object.ticket_id.category_id.name or ''"/><br/>
+                <t t-if="object.ticket_id.planned_time_format">
+                    <b>Fecha planeada:</b> <t t-out="object.ticket_id.planned_time_format"/><br/>
+                </t>
+                <b>Descripción:</b><br/>
+                <t t-out="object.ticket_id.description"/>
+            </field>
+        </record>
+
+        <record id="support_ticket_approval" model="mail.template">
+            <field name="name">Support Ticket Approval</field>
+            <field name="model_id" ref="model_website_support_ticket"></field>
+            <field name="email_from"><![CDATA[${object.company_id.name} <${object.company_id.email}>]]></field>
+            <field name="email_to">${object.email|safe}</field>
+            <field name="subject">Ticket aprobado (#${object.ticket_number or object.id})</field>
+            <field name="auto_delete" eval="False"/>
+            <field name="built_in" eval="True"/>
+            <field name="body_html"><![CDATA[
+                % if object.person_name :
+                    <p>Estimado ${object.person_name},</p>
+                    <br/>
+                % endif
+
+                <p>La aprobacion es requerida para continuar el porceso de soporte, porfavor hacer click en link para aprobar </p>
+                <br/>
+                <p><a href="${object.approve_url}" style="color:green">Aprobado</a> | <a href="${object.disapprove_url}" style="color:red">Rechazado</a></p>
+
+            ]]>
+            </field>
+        </record>
+
+        <record id="support_ticket_approval_user" model="mail.template">
+            <field name="name">Support Ticket Approval (User)</field>
+            <field name="model_id" ref="model_website_support_ticket"></field>
+            <field name="email_from"><![CDATA[${object.company_id.name} <${object.company_id.email}>]]></field>
+            <field name="email_to">${object.email|safe}</field>
+            <field name="subject">Aprobacion de ticket (#${object.ticket_number or object.id})</field>
+            <field name="auto_delete" eval="False"/>
+            <field name="built_in" eval="True"/>
+            <field name="body_html"><![CDATA[
+                <p>Estimado _user_name_,</p>
+                <p>La calificación de aprobación de un ticket de soporte ha cambiado</p>
+                <p>Persona: ${object.person_name}</p>
+                <p>Categoria: ${object.category_id.name}</p>
+                <p>Asunto: ${object.subject}</p>
+                <p>Aprobación: ${object.approval_id.name}</p>
+                <p>${object.description|safe}</p>
+                <p>Click <a href="_ticket_url_">aqui</a> para ver el ticket</p>
+            ]]>
+            </field>
+        </record>
+
+</odoo>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+    <record id="product_avaibility_wizard" model="ir.ui.view">
+      <field name="name">Productos faltantes</field>
+      <field name="model">product.avaibility</field>
+      <field name="arch" type="xml">
+        <form>
+          <field name="datas" invisible = "1"/>
+          <footer>
+            <button string="Generar" name="product_avaibiliy" type="object" class="btn-primary" />
+          </footer>
+
+        </form>
+      </field>
+    </record>
+
+    <record id="producto_faltante_action" model="ir.actions.act_window">
+      <field name="name">Producto faltante</field>
+      <field name="res_model">product.avaibility</field>
+      <field name="view_mode">form</field>
+      <field name="target">new</field>
+  </record>
+
+
+    <menuitem name="Producto faltante" id="product_unavaible_id" parent="stock.menu_warehouse_report"
+      action="producto_faltante_action" sequence="102" />
+  </data>
+</odoo>

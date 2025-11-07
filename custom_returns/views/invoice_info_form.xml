@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="invoice_info_form" name="Información de Factura">
+        <t t-call="website.layout">
+            <div class="d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+                <div class="container" style="max-width: 1000px; width: 100%;">
+
+                    <!-- <link rel="stylesheet" type="text/css"
+                    href="/customer_returns/static/src/css/custom_styles.css" /> -->
+                    <h2 class="text-primary mb-4 text-center"><i class="fa fa-file-invoice"></i>Información
+                        de la Factura</h2>
+                    <t t-if="invoice">
+                        <form action="/submit/info" method="post" onsubmit="return validarArchivo()"
+                            class="p-4 shadow rounded bg-light" enctype="multipart/form-data">
+
+                            <input type="hidden" name="csrf_token"
+                                t-att-value="request.csrf_token()" />
+                            <div class="form-group d-flex align-items-center mb-3">
+                                <label class="mr-3" style="min-width: 100px;">Razón Social</label>
+                                <input type="text" t-att-value="invoice.partner_id.name"
+                                    class="form-control" id="name" name="name" required="1" />
+                            </div>
+
+                            <div class="form-group d-flex align-items-center mb-3">
+                                <label class="mr-3" style="min-width: 100px;">Contacto</label>
+                                <input type="text"
+                                    class="form-control" id="cotanct" name="cotanct" />
+                            </div>
+                            <div class="form-group d-flex align-items-center mb-3">
+                                <label class="mr-3" style="min-width: 100px;">Correo</label>
+                                <input type="text" t-att-value="invoice.partner_id.email"
+                                    class="form-control" id="email" name="email" required="1" />
+                            </div>
+                            <div class="form-group d-flex align-items-center mb-3">
+                                <label class="mr-3" style="min-width: 100px;">Teléfono</label>
+                                <input type="text" t-att-value="invoice.partner_id.phone"
+                                    class="form-control" id="phone" name="phone" />
+                            </div>
+
+                            <div class="form-group d-flex align-items-center mb-3">
+                                <label class="mr-3" style="min-width: 100px;">WhatsApp</label>
+                                <input type="text" 
+                                    class="form-control" id="mobile" name="mobile" />
+                            </div>
+                            <div class="form-group d-flex align-items-center mb-3">
+                                <label class="mr-3" style="min-width: 100px;">Seleccione el motivo
+                                    del reclamo</label>
+                                <select id="motive" name="motive" class="form-control"
+                                    required="true">
+                                    <option value="opcion0"></option>
+                                    <option value="Mal solicitado por cliente">Mal solicitado por
+                                        cliente</option>
+                                    <option value="Mal surtido por vendedor">Mal surtido por
+                                        vendedor</option>
+                                    <option value="Error surtido de almacén">Error surtido de
+                                        almacén</option>
+                                    <option value="Mercancía mal empacada">Mercancía mal empacada</option>
+                                    <option value="Mercancía dañada o defectuosa">Mercancía dañada o
+                                        defectuosa</option>
+                                    <option value="Mercancía enviada a otro destino">Mercancía
+                                        enviada a otro destino</option>
+                                    <option
+                                        value="Faltante de mercancía (llegó menos de lo facturado)">Faltante
+                                        de mercancía (llegó menos de lo facturado)</option>
+                                    <option
+                                        value="Excedente de mercancía (llegó más de lo facturado)">Excedente
+                                        de mercancía (llegó más de lo facturado)</option>
+                                    <option value="Error en precio">Error en precio</option>
+                                    <option value="otro">Otro</option>
+                                </select>
+                            </div>
+                            <!-- Campo adicional (oculto inicialmente) -->
+                            <div id="otro_motivo_group"
+                                class="form-group d-flex align-items-center mb-3"
+                                style="display: none;">
+                                <label class="mr-3" style="min-width: 100px;">Especifique el motivo</label>
+                                <input type="text" id="otro_motivo" name="otro_motivo"
+                                    class="form-control" />
+                            </div>
+                            <!-- JavaScript para manejar la visibilidad del campo -->
+                            <script>
+                                document.addEventListener("DOMContentLoaded", function() {
+                                    var selectMotive = document.getElementById("motive");
+                                    var otroMotivoGroup = document.getElementById("otro_motivo_group");
+                                    var otroMotivoInput = document.getElementById("otro_motivo");
+
+                                    selectMotive.addEventListener("change", function() {
+                                        if (selectMotive.value === "otro") {
+                                            otroMotivoGroup.style.display = "flex"; // Mostrar el campo
+                                            otroMotivoInput.setAttribute("required", true); // Hacer el campo obligatorio
+                                        } else {
+                                            otroMotivoGroup.style.display = "none"; // Ocultar el campo
+                                            otroMotivoInput.removeAttribute("required"); // Quitar la obligatoriedad
+                                        }
+                                    });
+                                });
+                            </script>
+                            <div class="form-group d-flex align-items-center mb-3">
+                                <label class="mr-3" style="min-width: 100px;">Agente de ventas</label>
+                                <input type="text" id="agent" t-att-value="invoice.user_id.name"
+                                    class="form-control" name="agent" />
+                            </div>
+                            <!-- Campo para Adjuntar Archivo -->
+                             <div class="form-group d-flex align-items-center mb-3">
+                                    <label for="attachment" class="mr-3" style="min-width: 100px;">
+                                        Adjuntar</label>
+                                    <input name="file_claim" id="file_claim" type="file"
+                                        multiple="multiple" onchange="validarArchivo()" />
+                            </div>
+                                <!-- Script para validar el tamaño del archivo -->
+                            <script>
+                                function validarArchivo() {
+                                    const archivoInput = document.getElementById(&apos;file_claim&apos;);
+                                    const archivo = archivoInput.files[0];
+
+                                    // Tamaño máximo permitido (en bytes)
+                                    const tamañoMaximo = 3145728; // 3 MB
+
+                                    if (archivo &amp;&amp; archivo.size &gt; tamañoMaximo) {
+                                        alert(&apos;El archivo es demasiado grande. El tamaño máximo permitido es de 3 MB.&apos;);
+                                        return false; // Evita que se envíe el formulario
+                                    }
+
+                                    return true; // Permite que se envíe el formulario
+                                }
+                            </script>
+                            <!-- Tabla -->
+                            <style>
+                                .custom-table {
+                                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                                    border-radius: 8px;
+                                    overflow: hidden;
+                                    margin-bottom: 0;
+                                }
+                                .custom-table thead th {
+                                    background-color: #014389;
+                                    color: white;
+                                    font-weight: 600;
+                                    padding: 12px 8px;
+                                    border: none;
+                                    white-space: nowrap;
+                                }
+                                .custom-table tbody td {
+                                    padding: 12px 8px;
+                                    vertical-align: middle;
+                                    border-top: 1px solid #dee2e6;
+                                }
+                                .custom-table tbody td:nth-child(1) {
+                                    width: 120px;
+                                    min-width: 120px;
+                                }
+                                .custom-table tbody td:nth-child(2) {
+                                    width: 180px;
+                                    min-width: 180px;
+                                }
+                                .custom-table tbody td:nth-child(3) {
+                                    min-width: 300px;
+                                }
+                                .custom-table tbody td:nth-child(4) {
+                                    width: 140px;
+                                    min-width: 140px;
+                                }
+                                .custom-table tbody td:nth-child(5) {
+                                    width: 150px;
+                                    min-width: 150px;
+                                }
+                                .custom-table tbody tr:hover {
+                                    background-color: #f8f9fa;
+                                }
+                                .custom-table tbody tr:nth-child(even) {
+                                    background-color: #f8f9fa;
+                                }
+                                .custom-table tbody tr:nth-child(even):hover {
+                                    background-color: #e9ecef;
+                                }
+                                .custom-input {
+                                    border: 1px solid #ced4da;
+                                    border-radius: 4px;
+                                    padding: 8px 12px;
+                                    transition: border-color 0.3s ease;
+                                    width: 100%;
+                                }
+                                .custom-input:focus {
+                                    border-color: #80bdff;
+                                    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+                                    outline: none;
+                                }
+                                .table-responsive {
+                                    border-radius: 8px;
+                                    overflow: hidden;
+                                }
+                                .form-check-input {
+                                    width: 18px;
+                                    height: 18px;
+                                    margin: 0;
+                                }
+                            </style>
+                            <!-- Título de Productos -->
+                            <div class="form-group mb-3">
+                                <h3 class="text-primary mb-3">Productos</h3>
+                            </div>
+                            
+                            <!-- Tabla de Productos -->
+                            <div class="form-group mb-3">
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-bordered table-hover custom-table">
+                                        <thead class="thead-dark">
+                                            <tr>
+                                                <th class="text-center" style="width: 120px; min-width: 120px;">Seleccionar</th>
+                                                <th style="width: 180px; min-width: 180px;">Código</th>
+                                                <th style="min-width: 300px;">Producto</th>
+                                                <th class="text-right" style="width: 140px; min-width: 140px;">Precio</th>
+                                                <th class="text-center" style="width: 150px; min-width: 150px;">Cantidad</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <t t-foreach="lines" t-as="line">
+                                                <tr>
+                                                    <td class="text-center">
+                                                        <input type="checkbox" name="productos[]"
+                                                            t-att-value="line" class="form-check-input" />
+                                                    </td>
+                                                    <td>
+                                                        <t t-esc="line.product_id.default_code" />
+                                                    </td>
+                                                    <td>
+                                                        <div style="word-wrap: break-word; max-width: 400px;">
+                                                            <t t-esc="line.product_id.name" />
+                                                        </div>
+                                                    </td>
+                                                    <td class="text-right">
+                                                        <t t-esc="line.price_unit" />
+                                                    </td>
+                                                    <td>
+                                                        <input type="number" min="0" step="0.01"
+                                                            t-att-name="'cantidad_' + str(line.id)"
+                                                            class="form-control custom-input text-center" 
+                                                            placeholder="0" />
+                                                    </td>
+                                                </tr>
+                                            </t>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- Botón Enviar -->
+                            <div class="text-center mt-4">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="fa fa-paper-plane"></i> Enviar </button>
+                            </div>
+                        </form>
+                    </t>
+                    <t t-else="">
+                        <div class="mt-5 text-danger">
+                            <p>No se encontró ninguna factura con ese número.</p>
+                        </div>
+                        <a href="/customer_page" class="btn btn-primary">Volver</a>
+                    </t>
+                </div>
+            </div>
+        </t>
+    </template>
+
+</odoo>

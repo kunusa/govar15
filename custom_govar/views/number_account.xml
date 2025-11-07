@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+        <!-- work.days tree view -->
+        <record id="numberaccount_view_tree" model="ir.ui.view">
+            <field name="name">number.account.view.tree</field>
+            <field name="model">number.account</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="account_id"/>
+                    <field name="sales"/>
+                    <field name="buys"/>
+                </tree>
+            </field>
+        </record>
+        
+        <!-- work.days form view -->
+        <record id="numberaccount_view_form" model="ir.ui.view">
+            <field name="name">number.account.view.form</field>
+            <field name="model">number.account</field>
+            <field name="arch" type="xml">
+                <form string="Dias Laborales">
+                    <sheet>
+                        <group>
+                            <!-- Add your fields here -->
+                            <field name="account_id"/>
+                            <field name="sales"/>
+                            <field name="buys"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- work.days action window -->
+      <record id="action_number_account" model="ir.actions.act_window">
+        <field name="name">Numero de cuenta</field>
+        <field name="res_model">number.account</field>
+        <field name="view_mode">tree,form</field>
+      </record>
+        <!-- This Menu Item will appear in the Upper bar, that's why It needs NO parent or action -->
+        <menuitem id="numberaccount_menu_root" parent="account.menu_finance_configuration" name="Numero de cuenta" action="action_number_account" sequence="1"/>
+    </data>
+</odoo>

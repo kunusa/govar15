@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Heredar la vista de sale.order para agregar botón make_remission -->
+        <record id="view_order_form_remision_inherit" model="ir.ui.view">
+            <field name="name">sale.order.form.remision.inherit</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <!-- Agregar botón make_remission en el header después de los botones existentes -->
+                <xpath expr="//header/button[@name='action_quotation_send']" position="after">
+                    <button name="make_remission" 
+                            string="Duplicar a remisión" 
+                            type="object" 
+                            class="btn-primary"
+                            attrs="{'invisible': [('state', 'not in', ['draft', 'sent'])]}"
+                            groups="base.group_user"/>
+                </xpath>
+                <xpath expr="//field[@name='payment_term_id']" position="after">
+                    <div>
+                        <h4>
+                            <span>
+                                <field name="menssage" string=" " class="badge badge-danger" attrs="{'invisible': [('menssage','!=','Producto surtido')]}" nolabe="1"/>
+                                <field name="mensage" string=" " class="badge badge-success" attrs="{'invisible': [('mensage','!=','Producto embarcado')]}" nolabe="1"/>
+                            </span>
+                            <span>
+                                <field name="bandera" invisible="1"/>
+                                <field name="sales_flag" invisible="1"/> 
+                                <field name="message_logistic" string=" " class="badge badge-warning" nolabe="1" readonly="1"/>
+                                <field name="message_sales" string=" " class="badge badge-danger" nolabe="1" readonly="1"/>
+                                <field name="message_client" string=" " class="badge badge-success" nolabe="1" readonly="1"/>
+                                <field name="message_residence" string=" " class="badge badge-primary" nolabe="1" readonly="1"/>
+                            </span>
+                        </h4>
+                    </div>
+                </xpath>
+                <xpath expr="//field[@name='tag_ids']" position="after">
+                    <field name="flag_other_info" invisible="1"/>
+                    <field name="v_observations" string="Observaciones" attrs="{'readonly': [('flag_other_info','=',True)]}"/>
+                    <field name="v_delivery_method" string="Forma de entrega" required="1" attrs="{'readonly': [('flag_other_info','=',True)]}"/>
+                    <field name="v_terms" string="Condiciones" attrs="{'readonly': [('flag_other_info','=',True)]}"/>
+                    <field name="destiny_so" string="Destino" attrs="{'readonly': [('flag_other_info','=',True)]}"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

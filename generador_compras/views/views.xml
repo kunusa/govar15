@@ -32,7 +32,7 @@
             <button type="object" name="return_draft" class="oe_highlight" string="Regresar a Nuevo"
               states="revision" />
             <button type="object" name="cancel_sales" class="oe_highlight" string="Cancelar"
-              states="nuevo,revision,aplicado" groups="compras_govar.close_sales" />
+              states="nuevo,revision,aplicado" groups="generador_compras.close_sales" />
             <button type="object" name="validate" class="oe_highlight" string="Validar"
               states="nuevo" />
             <field name="state" widget="statusbar"
@@ -182,19 +182,7 @@
     </record>
 
 
-    <!-- TODO: MOver a otro modulo -->
-    <!-- <record model="ir.ui.view" id="account_invoice_inherit_form">
-      <field name="name">account.invoice.inherit.form</field>
-      <field name="inherit_id" ref="account.invoice_supplier_tree" />
-      <field name="model">account.invoice</field>
-      <field name="arch" type="xml">
-        <xpath expr="//field[@name='origin']" position="after">
-          <field name="amount_mxn" sum="Total" string="Total MXN" />
-          <field name="currency_id" readonly="1" />
-          <field name="diary_value" string="TC" readonly="1" />
-        </xpath>
-      </field>
-    </record> -->
+
 
 
     <!-- Top menu item -->

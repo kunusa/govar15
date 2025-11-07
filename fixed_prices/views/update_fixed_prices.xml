@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+    <act_window id="update_fixed_prices_action" name="Actualizar lista de precios" res_model="update.fixed.prices" view_mode="form" target="new"/>
+    <record id="Update_fixed_prices" model="ir.ui.view">
+      <field name="name">Actualizar lista de precios</field>
+      <field name="model">update.fixed.prices</field>
+      <field name="arch" type="xml">
+        <form>
+          <sheet>
+            <notebook>
+              <page string="Listas de precios">
+                <group cols="4">
+                  <field name="ufp_category" widget="many2many_tags"  options = "{'no_create': '1', 'no_create_edit': '1', 'no_open': '1'}" attrs="{'invisible': [('utp_bandera','=',True)]}"/>
+                  <field name="ufp_product_id" widget="many2many_tags"  options = "{'no_create': '1', 'no_create_edit': '1', 'no_open': '1'}" attrs="{'invisible': [('utp_bandera','=',False)]}"/>
+                  <field name="utp_bandera"/>
+                </group>
+                <group cols="4">
+                  <group cols="4" string="Lista 1">
+                    <field name="ufp_lista_1"/>
+                    <field name="ufp_percentage_1"/>
+                  </group>
+                  <group cols="4" string="Lista 2">
+                    <field name="ufp_lista_2"/>
+                    <field name="ufp_percentage_2"/>
+                  </group>
+                  <group cols="4" string="Lista 3">
+                    <field name="ufp_lista_3"/>
+                    <field name="ufp_percentage_3"/>
+                  </group>
+                  <group cols="4" string="Lista 5">
+                    <field name="ufp_lista_5"/>
+                    <field name="ufp_percentage_5"/>
+                  </group>
+                </group>
+                <button name="actualize_standard_price" type="object" string="Actualizar" class="oe_highlight"/>
+              </page>
+              <page string="Costo del producto">
+                <group>
+                  <group cols="4">
+                    <field name="ufp_archivo"/>
+                  </group>
+                </group>
+                <button name="actualize_price" type="object" string="Actualizar" class="oe_highlight"/>
+              </page>
+              <page string="Moneda">
+                <group>
+                  <group cols="4">
+                    <field name="ufp_currency_fixed_id" options = "{'no_create': '1', 'no_create_edit': '1', 'no_open': '1'}"/>
+                  </group>
+                </group>
+                <button name="actualize_currency_fixed" type="object" string="Actualizar" class="oe_highlight"/>
+              </page>
+            </notebook>
+            <h4 attrs="{'invisible': [('ufp_productos', '=', False)]}">Lista de productos no encontrados</h4>
+            <field name="ufp_productos" attrs="{'invisible': [('ufp_productos', '=', False)]}"/>
+          </sheet>
+          <footer>
+            <button special="cancel" string="Cancelar" type="object" class="oe_inline"/>
+          </footer>
+        </form>
+      </field>
+    </record>
+
+    <menuitem name="Actualizador de listas" id="update_fixed_prices_menu" parent="account.menu_finance_entries" action="update_fixed_prices_action" groups="fixed_prices.user_govar_product"/>
+
+  </data>
+</odoo>

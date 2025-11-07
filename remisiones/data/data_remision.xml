@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Crear ubicación automática para remisiones -->
+        <record id="stock_location_remision" model="stock.location">
+            <field name="name">REMISION</field>
+            <field name="location_id" ref="stock.stock_location_customers"/>
+            <field name="usage">customer</field>
+            <field name="active">True</field>
+        </record>
+    </data>
+</odoo>

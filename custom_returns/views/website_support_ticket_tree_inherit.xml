@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Crear una nueva acción que use la vista filtrada -->
+    <record id="website_support_ticket_action_no_claims" model="ir.actions.act_window">
+        <field name="name">Tickets (Sin Reclamos)</field>
+        <field name="res_model">website.support.ticket</field>
+        <field name="view_mode">tree,kanban,form,graph</field>
+        <field name="domain">[('is_claim', '=', False)]</field>
+        <field name="context">{"search_default_unattended_tickets":1, 'auto_refresh': 1}</field>
+        <field name="help" type="html">
+            <p>
+                No se encontraron tickets
+            </p>
+        </field>
+    </record>
+</odoo>

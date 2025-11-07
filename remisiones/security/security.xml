@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Grupo para cerrar remisiones -->
+        <record id="group_close_remision" model="res.groups">
+            <field name="name">Cerrar Remisiones</field>
+            <field name="comment">Permite cerrar remisiones</field>
+        </record>
+
+        <!-- Grupo para confirmar remisiones -->
+        <record id="confirm_rem" model="res.groups">
+            <field name="name">Confirmar remisión Publico en General</field>
+            <field name="comment">Permite confirmar remisiones</field>
+        </record>
+        <record id="parcial_quotation" model="res.groups">
+            <field name="name">Presupuesto parcial</field>
+        </record>
+    	<record id="cancel_remision" model="res.groups">
+    		<field name="name">
+				Cancelar remisiones 
+    		</field>
+    	</record>
+    </data>
+</odoo>

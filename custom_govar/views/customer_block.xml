@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+    <record id="block_customer_wizard" model="ir.ui.view">
+      <field name="name">Clientes bloquedos</field>
+      <field name="model">customer.block</field>
+      <field name="arch" type="xml">
+        <form>
+          <script>
+            $(document).ready(function(){
+            $('.modal-dialog').css({'width': '40%', 'height': '50%'});
+            $('.modal-content').css({'height': '65%'});
+            $('.modal-body').css({'height': '65%'});
+            });
+          </script>
+          <footer>
+            <button string="Generar" name="block_customers" type="object" class="oe_highlight" />
+          </footer>
+
+        </form>
+      </field>
+    </record>
+
+    <record id="customer_block_save_action" model="ir.actions.act_window">
+      <field name="name">Bloqueo de clientes</field>
+      <field name="type">ir.actions.act_window</field>
+      <field name="res_model">customer.block</field>
+      <field name="view_mode">form</field>
+      <field name="target">new</field>
+  </record>
+
+    <menuitem name="Clientes bloqueados S/MOV" id="customer_block_id" parent="account.menu_finance_receivables"
+      action="customer_block_save_action" sequence="101" />
+  </data>
+</odoo>

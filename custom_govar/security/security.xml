@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+    <record id="see_menu_product_denied" model="res.groups">
+      <field name="name">Ver menú productos negados</field>
+      <field name="comment">Permite ver el menú de productos negados en inventario</field>
+    </record>
+    	<record id="accept_product" model="res.groups">
+    		<field name="name">
+				    Actualizar stock fisico	
+    		</field>
+    	</record>
+    	<record id="avoid_message_stock" model="res.groups">
+    		<field name="name">
+				Evitar mensage de inventario(SO)
+    		</field>
+    	</record>
+        <record id="craete_several_invoices_so" model="res.groups">
+            <field name="name">Crear varias facturas desde la SO</field>
+        </record> 
+    	<record id="transfer_material" model="res.groups">
+    		<field name="name">
+				Transferir material
+    		</field>
+    	</record>
+    	<record id="show_label_menu" model="res.groups">
+    		<field name="name">
+				Menu etiquetas
+    		</field>
+    	</record>
+    	<record id="permission_create_products" model="res.groups">
+    		<field name="name">
+				Permiso crear productos
+    		</field>
+    	</record>
+        <record id="permission_crete_vendors" model="res.groups">
+            <field name="name">Permiso crear proveedores</field>
+        </record>
+    	<record id="permission_create_products" model="res.groups">
+    		<field name="name">
+				Permiso crear productos
+    		</field>
+    	</record>
+        <record id="show_products_menu" model="res.groups">
+            <field name="name">Sitio web</field>
+        </record>
+
+    	<record id="see_account_sales" model="res.groups">
+    		<field name="name">
+				Ver cuentas en ventas 
+    		</field>
+    	</record>
+    	<record id="see_account_buys" model="res.groups">
+    		<field name="name">
+				Ver cuentas en compras 
+    		</field>
+    	</record>
+
+        <record id="user_descuento_promocion" model="res.groups">
+            <field name="name">Aplicar descuentos por promocion</field>
+        </record>
+
+  </data>
+</odoo>

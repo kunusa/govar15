@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+    <record id="trimestral_sale_wizard" model="ir.ui.view">
+      <field name="name">Ventas trimestrales</field>
+      <field name="model">product.sales.report</field>
+      <field name="arch" type="xml">
+        <form>
+          <script>
+            $(document).ready(function(){
+              $('.modal-dialog').css({'width': '50%', 'height': '75%'});
+              $('.modal-content').css({'height': '60%'});
+              $('.modal-body').css({'height': '60%'});
+          });
+          </script>
+          <group col="4">
+            <field name="date_start" />
+          </group>
+          <field name="datas" invisible="1" />
+          <field name="datas_fname" invisible="1" />
+          <footer>
+            <button string="Generar" name="download_trimestral_sales" type="object" class="oe_highlight" />
+          </footer>
+
+        </form>
+      </field>
+    </record>
+
+    <record id="trimestral_sales_action" model="ir.actions.act_window">
+      <field name="name">Ventas trimestrales</field>
+      <field name="type">ir.actions.act_window</field>
+      <field name="res_model">product.sales.report</field>
+      <field name="view_mode">form</field>
+      <field name="target">new</field>
+    </record>
+
+
+    <menuitem name="Ventas trimestrales" id="trimestral_sale_id" parent="sale.menu_sale_report"
+      action="trimestral_sales_action" sequence="102" />
+  </data>
+</odoo>

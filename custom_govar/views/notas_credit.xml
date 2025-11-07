@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+    <!--Tree de notas de credito-->
+    <record model="ir.ui.view" id="view_nota_credito">
+      <field name="name">nota.credito.tree</field>
+      <field name="model">nota.credito</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+          <field name="nc_categiria"/>
+          <field name="nc_fecha_inicio"/>
+          <field name="nc_fecha_fin"/>
+          <field name="state"/>
+        </tree>
+      </field>
+    </record>
+
+    <!--from de notas de credito
+  -->
+    <record model="ir.ui.view" id="view_nota_credito_from">
+      <field name="name">nota.credito.from</field>
+      <field name="model">nota.credito</field>
+      <field name="priority" eval="8" />
+      <field name="arch" type="xml">
+        <form>
+          <header>
+            <button type="object" name="generar_notas" class="oe_highlight" string="Generar Notas" states="revision"/>
+            <button type="object" name="cancelar" class="oe_highlight" string="Cancelar" states="revision"/>
+            <button type="object" name="validate" class="oe_highlight" string="Validar" states="nuevo"/>
+            <field name="state" widget="statusbar" statusbar_visible="nuevo,revision,cancelar,aplicado"/>
+          </header>
+          <sheet>
+            <h2>
+              <field name="name"/>
+            </h2>
+            <group col="2">
+              <field name="nc_categiria" widget="many2many_tags"  options = "{'no_create': '1', 'no_create_edit': '1', 'no_open': '1'}" required="1"/>
+            </group>
+            <h4>Fechas</h4>
+            <group col="5">
+              <field name="nc_fecha_inicio" required="1"/>
+              <p>A</p>
+              <field name="nc_fecha_fin" required="1"/>
+              <field name="nc_producto" invisible="1"/>
+            </group>
+            <notebook>
+              <page string="Lineas de nota" attrs="{'invisible': [('notaCreditoLine_ids','=',[])]}">
+                <field name="notaCreditoLine_ids" attrs="{'readonly': [('state','in',('cancelar','aplicado'))]}">
+                  <tree editable="top">
+                    <field name="ncl_num"/>
+                    <field name="ncl_res_partner_id" options = "{'no_create': '1', 'no_create_edit': '1', 'no_open': '1'}"/>
+                    <field name="ncl_clien_clave"/>
+                    <field name="ncl_user_id" options = "{'no_create': '1', 'no_create_edit': '1', 'no_open': '1'}"/>
+                    <field name="ncl_subtotal" sum="Total"/>
+                    <field name="nlc_descuento"/>
+                    <field name="nlc_monto" sum="Total"/>
+                    <field name="notaCredito_id" invisible="1"/>
+                  </tree>
+                </field>
+              </page>
+            </notebook>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+    <!--notas de credito accion-->
+    <record model="ir.actions.act_window" id="action_nota_credito">
+      <field name="name">Nota de credito</field>
+      <field name="res_model">nota.credito</field>
+      <field name="view_mode">tree,form</field>
+      <field name="help" type="html">
+        <p class="oe_view_nocontent_create">Retiros o depositos</p>
+      </field>
+    </record>
+
+    <menuitem name="Descuento por promocion" id="ret_dep_id" parent="account.menu_finance_receivables" action="action_nota_credito" groups="custom_govar.user_descuento_promocion"/>
+
+  </data>
+</odoo>

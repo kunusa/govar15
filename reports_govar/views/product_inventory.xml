@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="product_report_inventory_form" model="ir.ui.view">
+        <field name="name">create.product.report.inventory.stock</field>
+        <field name="model">product.report.inventory</field>
+        <field name="arch" type="xml">
+            <form string= "Generar Reporte">
+              <script>
+                  $(document).ready(function(){
+                      $('.modal-dialog').css({'width': '50%', 'height': '75%'});
+                      $('.modal-content').css({'height': '70%'});
+                      $('.modal-body').css({'height': '70%'});
+                  });
+              </script>
+                <group col = "2">
+                    <field name="initial_date" required="1"/>
+                    <field name="location_ids" domain="[('usage','=','internal')]" widget="many2many_tags" options="{'no_create':True, 'no_open':True}" />
+                </group>
+                <group col = "2">
+                    <field name="datas" invisible="1"/> 
+                    <field name="datas_fname" invisible="1"/>
+                </group>
+              <footer>
+                <button class="btn-primary" string="Generar Reporte"  name="download_file_report_inventory" type="object"/>
+                <button string="Cancelar" class="btn-secondary" special="cancel"/>
+              </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="product_report_inventory_wizard" model="ir.actions.act_window">
+      <field name="name">Reporte de inventario-ventas</field>
+      <field name="res_model">product.report.inventory</field>
+      <field name="type">ir.actions.act_window</field>
+      <field name="view_mode">form</field>
+      <field name="view_id" ref="product_report_inventory_form"/>
+      <field name="target">inline</field>
+      <field name="target">new</field>
+    </record>
+
+    <!-- <menuitem name="Informes" id="info_menu"/> -->
+    <menuitem id="product_report_inventory_menu" name="Reporte de inventario-ventas" action="product_report_inventory_wizard" parent="stock.menu_warehouse_report"/> 
+</odoo>
